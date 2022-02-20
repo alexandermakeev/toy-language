@@ -14,6 +14,7 @@ import org.example.toylanguage.expression.value.NumericValue;
 import org.example.toylanguage.expression.value.TextValue;
 import org.example.toylanguage.expression.value.Value;
 import org.example.toylanguage.statement.AssignStatement;
+import org.example.toylanguage.statement.InputStatement;
 import org.example.toylanguage.statement.PrintStatement;
 import org.example.toylanguage.statement.Statement;
 import org.example.toylanguage.token.Token;
@@ -26,12 +27,14 @@ public class StatementParser {
     private final List<Token> tokens;
     private final Map<String, Value<?>> variables;
     private final Map<String, StructureDefinition> structures;
+    private final Scanner scanner;
     private int position;
 
     public StatementParser(List<Token> tokens) {
         this.tokens = tokens;
         this.variables = new HashMap<>();
         this.structures = new HashMap<>();
+        this.scanner = new Scanner(System.in);
     }
 
     public Statement parse() {
@@ -59,6 +62,8 @@ public class StatementParser {
                         Expression expression = readExpression();
                         return new PrintStatement(expression);
                     case "input":
+                        Token variable = next(TokenType.Variable);
+                        return new InputStatement(variable.getValue(), scanner::nextLine, variables::put);
                     case "if":
                     case "struct":
                 }
