@@ -13,4 +13,9 @@ public class Value<T extends Comparable<T>> implements Expression {
     public String toString() {
         return value.toString();
     }
+
+    @Override
+    public Value<?> evaluate() {
+        return this;
+    }
 }

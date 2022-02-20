@@ -3,6 +3,7 @@ package org.example.toylanguage.expression;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.example.toylanguage.definition.StructureDefinition;
+import org.example.toylanguage.expression.value.StructureValue;
 import org.example.toylanguage.expression.value.Value;
 
 import java.util.List;
@@ -24,6 +25,11 @@ public class StructureExpression implements Expression, Comparable<StructureExpr
                 .mapToObj(this::getValue)
                 .findFirst()
                 .orElse(null);
+    }
+
+    @Override
+    public Value<?> evaluate() {
+        return new StructureValue(this);
     }
 
     @Override
@@ -54,7 +60,11 @@ public class StructureExpression implements Expression, Comparable<StructureExpr
     }
 
     private Value<?> getValue(int index) {
-        // TODO: 2/20/22
-        return null;
+        Expression expression = values.get(index);
+        if (expression instanceof VariableExpression) {
+            return variableValue.apply(((VariableExpression) expression).getName());
+        } else {
+            return expression.evaluate();
+        }
     }
 }

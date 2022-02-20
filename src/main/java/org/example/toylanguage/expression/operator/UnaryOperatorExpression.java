@@ -10,6 +10,11 @@ import org.example.toylanguage.expression.value.Value;
 public abstract class UnaryOperatorExpression implements OperatorExpression {
     private final Expression value;
 
+    @Override
+    public Value<?> evaluate() {
+        return calc(getValue().evaluate());
+    }
+
     public abstract Value<?> calc(Value<?> value);
 }
 
