@@ -13,10 +13,7 @@ import org.example.toylanguage.expression.value.LogicalValue;
 import org.example.toylanguage.expression.value.NumericValue;
 import org.example.toylanguage.expression.value.TextValue;
 import org.example.toylanguage.expression.value.Value;
-import org.example.toylanguage.statement.AssignStatement;
-import org.example.toylanguage.statement.InputStatement;
-import org.example.toylanguage.statement.PrintStatement;
-import org.example.toylanguage.statement.Statement;
+import org.example.toylanguage.statement.*;
 import org.example.toylanguage.token.Token;
 import org.example.toylanguage.token.TokenType;
 
@@ -65,6 +62,17 @@ public class StatementParser {
                         Token variable = next(TokenType.Variable);
                         return new InputStatement(variable.getValue(), scanner::nextLine, variables::put);
                     case "if":
+                        Expression condition = readExpression();
+                        next(TokenType.Keyword, "then"); //skip then
+
+                        ConditionStatement conditionStatement = new ConditionStatement(condition);
+                        while (!peek(TokenType.Keyword, "end")) {
+                            Statement statement = parseExpression();
+                            conditionStatement.addStatement(statement);
+                        }
+                        next(TokenType.Keyword, "end"); //skip end
+
+                        return conditionStatement;
                     case "struct":
                 }
             default:
