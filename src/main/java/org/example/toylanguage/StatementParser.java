@@ -74,6 +74,20 @@ public class StatementParser {
 
                         return conditionStatement;
                     case "struct":
+                        Token type = next(TokenType.Variable);
+
+                        Set<String> args = new HashSet<>();
+                        while (!peek(TokenType.Keyword, "end")) {
+                            next(TokenType.Keyword, "arg");
+
+                            Token arg = next(TokenType.Variable);
+                            args.add(arg.getValue());
+                        }
+                        next(TokenType.Keyword, "end"); //skip end
+
+                        structures.put(type.getValue(), new StructureDefinition(type.getValue(), new ArrayList<>(args)));
+
+                        return null;
                 }
             default:
                 throw new SyntaxException(String.format("Statement can't start with the following lexeme `%s`", token));
