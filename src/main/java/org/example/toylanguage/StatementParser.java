@@ -1,8 +1,10 @@
 package org.example.toylanguage;
 
 import lombok.SneakyThrows;
+import org.example.toylanguage.definition.StructureDefinition;
 import org.example.toylanguage.exception.SyntaxException;
 import org.example.toylanguage.expression.Expression;
+import org.example.toylanguage.expression.StructureExpression;
 import org.example.toylanguage.expression.VariableExpression;
 import org.example.toylanguage.expression.operator.BinaryOperatorExpression;
 import org.example.toylanguage.expression.operator.Operator;
@@ -16,20 +18,19 @@ import org.example.toylanguage.statement.Statement;
 import org.example.toylanguage.token.Token;
 import org.example.toylanguage.token.TokenType;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Stream;
 
 public class StatementParser {
     private final List<Token> tokens;
     private final Map<String, Value<?>> variables;
+    private final Map<String, StructureDefinition> structures;
     private int position;
 
     public StatementParser(List<Token> tokens) {
         this.tokens = tokens;
         this.variables = new HashMap<>();
+        this.structures = new HashMap<>();
     }
 
     public Statement parse() {
@@ -57,9 +58,31 @@ public class StatementParser {
     }
 
     private Expression readInstance() {
-        // TODO: 2/20/22
-        return null;
+        next(TokenType.Keyword, "new"); //skip new
+
+        Token type = next(TokenType.Variable);
+
+        List<Expression> arguments = new ArrayList<>();
+
+        if (peek(TokenType.GroupDivider, "[")) {
+
+            next(TokenType.GroupDivider, "["); //skip open square bracket
+
+            while (!peek(TokenType.GroupDivider, "]")) {
+                Expression value = readExpression();
+                arguments.add(value);
+            }
+
+            next(TokenType.GroupDivider, "]"); //skip close square bracket
+        }
+
+        StructureDefinition definition = structures.get(type.getValue());
+        if (definition == null) {
+            throw new SyntaxException(String.format("Structure is not defined: %s", type.getValue()));
+        }
+        return new StructureExpression(definition, arguments, variables::get);
     }
+
 
     @SneakyThrows
     private Expression readExpression() {
