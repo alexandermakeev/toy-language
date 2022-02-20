@@ -14,6 +14,7 @@ import org.example.toylanguage.expression.value.NumericValue;
 import org.example.toylanguage.expression.value.TextValue;
 import org.example.toylanguage.expression.value.Value;
 import org.example.toylanguage.statement.AssignStatement;
+import org.example.toylanguage.statement.PrintStatement;
 import org.example.toylanguage.statement.Statement;
 import org.example.toylanguage.token.Token;
 import org.example.toylanguage.token.TokenType;
@@ -52,6 +53,15 @@ public class StatementParser {
                 }
 
                 return new AssignStatement(token.getValue(), value, variables::put);
+            case Keyword:
+                switch (token.getValue()) {
+                    case "print":
+                        Expression expression = readExpression();
+                        return new PrintStatement(expression);
+                    case "input":
+                    case "if":
+                    case "struct":
+                }
             default:
                 throw new SyntaxException(String.format("Statement can't start with the following lexeme `%s`", token));
         }
