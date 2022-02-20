@@ -35,8 +35,12 @@ public class StatementParser {
     }
 
     public Statement parse() {
-        // TODO: 2/20/22
-        return null;
+        CompositeStatement root = new CompositeStatement();
+        while (position < tokens.size()) {
+            Statement statement = parseExpression();
+            root.addStatement(statement);
+        }
+        return root;
     }
 
     private Statement parseExpression() {
