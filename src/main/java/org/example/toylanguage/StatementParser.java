@@ -1,6 +1,7 @@
 package org.example.toylanguage;
 
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.ArrayUtils;
 import org.example.toylanguage.definition.StructureDefinition;
 import org.example.toylanguage.exception.SyntaxException;
 import org.example.toylanguage.expression.Expression;
@@ -9,6 +10,7 @@ import org.example.toylanguage.expression.VariableExpression;
 import org.example.toylanguage.expression.operator.BinaryOperatorExpression;
 import org.example.toylanguage.expression.operator.Operator;
 import org.example.toylanguage.expression.operator.OperatorExpression;
+import org.example.toylanguage.expression.operator.UnaryOperatorExpression;
 import org.example.toylanguage.expression.value.LogicalValue;
 import org.example.toylanguage.expression.value.NumericValue;
 import org.example.toylanguage.expression.value.TextValue;
@@ -138,7 +140,7 @@ public class StatementParser {
                 left = operatorType
                         .getConstructor(Expression.class, Expression.class)
                         .newInstance(left, right);
-            } else {
+            } else if (UnaryOperatorExpression.class.isAssignableFrom(operatorType)) {
                 left = operatorType
                         .getConstructor(Expression.class)
                         .newInstance(left);
@@ -165,7 +167,7 @@ public class StatementParser {
     }
 
     private Token next(TokenType type, TokenType... types) {
-        TokenType[] tokenTypes = org.apache.commons.lang3.ArrayUtils.add(types, type);
+        TokenType[] tokenTypes = ArrayUtils.add(types, type);
         if (position < tokens.size()) {
             Token token = tokens.get(position);
             if (Stream.of(tokenTypes).anyMatch(t -> t == token.getType())) {

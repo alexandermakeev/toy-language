@@ -8,5 +8,6 @@ import lombok.Getter;
 public class Token {
     private final TokenType type;
     private final String value;
+    private final Integer row;
 }
 
