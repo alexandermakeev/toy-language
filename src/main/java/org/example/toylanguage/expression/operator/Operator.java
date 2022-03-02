@@ -9,8 +9,6 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @Getter
 public enum Operator {
-    Increment("++", IncrementOperator.class),
-    Decrement("--", DecrementOperator.class),
     Not("!", NotOperator.class),
     Addition("+", AdditionOperator.class),
     Subtraction("-", SubtractionOperator.class),
