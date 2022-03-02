@@ -134,7 +134,8 @@ public class StatementParser {
         //recursively read an expression
         while (peek(TokenType.Operator)) {
             Token operation = next(TokenType.Operator);
-            Class<? extends OperatorExpression> operatorType = Operator.getType(operation.getValue());
+            Operator operator = Operator.getType(operation.getValue());
+            Class<? extends OperatorExpression> operatorType = operator.getType();
             if (BinaryOperatorExpression.class.isAssignableFrom(operatorType)) {
                 Expression right = nextExpression();
                 left = operatorType
@@ -162,7 +163,7 @@ public class StatementParser {
                 return new TextValue(value);
             case Variable:
             default:
-                return new VariableExpression(value, variables::get);
+                return new VariableExpression(value, variables::get, variables::put);
         }
     }
 
