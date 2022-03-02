@@ -8,7 +8,7 @@ input your_name
 input your_experience_in_years
 input do_you_like_programming
 
-person = new Person [your_name your_experience_in_years do_you_like_programming == "yes"]
+person = new Person [your_name, your_experience_in_years, do_you_like_programming == "yes"]
 print person
 
 if person :: is_developer then

@@ -17,7 +17,7 @@ class ToyLanguageTest {
         URL resource = getClass().getClassLoader().getResource("test.toy");
         Path path = Paths.get(resource.toURI());
 
-        try (InputStream in = new ByteArrayInputStream("Alexander\n5\nyes".getBytes());
+        try (InputStream in = new ByteArrayInputStream("Robert\n5\nyes".getBytes());
              ByteArrayOutputStream baos = new ByteArrayOutputStream();
              PrintStream out = new PrintStream(baos)) {
 
@@ -31,8 +31,8 @@ class ToyLanguageTest {
                     "enter \"your name\" >>> " +
                             "enter \"your experience in years\" >>> " +
                             "enter \"do you like programming\" >>> " +
-                            "Person [ name = Alexander, experience = 5, is_developer = true ]\n" +
-                            "hey Alexander!\n" +
+                            "Person [ name = Robert, experience = 5, is_developer = true ]\n" +
+                            "hey Robert!\n" +
                             "you had started your career in 2017\n",
                     baos.toString()
             );
