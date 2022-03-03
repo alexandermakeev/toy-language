@@ -79,7 +79,7 @@ public class StatementParser {
                     case "struct":
                         Token type = next(TokenType.Variable);
 
-                        Set<String> args = new HashSet<>();
+                        List<String> args = new ArrayList<>();
                         while (!peek(TokenType.Keyword, "end")) {
                             next(TokenType.Keyword, "arg");
 
