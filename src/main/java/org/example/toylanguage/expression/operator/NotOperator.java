@@ -13,7 +13,7 @@ public class NotOperator extends UnaryOperatorExpression {
     @Override
     public Value<?> calc(Value<?> value) {
         if (value instanceof LogicalValue) {
-            return new LogicalValue(!((LogicalValue) value.getValue()).getValue());
+            return new LogicalValue(!(((LogicalValue) value).getValue()));
         } else {
             throw new ExecutionException(String.format("Unable to perform NOT operator for non logical value `%s`", value));
         }
