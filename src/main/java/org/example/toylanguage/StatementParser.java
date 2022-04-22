@@ -179,7 +179,7 @@ public class StatementParser {
                         Expression operand;
                         switch (token.getType()) {
                             case Numeric:
-                                operand = new NumericValue(Integer.parseInt(value));
+                                operand = new NumericValue(Double.parseDouble(value));
                                 break;
                             case Logical:
                                 operand = new LogicalValue(Boolean.valueOf(value));

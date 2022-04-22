@@ -16,9 +16,9 @@ public class MultiplicationOperator extends BinaryOperatorExpression {
         if (left instanceof NumericValue && right instanceof NumericValue) {
             return new NumericValue(((NumericValue) left).getValue() * ((NumericValue) right).getValue());
         } else if (left instanceof NumericValue) {
-            return new TextValue(right.toString().repeat(((NumericValue) left).getValue()));
+            return new TextValue(right.toString().repeat(((NumericValue) left).getValue().intValue()));
         } else if (right instanceof NumericValue) {
-            return new TextValue(left.toString().repeat(((NumericValue) right).getValue()));
+            return new TextValue(left.toString().repeat(((NumericValue) right).getValue().intValue()));
         } else {
             throw new ExecutionException(String.format("Unable to multiply non numeric values `%s` and `%s`", left, right));
         }

@@ -196,7 +196,7 @@ class StatementParserTest {
         assertEquals(Arrays.asList("name", "age"), definition.getArguments());
 
         assertEquals("Robert", structure.getArgumentValue("name").getValue());
-        assertEquals(25, structure.getArgumentValue("age").getValue());
+        assertEquals("25", structure.getArgumentValue("age").toString());
 
         // 2nd statement
         PrintStatement printStatement = (PrintStatement) statements.get(1);

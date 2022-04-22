@@ -6,6 +6,7 @@ import org.example.toylanguage.expression.value.LogicalValue;
 import org.example.toylanguage.expression.value.NumericValue;
 import org.example.toylanguage.expression.value.TextValue;
 import org.example.toylanguage.expression.value.Value;
+import org.example.toylanguage.token.TokenType;
 
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
@@ -23,9 +24,9 @@ public class InputStatement implements Statement {
         String line = consoleSupplier.get();
 
         Value<?> value;
-        if (line.matches("[0-9]+")) {
-            value = new NumericValue(Integer.parseInt(line));
-        } else if (line.matches("true|false")) {
+        if (line.matches(TokenType.Numeric.getRegex())) {
+            value = new NumericValue(Double.parseDouble(line));
+        } else if (line.matches(TokenType.Logical.getRegex())) {
             value = new LogicalValue(Boolean.valueOf(line));
         } else {
             value = new TextValue(line);
