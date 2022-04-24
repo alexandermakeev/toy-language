@@ -35,7 +35,7 @@ public class StatementParser {
 
     public Statement parse() {
         CompositeStatement root = new CompositeStatement();
-        while (position < tokens.size()) {
+        while (hasNext()) {
             Statement statement = parseExpression();
             root.addStatement(statement);
         }
@@ -111,6 +111,11 @@ public class StatementParser {
         throw new SyntaxException(String.format("After `%s` declaration expected any of the following lexemes `%s`", previousToken, Arrays.toString(tokenTypes)));
     }
 
+    private boolean hasNext() {
+		skipLineBreaks();
+		return position < tokens.size();
+    }
+
     private Token next(TokenType type, String value) {
         skipLineBreaks();
         if (position < tokens.size()) {
@@ -139,7 +144,8 @@ public class StatementParser {
     }
 
     private void skipLineBreaks() {
-        while (tokens.get(position).getType() == TokenType.LineBreak && ++position != tokens.size()) ;
+        while (position != tokens.size() && tokens.get(position).getType() == TokenType.LineBreak)
+			position++;
     }
 
     private class ExpressionReader {
