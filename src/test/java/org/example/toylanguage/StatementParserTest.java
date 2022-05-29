@@ -137,7 +137,6 @@ class StatementParserTest {
 
     @Test
     public void testObject() {
-
         List<Token> tokens = Arrays.asList(
                 Token.builder().type(TokenType.Keyword).value("struct").row(1).build(),
                 Token.builder().type(TokenType.Variable).value("Person").row(1).build(),
@@ -201,6 +200,32 @@ class StatementParserTest {
         // 2nd statement
         PrintStatement printStatement = (PrintStatement) statements.get(1);
         assertEquals(AdditionOperator.class, printStatement.getExpression().getClass());
+    }
+
+    @Test
+    public void testComment() {
+        List<Token> tokens = Arrays.asList(
+                Token.builder().type(TokenType.Comment).value("# a = 5").build(),
+                Token.builder().type(TokenType.LineBreak).value("\n").build(),
+                Token.builder().type(TokenType.Variable).value("a").build(),
+                Token.builder().type(TokenType.Operator).value("=").build(),
+                Token.builder().type(TokenType.Numeric).value("5").build(),
+                Token.builder().type(TokenType.Comment).value("# a is equal to 5").build()
+        );
+        StatementParser parser = new StatementParser(tokens);
+        CompositeStatement statement = (CompositeStatement) parser.parse();
+
+        List<Statement> statements = statement.getStatements2Execute();
+        assertEquals(1, statements.size());
+
+        assertEquals(AssignStatement.class, statements.get(0).getClass());
+        AssignStatement assignStatement = (AssignStatement) statements.get(0);
+
+        assertEquals("a", assignStatement.getName());
+        assertEquals(NumericValue.class, assignStatement.getExpression().getClass());
+        NumericValue numericValue = (NumericValue) assignStatement.getExpression();
+
+        assertEquals(5, numericValue.getValue());
     }
 
 }

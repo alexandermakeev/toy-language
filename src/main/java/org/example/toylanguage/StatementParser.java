@@ -26,6 +26,8 @@ public class StatementParser {
     private final Scanner scanner;
     private int position;
 
+    private static final List<TokenType> EMPTY_TOKENS = List.of(TokenType.LineBreak, TokenType.Comment);
+
     public StatementParser(List<Token> tokens) {
         this.tokens = tokens;
         this.variables = new HashMap<>();
@@ -98,7 +100,7 @@ public class StatementParser {
     }
 
     private Token next(TokenType type, TokenType... types) {
-        skipLineBreaks();
+        skipEmptyTokens();
         TokenType[] tokenTypes = ArrayUtils.add(types, type);
         if (position < tokens.size()) {
             Token token = tokens.get(position);
@@ -112,12 +114,12 @@ public class StatementParser {
     }
 
     private boolean hasNext() {
-		skipLineBreaks();
+        skipEmptyTokens();
 		return position < tokens.size();
     }
 
     private Token next(TokenType type, String value) {
-        skipLineBreaks();
+        skipEmptyTokens();
         if (position < tokens.size()) {
             Token token = tokens.get(position);
             if (token.getType() == type && token.getValue().equals(value)) {
@@ -130,12 +132,12 @@ public class StatementParser {
     }
 
     private Token next() {
-        skipLineBreaks();
+        skipEmptyTokens();
         return tokens.get(position++);
     }
 
     private boolean peek(TokenType type, String content) {
-        skipLineBreaks();
+        skipEmptyTokens();
         if (position < tokens.size()) {
             Token token = tokens.get(position);
             return type == token.getType() && token.getValue().equals(content);
@@ -143,8 +145,8 @@ public class StatementParser {
         return false;
     }
 
-    private void skipLineBreaks() {
-        while (position != tokens.size() && tokens.get(position).getType() == TokenType.LineBreak)
+    private void skipEmptyTokens() {
+        while (position != tokens.size() && EMPTY_TOKENS.contains(tokens.get(position).getType()))
 			position++;
     }
 

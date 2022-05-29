@@ -283,4 +283,39 @@ class LexicalParserTest {
         assertEquals(7, tokens.get(count).getRow());
     }
 
+    @Test
+    public void testComment() {
+        String source = "# a = 5\n" +
+                        "a = 5 # a is equal to 5";
+        LexicalParser parser = new LexicalParser(source);
+        List<Token> tokens = parser.parse();
+
+        assertEquals(6, tokens.size());
+
+        int count = 0;
+        assertEquals(TokenType.Comment, tokens.get(count).getType());
+        assertEquals("# a = 5", tokens.get(count).getValue());
+        assertEquals(1, tokens.get(count).getRow());
+
+        assertEquals(TokenType.LineBreak, tokens.get(++count).getType());
+        assertEquals("\n", tokens.get(count).getValue());
+        assertEquals(1, tokens.get(count).getRow());
+
+        assertEquals(TokenType.Variable, tokens.get(++count).getType());
+        assertEquals("a", tokens.get(count).getValue());
+        assertEquals(2, tokens.get(count).getRow());
+
+        assertEquals(TokenType.Operator, tokens.get(++count).getType());
+        assertEquals("=", tokens.get(count).getValue());
+        assertEquals(2, tokens.get(count).getRow());
+
+        assertEquals(TokenType.Numeric, tokens.get(++count).getType());
+        assertEquals("5", tokens.get(count).getValue());
+        assertEquals(2, tokens.get(count).getRow());
+
+        assertEquals(TokenType.Comment, tokens.get(++count).getType());
+        assertEquals("# a is equal to 5", tokens.get(count).getValue());
+        assertEquals(2, tokens.get(count).getRow());
+    }
+
 }
