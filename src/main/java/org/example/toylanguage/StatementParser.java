@@ -82,13 +82,21 @@ public class StatementParser {
                         Token type = next(TokenType.Variable);
 
                         List<String> args = new ArrayList<>();
-                        while (!peek(TokenType.Keyword, "end")) {
-                            next(TokenType.Keyword, "arg");
 
-                            Token arg = next(TokenType.Variable);
-                            args.add(arg.getValue());
+                        if (peek(TokenType.GroupDivider, "[")) {
+
+                            next(TokenType.GroupDivider, "["); //skip open square bracket
+
+                            while (!peek(TokenType.GroupDivider, "]")) {
+                                Token arg = next(TokenType.Variable);
+                                args.add(arg.getValue());
+
+                                if (peek(TokenType.GroupDivider, ","))
+                                    next();
+                            }
+
+                            next(TokenType.GroupDivider, "]"); //skip close square bracket
                         }
-                        next(TokenType.Keyword, "end"); //skip end
 
                         structures.put(type.getValue(), new StructureDefinition(type.getValue(), new ArrayList<>(args)));
 

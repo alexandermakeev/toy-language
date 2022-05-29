@@ -1,8 +1,4 @@
-struct Person
-    arg name
-    arg experience
-    arg is_developer
-end
+struct Person [ name, experience, is_developer ]
 
 input your_name
 input your_experience_in_years
