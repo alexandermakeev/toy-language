@@ -70,12 +70,14 @@ public class StatementParser {
                 }
             case Keyword:
                 switch (token.getValue()) {
-                    case "print":
+                    case "print": {
                         Expression expression = new ExpressionReader().readExpression();
                         return new PrintStatement(expression);
-                    case "input":
+                    }
+                    case "input": {
                         Token variable = tokens.next(TokenType.Variable);
                         return new InputStatement(variable.getValue(), scanner::nextLine, variables::put);
+                    }
                     case "if":
                         Expression condition = new ExpressionReader().readExpression();
                         tokens.next(TokenType.Keyword, "then"); //skip then
@@ -143,6 +145,10 @@ public class StatementParser {
                         tokens.next(TokenType.Keyword, "end");
 
                         return null;
+                    }
+                    case "return": {
+                        Expression expression = new ExpressionReader().readExpression();
+                        return new ReturnStatement(expression);
                     }
                 }
             default:
