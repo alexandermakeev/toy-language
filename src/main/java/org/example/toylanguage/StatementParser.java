@@ -1,6 +1,7 @@
 package org.example.toylanguage;
 
 import lombok.SneakyThrows;
+import org.example.toylanguage.definition.FunctionDefinition;
 import org.example.toylanguage.definition.StructureDefinition;
 import org.example.toylanguage.exception.SyntaxException;
 import org.example.toylanguage.expression.Expression;
@@ -22,12 +23,14 @@ public class StatementParser {
     private final TokensStack tokens;
     private final Map<String, Value<?>> variables;
     private final Map<String, StructureDefinition> structures;
+    private final Map<String, FunctionDefinition> functions;
     private final Scanner scanner;
 
     public StatementParser(List<Token> tokens) {
         this.tokens = new TokensStack(tokens);
         this.variables = new HashMap<>();
         this.structures = new HashMap<>();
+        this.functions = new HashMap<>();
         this.scanner = new Scanner(System.in);
     }
 
@@ -85,7 +88,7 @@ public class StatementParser {
                         tokens.next(TokenType.Keyword, "end"); //skip end
 
                         return conditionStatement;
-                    case "struct":
+                    case "struct": {
                         Token type = tokens.next(TokenType.Variable);
 
                         List<String> args = new ArrayList<>();
@@ -108,6 +111,39 @@ public class StatementParser {
                         structures.put(type.getValue(), new StructureDefinition(type.getValue(), new ArrayList<>(args)));
 
                         return null;
+                    }
+                    case "fun": {
+                        Token type = tokens.next(TokenType.Variable);
+
+                        List<String> args = new ArrayList<>();
+
+                        if (tokens.peek(TokenType.GroupDivider, "[")) {
+
+                            tokens.next(TokenType.GroupDivider, "["); //skip open square bracket
+
+                            while (!tokens.peek(TokenType.GroupDivider, "]")) {
+                                Token arg = tokens.next(TokenType.Variable);
+                                args.add(arg.getValue());
+
+                                if (tokens.peek(TokenType.GroupDivider, ","))
+                                    tokens.next();
+                            }
+
+                            tokens.next(TokenType.GroupDivider, "]"); //skip close square bracket
+                        }
+
+                        FunctionStatement functionStatement = new FunctionStatement();
+                        FunctionDefinition functionDefinition = new FunctionDefinition(type.getValue(), args, functionStatement);
+                        functions.put(type.getValue(), functionDefinition);
+
+                        while (!tokens.peek(TokenType.Keyword, "end")) {
+                            Statement statement = parseExpression();
+                            functionStatement.addStatement(statement);
+                        }
+                        tokens.next(TokenType.Keyword, "end");
+
+                        return null;
+                    }
                 }
             default:
                 throw new SyntaxException(String.format("Statement can't start with the following lexeme `%s`", token));
