@@ -19,6 +19,8 @@ import org.example.toylanguage.token.TokensStack;
 
 import java.util.*;
 
+import static org.example.toylanguage.expression.value.NullValue.NULL_INSTANCE;
+
 public class StatementParser {
     private final TokensStack tokens;
     private final Map<String, Value<?>> variables;
@@ -166,7 +168,7 @@ public class StatementParser {
         }
 
         private Expression readExpression() {
-            while (tokens.peekSameLine(TokenType.Operator, TokenType.Variable, TokenType.Numeric, TokenType.Logical, TokenType.Text)) {
+            while (tokens.peekSameLine(TokenType.Operator, TokenType.Variable, TokenType.Numeric, TokenType.Logical, TokenType.Null, TokenType.Text)) {
                 Token token = tokens.next();
                 switch (token.getType()) {
                     case Operator:
@@ -201,6 +203,9 @@ public class StatementParser {
                             case Text:
                                 operand = new TextValue(value);
                                 break;
+                            case Null:
+                                operand = NULL_INSTANCE;
+                                break;
                             case Variable:
                             default:
                                 if (!operators.isEmpty() && operators.peek() == Operator.StructureInstance) {
@@ -217,7 +222,11 @@ public class StatementParser {
                 applyTopOperator();
             }
 
-            return operands.pop();
+            if (operands.isEmpty()) {
+                return NULL_INSTANCE;
+            } else {
+                return operands.pop();
+            }
         }
 
         @SneakyThrows
