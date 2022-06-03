@@ -2,6 +2,7 @@ package org.example.toylanguage.statement;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.example.toylanguage.context.MemoryContext;
 import org.example.toylanguage.exception.ExecutionException;
 import org.example.toylanguage.expression.Expression;
 import org.example.toylanguage.expression.value.LogicalValue;
@@ -17,7 +18,12 @@ public class ConditionStatement extends CompositeStatement {
         Value<?> value = condition.evaluate();
         if (value instanceof LogicalValue) {
             if (((LogicalValue) value).getValue()) {
-                super.execute();
+                MemoryContext.newScope();
+                try {
+                    super.execute();
+                } finally {
+                    MemoryContext.endScope();
+                }
             }
         } else {
             throw new ExecutionException(String.format("Cannot compare non logical value `%s`", value));
