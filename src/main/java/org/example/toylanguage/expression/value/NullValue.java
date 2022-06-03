@@ -1,6 +1,6 @@
 package org.example.toylanguage.expression.value;
 
-public class NullValue<T extends Comparable<T>> extends Value<T> {
+public class NullValue<T extends Comparable<T>> extends ComparableValue<T> {
 
 	public static final NullValue<?> NULL_INSTANCE = new NullValue<>(null);
 

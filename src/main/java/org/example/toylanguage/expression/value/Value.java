@@ -6,7 +6,7 @@ import org.example.toylanguage.expression.Expression;
 
 @RequiredArgsConstructor
 @Getter
-public class Value<T extends Comparable<T>> implements Expression {
+public class Value<T> implements Expression {
     private final T value;
 
     @Override

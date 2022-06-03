@@ -272,7 +272,7 @@ public class StatementParser {
             if (definition == null) {
                 throw new SyntaxException(String.format("Structure is not defined: %s", token.getValue()));
             }
-            return new StructureExpression(definition, arguments, variables::get);
+            return new StructureExpression(definition, arguments);
         }
     }
 }
