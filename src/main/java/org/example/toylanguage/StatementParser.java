@@ -5,13 +5,13 @@ import org.example.toylanguage.definition.FunctionDefinition;
 import org.example.toylanguage.definition.StructureDefinition;
 import org.example.toylanguage.exception.SyntaxException;
 import org.example.toylanguage.expression.Expression;
+import org.example.toylanguage.expression.FunctionExpression;
 import org.example.toylanguage.expression.StructureExpression;
 import org.example.toylanguage.expression.VariableExpression;
 import org.example.toylanguage.expression.operator.*;
 import org.example.toylanguage.expression.value.LogicalValue;
 import org.example.toylanguage.expression.value.NumericValue;
 import org.example.toylanguage.expression.value.TextValue;
-import org.example.toylanguage.expression.value.Value;
 import org.example.toylanguage.statement.*;
 import org.example.toylanguage.token.Token;
 import org.example.toylanguage.token.TokenType;
@@ -66,7 +66,7 @@ public class StatementParser {
                     VariableExpression variable = (VariableExpression) ((AssignmentOperator) value).getLeft();
                     return new AssignStatement(variable.getName(), ((AssignmentOperator) value).getRight());
                 } else {
-                    throw new SyntaxException(String.format("Unsupported statement: `%s`", value));
+                    return new ExpressionStatement(value);
                 }
             case Keyword:
                 switch (token.getValue()) {
@@ -207,7 +207,9 @@ public class StatementParser {
                             case Variable:
                             default:
                                 if (!operators.isEmpty() && operators.peek() == Operator.StructureInstance) {
-                                    operand = readInstance(token);
+                                    operand = readStructureInstance(token);
+                                } else if (tokens.peekSameLine(TokenType.GroupDivider, "[")) {
+                                    operand = readFunctionInvocation(token);
                                 } else {
                                     operand = new VariableExpression(value);
                                 }
@@ -248,8 +250,35 @@ public class StatementParser {
             }
         }
 
-        private Expression readInstance(Token token) {
+        private StructureExpression readStructureInstance(Token token) {
             StructureDefinition definition = structures.get(token.getValue());
+            if (definition == null) {
+                throw new SyntaxException(String.format("Structure is not defined: %s", token.getValue()));
+            }
+
+            List<Expression> arguments = new ArrayList<>();
+            if (tokens.peekSameLine(TokenType.GroupDivider, "[")) {
+
+                tokens.next(TokenType.GroupDivider, "["); //skip open square bracket
+
+                while (!tokens.peekSameLine(TokenType.GroupDivider, "]")) {
+                    Expression value = new ExpressionReader().readExpression();
+                    arguments.add(value);
+
+                    if (tokens.peekSameLine(TokenType.GroupDivider, ","))
+                        tokens.next();
+                }
+
+                tokens.next(TokenType.GroupDivider, "]"); //skip close square bracket
+            }
+            return new StructureExpression(definition, arguments);
+        }
+
+        private FunctionExpression readFunctionInvocation(Token token) {
+            FunctionDefinition definition = functions.get(token.getValue());
+            if (definition == null) {
+                throw new SyntaxException(String.format("Function is not defined: %s", token.getValue()));
+            }
 
             List<Expression> arguments = new ArrayList<>();
             if (tokens.peekSameLine(TokenType.GroupDivider, "[")) {
@@ -267,10 +296,7 @@ public class StatementParser {
                 tokens.next(TokenType.GroupDivider, "]"); //skip close square bracket
             }
 
-            if (definition == null) {
-                throw new SyntaxException(String.format("Structure is not defined: %s", token.getValue()));
-            }
-            return new StructureExpression(definition, arguments);
+            return new FunctionExpression(definition, arguments);
         }
     }
 }
