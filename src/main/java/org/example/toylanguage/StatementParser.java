@@ -23,14 +23,12 @@ import static org.example.toylanguage.expression.value.NullValue.NULL_INSTANCE;
 
 public class StatementParser {
     private final TokensStack tokens;
-    private final Map<String, Value<?>> variables;
     private final Map<String, StructureDefinition> structures;
     private final Map<String, FunctionDefinition> functions;
     private final Scanner scanner;
 
     public StatementParser(List<Token> tokens) {
         this.tokens = new TokensStack(tokens);
-        this.variables = new HashMap<>();
         this.structures = new HashMap<>();
         this.functions = new HashMap<>();
         this.scanner = new Scanner(System.in);
@@ -66,7 +64,7 @@ public class StatementParser {
 
                 if (value instanceof AssignmentOperator) {
                     VariableExpression variable = (VariableExpression) ((AssignmentOperator) value).getLeft();
-                    return new AssignStatement(variable.getName(), ((AssignmentOperator) value).getRight(), variables::put);
+                    return new AssignStatement(variable.getName(), ((AssignmentOperator) value).getRight());
                 } else {
                     throw new SyntaxException(String.format("Unsupported statement: `%s`", value));
                 }
@@ -78,7 +76,7 @@ public class StatementParser {
                     }
                     case "input": {
                         Token variable = tokens.next(TokenType.Variable);
-                        return new InputStatement(variable.getValue(), scanner::nextLine, variables::put);
+                        return new InputStatement(variable.getValue(), scanner::nextLine);
                     }
                     case "if":
                         Expression condition = new ExpressionReader().readExpression();
@@ -211,7 +209,7 @@ public class StatementParser {
                                 if (!operators.isEmpty() && operators.peek() == Operator.StructureInstance) {
                                     operand = readInstance(token);
                                 } else {
-                                    operand = new VariableExpression(value, variables::get, variables::put);
+                                    operand = new VariableExpression(value);
                                 }
                         }
                         operands.push(operand);

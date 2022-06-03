@@ -2,13 +2,13 @@ package org.example.toylanguage.statement;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.example.toylanguage.context.MemoryContext;
 import org.example.toylanguage.expression.value.LogicalValue;
 import org.example.toylanguage.expression.value.NumericValue;
 import org.example.toylanguage.expression.value.TextValue;
 import org.example.toylanguage.expression.value.Value;
 import org.example.toylanguage.token.TokenType;
 
-import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
 @AllArgsConstructor
@@ -16,7 +16,6 @@ import java.util.function.Supplier;
 public class InputStatement implements Statement {
     private final String name;
     private final Supplier<String> consoleSupplier;
-    private final BiConsumer<String, Value<?>> variableSetter;
 
     @Override
     public void execute() {
@@ -32,6 +31,6 @@ public class InputStatement implements Statement {
             value = new TextValue(line);
         }
 
-        variableSetter.accept(name, value);
+        MemoryContext.getMemory().set(name, value);
     }
 }
