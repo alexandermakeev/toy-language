@@ -1,6 +1,6 @@
 package org.example.toylanguage.expression.value;
 
-public class NumericValue extends Value<Double> {
+public class NumericValue extends ComparableValue<Double> {
     public NumericValue(Double value) {
         super(value);
     }

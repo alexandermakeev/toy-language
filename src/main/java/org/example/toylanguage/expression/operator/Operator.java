@@ -9,22 +9,27 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @Getter
 public enum Operator {
-    Not("!", NotOperator.class, 5),
-    StructureInstance("new", StructureInstanceOperator.class, 5),
-    StructureValue("::", StructureValueOperator.class, 5),
+    Not("!", NotOperator.class, 7),
+    StructureInstance("new", StructureInstanceOperator.class, 7),
+    StructureValue("::", StructureValueOperator.class, 7),
 
-    Multiplication("*", MultiplicationOperator.class, 4),
-    Division("/", DivisionOperator.class, 4),
+    Multiplication("*", MultiplicationOperator.class, 6),
+    Division("/", DivisionOperator.class, 6),
+    Modulo("%", ModuloOperator.class, 6),
 
-    Addition("+", AdditionOperator.class, 3),
-    Subtraction("-", SubtractionOperator.class, 3),
+    Addition("+", AdditionOperator.class, 5),
+    Subtraction("-", SubtractionOperator.class, 5),
 
-    Equality("==", EqualsOperator.class, 2),
-    LessThan("<", LessThanOperator.class, 2),
-    GreaterThan(">", GreaterThanOperator.class, 2),
+    Equals("==", EqualsOperator.class, 4),
+    NotEquals("!=", NotEqualsOperator.class, 4),
+    LessThan("<", LessThanOperator.class, 4),
+    GreaterThan(">", GreaterThanOperator.class, 4),
 
-    LeftParen("(", 1),
-    RightParen(")", 1),
+    LeftParen("(", 3),
+    RightParen(")", 3),
+
+    LogicalAnd("and", LogicalAndOperator.class, 2),
+    LogicalOr("or", LogicalOrOperator.class, 1),
 
     Assignment("=", AssignmentOperator.class, 0);
 

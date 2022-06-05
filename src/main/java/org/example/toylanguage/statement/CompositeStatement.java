@@ -1,6 +1,7 @@
 package org.example.toylanguage.statement;
 
 import lombok.Getter;
+import org.example.toylanguage.context.ReturnContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,12 @@ public class CompositeStatement implements Statement {
 
     @Override
     public void execute() {
-        statements2Execute.forEach(Statement::execute);
+        for (Statement statement : statements2Execute) {
+            statement.execute();
+
+            //stop the execution in case ReturnStatement has been invoked
+            if (ReturnContext.getScope().isInvoked())
+                return;
+        }
     }
 }

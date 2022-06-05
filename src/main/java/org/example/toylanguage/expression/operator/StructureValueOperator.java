@@ -12,7 +12,7 @@ public class StructureValueOperator extends BinaryOperatorExpression {
     @Override
     public Value<?> calc(Value<?> left, Value<?> right) {
         if (left instanceof StructureValue)
-            return ((StructureValue) left).getValue().getArgumentValue(right.toString());
+            return ((StructureValue) left).getValue(right.toString());
         return left;
     }
 }

@@ -1,151 +1,159 @@
 package org.example.toylanguage;
 
 import lombok.SneakyThrows;
-import org.apache.commons.lang3.ArrayUtils;
+import org.example.toylanguage.definition.FunctionDefinition;
 import org.example.toylanguage.definition.StructureDefinition;
 import org.example.toylanguage.exception.SyntaxException;
 import org.example.toylanguage.expression.Expression;
+import org.example.toylanguage.expression.FunctionExpression;
 import org.example.toylanguage.expression.StructureExpression;
 import org.example.toylanguage.expression.VariableExpression;
 import org.example.toylanguage.expression.operator.*;
 import org.example.toylanguage.expression.value.LogicalValue;
 import org.example.toylanguage.expression.value.NumericValue;
 import org.example.toylanguage.expression.value.TextValue;
-import org.example.toylanguage.expression.value.Value;
 import org.example.toylanguage.statement.*;
 import org.example.toylanguage.token.Token;
 import org.example.toylanguage.token.TokenType;
+import org.example.toylanguage.token.TokensStack;
 
 import java.util.*;
-import java.util.stream.Stream;
+
+import static org.example.toylanguage.expression.value.NullValue.NULL_INSTANCE;
 
 public class StatementParser {
-    private final List<Token> tokens;
-    private final Map<String, Value<?>> variables;
+    private final TokensStack tokens;
     private final Map<String, StructureDefinition> structures;
+    private final Map<String, FunctionDefinition> functions;
     private final Scanner scanner;
-    private int position;
 
     public StatementParser(List<Token> tokens) {
-        this.tokens = tokens;
-        this.variables = new HashMap<>();
+        this.tokens = new TokensStack(tokens);
         this.structures = new HashMap<>();
+        this.functions = new HashMap<>();
         this.scanner = new Scanner(System.in);
     }
 
     public Statement parse() {
         CompositeStatement root = new CompositeStatement();
-        while (hasNext()) {
+        while (hasNextStatement()) {
             Statement statement = parseExpression();
             root.addStatement(statement);
         }
         return root;
     }
 
-    private Statement parseExpression() {
-        Token token = next(TokenType.Keyword, TokenType.Variable, TokenType.Operator);
-        switch (token.getType()) {
-            case Variable:
-            case Operator:
-                position--;
-                Expression value = new ExpressionReader().readExpression();
-
-                if (value instanceof AssignmentOperator) {
-                    VariableExpression variable = (VariableExpression) ((AssignmentOperator) value).getLeft();
-                    return new AssignStatement(variable.getName(), ((AssignmentOperator) value).getRight(), variables::put);
-                } else {
-                    throw new SyntaxException(String.format("Unsupported statement: `%s`", value));
-                }
-            case Keyword:
-                switch (token.getValue()) {
-                    case "print":
-                        Expression expression = new ExpressionReader().readExpression();
-                        return new PrintStatement(expression);
-                    case "input":
-                        Token variable = next(TokenType.Variable);
-                        return new InputStatement(variable.getValue(), scanner::nextLine, variables::put);
-                    case "if":
-                        Expression condition = new ExpressionReader().readExpression();
-                        next(TokenType.Keyword, "then"); //skip then
-
-                        ConditionStatement conditionStatement = new ConditionStatement(condition);
-                        while (!peek(TokenType.Keyword, "end")) {
-                            Statement statement = parseExpression();
-                            conditionStatement.addStatement(statement);
-                        }
-                        next(TokenType.Keyword, "end"); //skip end
-
-                        return conditionStatement;
-                    case "struct":
-                        Token type = next(TokenType.Variable);
-
-                        List<String> args = new ArrayList<>();
-                        while (!peek(TokenType.Keyword, "end")) {
-                            next(TokenType.Keyword, "arg");
-
-                            Token arg = next(TokenType.Variable);
-                            args.add(arg.getValue());
-                        }
-                        next(TokenType.Keyword, "end"); //skip end
-
-                        structures.put(type.getValue(), new StructureDefinition(type.getValue(), new ArrayList<>(args)));
-
-                        return null;
-                }
-            default:
-                throw new SyntaxException(String.format("Statement can't start with the following lexeme `%s`", token));
-        }
-    }
-
-    private Token next(TokenType type, TokenType... types) {
-        skipLineBreaks();
-        TokenType[] tokenTypes = ArrayUtils.add(types, type);
-        if (position < tokens.size()) {
-            Token token = tokens.get(position);
-            if (Stream.of(tokenTypes).anyMatch(t -> t == token.getType())) {
-                position++;
-                return token;
-            }
-        }
-        Token previousToken = tokens.get(position - 1);
-        throw new SyntaxException(String.format("After `%s` declaration expected any of the following lexemes `%s`", previousToken, Arrays.toString(tokenTypes)));
-    }
-
-    private boolean hasNext() {
-		skipLineBreaks();
-		return position < tokens.size();
-    }
-
-    private Token next(TokenType type, String value) {
-        skipLineBreaks();
-        if (position < tokens.size()) {
-            Token token = tokens.get(position);
-            if (token.getType() == type && token.getValue().equals(value)) {
-                position++;
-                return token;
-            }
-        }
-        Token previousToken = tokens.get(position - 1);
-        throw new SyntaxException(String.format("After `%s` declaration expected `%s, %s` lexeme", previousToken, type, value));
-    }
-
-    private Token next() {
-        skipLineBreaks();
-        return tokens.get(position++);
-    }
-
-    private boolean peek(TokenType type, String content) {
-        skipLineBreaks();
-        if (position < tokens.size()) {
-            Token token = tokens.get(position);
-            return type == token.getType() && token.getValue().equals(content);
+    private boolean hasNextStatement() {
+        if (!tokens.hasNext())
+            return false;
+        if (tokens.peek(TokenType.Operator, TokenType.Variable))
+            return true;
+        if (tokens.peek(TokenType.Keyword)) {
+            return !tokens.peek(TokenType.Keyword, "end");
         }
         return false;
     }
 
-    private void skipLineBreaks() {
-        while (position != tokens.size() && tokens.get(position).getType() == TokenType.LineBreak)
-			position++;
+    private Statement parseExpression() {
+        Token token = tokens.next(TokenType.Keyword, TokenType.Variable, TokenType.Operator);
+        switch (token.getType()) {
+            case Variable:
+            case Operator:
+                tokens.back(); // go back to read an expression from the beginning
+                Expression value = new ExpressionReader().readExpression();
+
+                if (value instanceof AssignmentOperator) {
+                    VariableExpression variable = (VariableExpression) ((AssignmentOperator) value).getLeft();
+                    return new AssignStatement(variable.getName(), ((AssignmentOperator) value).getRight());
+                } else {
+                    return new ExpressionStatement(value);
+                }
+            case Keyword:
+                switch (token.getValue()) {
+                    case "print": {
+                        Expression expression = new ExpressionReader().readExpression();
+                        return new PrintStatement(expression);
+                    }
+                    case "input": {
+                        Token variable = tokens.next(TokenType.Variable);
+                        return new InputStatement(variable.getValue(), scanner::nextLine);
+                    }
+                    case "if":
+                        Expression condition = new ExpressionReader().readExpression();
+                        tokens.next(TokenType.Keyword, "then"); //skip then
+
+                        ConditionStatement conditionStatement = new ConditionStatement(condition);
+                        while (!tokens.peek(TokenType.Keyword, "end")) {
+                            Statement statement = parseExpression();
+                            conditionStatement.addStatement(statement);
+                        }
+                        tokens.next(TokenType.Keyword, "end"); //skip end
+
+                        return conditionStatement;
+                    case "struct": {
+                        Token type = tokens.next(TokenType.Variable);
+
+                        List<String> args = new ArrayList<>();
+
+                        if (tokens.peek(TokenType.GroupDivider, "[")) {
+
+                            tokens.next(TokenType.GroupDivider, "["); //skip open square bracket
+
+                            while (!tokens.peek(TokenType.GroupDivider, "]")) {
+                                Token arg = tokens.next(TokenType.Variable);
+                                args.add(arg.getValue());
+
+                                if (tokens.peek(TokenType.GroupDivider, ","))
+                                    tokens.next();
+                            }
+
+                            tokens.next(TokenType.GroupDivider, "]"); //skip close square bracket
+                        }
+
+                        structures.put(type.getValue(), new StructureDefinition(type.getValue(), new ArrayList<>(args)));
+
+                        return null;
+                    }
+                    case "fun": {
+                        Token type = tokens.next(TokenType.Variable);
+
+                        List<String> args = new ArrayList<>();
+
+                        if (tokens.peek(TokenType.GroupDivider, "[")) {
+
+                            tokens.next(TokenType.GroupDivider, "["); //skip open square bracket
+
+                            while (!tokens.peek(TokenType.GroupDivider, "]")) {
+                                Token arg = tokens.next(TokenType.Variable);
+                                args.add(arg.getValue());
+
+                                if (tokens.peek(TokenType.GroupDivider, ","))
+                                    tokens.next();
+                            }
+
+                            tokens.next(TokenType.GroupDivider, "]"); //skip close square bracket
+                        }
+
+                        FunctionStatement functionStatement = new FunctionStatement();
+                        FunctionDefinition functionDefinition = new FunctionDefinition(type.getValue(), args, functionStatement);
+                        functions.put(type.getValue(), functionDefinition);
+
+                        while (!tokens.peek(TokenType.Keyword, "end")) {
+                            Statement statement = parseExpression();
+                            functionStatement.addStatement(statement);
+                        }
+                        tokens.next(TokenType.Keyword, "end");
+
+                        return null;
+                    }
+                    case "return": {
+                        Expression expression = new ExpressionReader().readExpression();
+                        return new ReturnStatement(expression);
+                    }
+                }
+            default:
+                throw new SyntaxException(String.format("Statement can't start with the following lexeme `%s`", token));
+        }
     }
 
     private class ExpressionReader {
@@ -158,8 +166,8 @@ public class StatementParser {
         }
 
         private Expression readExpression() {
-            while (peek(TokenType.Operator, TokenType.Variable, TokenType.Numeric, TokenType.Logical, TokenType.Text)) {
-                Token token = next();
+            while (tokens.peekSameLine(TokenType.Operator, TokenType.Variable, TokenType.Numeric, TokenType.Logical, TokenType.Null, TokenType.Text)) {
+                Token token = tokens.next();
                 switch (token.getType()) {
                     case Operator:
                         Operator operator = Operator.getType(token.getValue());
@@ -193,12 +201,17 @@ public class StatementParser {
                             case Text:
                                 operand = new TextValue(value);
                                 break;
+                            case Null:
+                                operand = NULL_INSTANCE;
+                                break;
                             case Variable:
                             default:
                                 if (!operators.isEmpty() && operators.peek() == Operator.StructureInstance) {
-                                    operand = readInstance(token);
+                                    operand = readStructureInstance(token);
+                                } else if (tokens.peekSameLine(TokenType.GroupDivider, "[")) {
+                                    operand = readFunctionInvocation(token);
                                 } else {
-                                    operand = new VariableExpression(value, variables::get, variables::put);
+                                    operand = new VariableExpression(value);
                                 }
                         }
                         operands.push(operand);
@@ -209,7 +222,11 @@ public class StatementParser {
                 applyTopOperator();
             }
 
-            return operands.pop();
+            if (operands.isEmpty()) {
+                return NULL_INSTANCE;
+            } else {
+                return operands.pop();
+            }
         }
 
         @SneakyThrows
@@ -233,38 +250,53 @@ public class StatementParser {
             }
         }
 
-        private Expression readInstance(Token token) {
+        private StructureExpression readStructureInstance(Token token) {
             StructureDefinition definition = structures.get(token.getValue());
-
-            List<Expression> arguments = new ArrayList<>();
-            if (StatementParser.this.peek(TokenType.GroupDivider, "[")) {
-
-                next(TokenType.GroupDivider, "["); //skip open square bracket
-
-                while (!StatementParser.this.peek(TokenType.GroupDivider, "]")) {
-                    Expression value = new ExpressionReader().readExpression();
-                    arguments.add(value);
-
-                    if (StatementParser.this.peek(TokenType.GroupDivider, ","))
-                        next();
-                }
-
-                next(TokenType.GroupDivider, "]"); //skip close square bracket
-            }
-
             if (definition == null) {
                 throw new SyntaxException(String.format("Structure is not defined: %s", token.getValue()));
             }
-            return new StructureExpression(definition, arguments, variables::get);
+
+            List<Expression> arguments = new ArrayList<>();
+            if (tokens.peekSameLine(TokenType.GroupDivider, "[")) {
+
+                tokens.next(TokenType.GroupDivider, "["); //skip open square bracket
+
+                while (!tokens.peekSameLine(TokenType.GroupDivider, "]")) {
+                    Expression value = new ExpressionReader().readExpression();
+                    arguments.add(value);
+
+                    if (tokens.peekSameLine(TokenType.GroupDivider, ","))
+                        tokens.next();
+                }
+
+                tokens.next(TokenType.GroupDivider, "]"); //skip close square bracket
+            }
+            return new StructureExpression(definition, arguments);
         }
 
-        private boolean peek(TokenType type, TokenType... types) {
-            TokenType[] tokenTypes = ArrayUtils.add(types, type);
-            if (position < tokens.size()) {
-                Token token = tokens.get(position);
-                return Stream.of(tokenTypes).anyMatch(t -> t == token.getType());
+        private FunctionExpression readFunctionInvocation(Token token) {
+            FunctionDefinition definition = functions.get(token.getValue());
+            if (definition == null) {
+                throw new SyntaxException(String.format("Function is not defined: %s", token.getValue()));
             }
-            return false;
+
+            List<Expression> arguments = new ArrayList<>();
+            if (tokens.peekSameLine(TokenType.GroupDivider, "[")) {
+
+                tokens.next(TokenType.GroupDivider, "["); //skip open square bracket
+
+                while (!tokens.peekSameLine(TokenType.GroupDivider, "]")) {
+                    Expression value = new ExpressionReader().readExpression();
+                    arguments.add(value);
+
+                    if (tokens.peekSameLine(TokenType.GroupDivider, ","))
+                        tokens.next();
+                }
+
+                tokens.next(TokenType.GroupDivider, "]"); //skip close square bracket
+            }
+
+            return new FunctionExpression(definition, arguments);
         }
     }
 }
