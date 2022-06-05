@@ -1,0 +1,13 @@
+#
+# Define the Fibonacci number of the given element index
+#
+
+fun fibonacci_number [ n ]
+    if n < 2 then
+        return n
+    end
+    return fibonacci_number [ n - 1 ] + fibonacci_number [ n - 2 ]
+end
+
+input index_number
+print "fibonacci number is " + fibonacci_number [ index_number ]
