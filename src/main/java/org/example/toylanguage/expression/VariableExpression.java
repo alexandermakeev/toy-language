@@ -6,6 +6,8 @@ import org.example.toylanguage.context.MemoryContext;
 import org.example.toylanguage.expression.value.TextValue;
 import org.example.toylanguage.expression.value.Value;
 
+import static org.example.toylanguage.context.VariableScopeType.Global;
+
 @AllArgsConstructor
 @Getter
 public class VariableExpression implements Expression {
@@ -21,6 +23,6 @@ public class VariableExpression implements Expression {
     }
 
     public void setValue(Value<?> value) {
-        MemoryContext.getMemory().set(name, value);
+        MemoryContext.getMemory().set(name, value, Global);
     }
 }

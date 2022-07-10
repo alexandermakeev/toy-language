@@ -13,6 +13,8 @@ import org.example.toylanguage.statement.Statement;
 import java.util.List;
 import java.util.stream.IntStream;
 
+import static org.example.toylanguage.context.VariableScopeType.Local;
+
 @RequiredArgsConstructor
 @Getter
 public class FunctionExpression implements Expression {
@@ -27,7 +29,7 @@ public class FunctionExpression implements Expression {
         //initialize function arguments
         IntStream.range(0, values.size())
                 .boxed()
-                .map(i -> new AssignStatement(definition.getArguments().get(i), values.get(i)))
+                .map(i -> new AssignStatement(definition.getArguments().get(i), values.get(i), Local))
                 .forEach(Statement::execute);
 
         //execute function body

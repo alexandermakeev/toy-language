@@ -50,6 +50,6 @@ public enum Operator {
     }
 
     public boolean greaterThan(Operator o) {
-        return getPrecedence().compareTo(o.getPrecedence()) > 0;
+        return getPrecedence().compareTo(o.getPrecedence()) >= 0;
     }
 }

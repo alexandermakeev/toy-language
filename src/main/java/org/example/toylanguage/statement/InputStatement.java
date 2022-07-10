@@ -11,6 +11,8 @@ import org.example.toylanguage.token.TokenType;
 
 import java.util.function.Supplier;
 
+import static org.example.toylanguage.context.VariableScopeType.Global;
+
 @AllArgsConstructor
 @Getter
 public class InputStatement implements Statement {
@@ -31,6 +33,6 @@ public class InputStatement implements Statement {
             value = new TextValue(line);
         }
 
-        MemoryContext.getMemory().set(name, value);
+        MemoryContext.getMemory().set(name, value, Global);
     }
 }
