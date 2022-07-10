@@ -81,13 +81,17 @@ class LexicalParserTest {
     @Test
     public void testCondition() {
 
-        String source = "if a > 1 then\n" +
-                "    print \"a is greater than 1\"\n" +
-                "end";
+        String source = "if a > 5 then\n" +
+                        "    print \"a is greater than 5\"\n" +
+                        "elif a >= 1 then\n" +
+                        "    print \"a is greater than or equal to 1\"\n" +
+                        "else then\n" +
+                        "    print \"a is less than 1\"\n" +
+                        "end";
         LexicalParser parser = new LexicalParser(source);
         List<Token> tokens = parser.parse();
 
-        assertEquals(10, tokens.size());
+        assertEquals(25, tokens.size());
 
         int count = 0;
         assertEquals(TokenType.Keyword, tokens.get(count).getType());
@@ -103,7 +107,7 @@ class LexicalParserTest {
         assertEquals(1, tokens.get(count).getRow());
 
         assertEquals(TokenType.Numeric, tokens.get(++count).getType());
-        assertEquals("1", tokens.get(count).getValue());
+        assertEquals("5", tokens.get(count).getValue());
         assertEquals(1, tokens.get(count).getRow());
 
         assertEquals(TokenType.Keyword, tokens.get(++count).getType());
@@ -119,7 +123,7 @@ class LexicalParserTest {
         assertEquals(2, tokens.get(count).getRow());
 
         assertEquals(TokenType.Text, tokens.get(++count).getType());
-        assertEquals("a is greater than 1", tokens.get(count).getValue());
+        assertEquals("a is greater than 5", tokens.get(count).getValue());
         assertEquals(2, tokens.get(count).getRow());
 
         assertEquals(TokenType.LineBreak, tokens.get(++count).getType());
@@ -127,8 +131,68 @@ class LexicalParserTest {
         assertEquals(2, tokens.get(count).getRow());
 
         assertEquals(TokenType.Keyword, tokens.get(++count).getType());
-        assertEquals("end", tokens.get(count).getValue());
+        assertEquals("elif", tokens.get(count).getValue());
         assertEquals(3, tokens.get(count).getRow());
+
+        assertEquals(TokenType.Variable, tokens.get(++count).getType());
+        assertEquals("a", tokens.get(count).getValue());
+        assertEquals(3, tokens.get(count).getRow());
+
+        assertEquals(TokenType.Operator, tokens.get(++count).getType());
+        assertEquals(">=", tokens.get(count).getValue());
+        assertEquals(3, tokens.get(count).getRow());
+
+        assertEquals(TokenType.Numeric, tokens.get(++count).getType());
+        assertEquals("1", tokens.get(count).getValue());
+        assertEquals(3, tokens.get(count).getRow());
+
+        assertEquals(TokenType.Keyword, tokens.get(++count).getType());
+        assertEquals("then", tokens.get(count).getValue());
+        assertEquals(3, tokens.get(count).getRow());
+
+        assertEquals(TokenType.LineBreak, tokens.get(++count).getType());
+        assertEquals("\n", tokens.get(count).getValue());
+        assertEquals(3, tokens.get(count).getRow());
+
+        assertEquals(TokenType.Keyword, tokens.get(++count).getType());
+        assertEquals("print", tokens.get(count).getValue());
+        assertEquals(4, tokens.get(count).getRow());
+
+        assertEquals(TokenType.Text, tokens.get(++count).getType());
+        assertEquals("a is greater than or equal to 1", tokens.get(count).getValue());
+        assertEquals(4, tokens.get(count).getRow());
+
+        assertEquals(TokenType.LineBreak, tokens.get(++count).getType());
+        assertEquals("\n", tokens.get(count).getValue());
+        assertEquals(4, tokens.get(count).getRow());
+
+        assertEquals(TokenType.Keyword, tokens.get(++count).getType());
+        assertEquals("else", tokens.get(count).getValue());
+        assertEquals(5, tokens.get(count).getRow());
+
+        assertEquals(TokenType.Keyword, tokens.get(++count).getType());
+        assertEquals("then", tokens.get(count).getValue());
+        assertEquals(5, tokens.get(count).getRow());
+
+        assertEquals(TokenType.LineBreak, tokens.get(++count).getType());
+        assertEquals("\n", tokens.get(count).getValue());
+        assertEquals(5, tokens.get(count).getRow());
+
+        assertEquals(TokenType.Keyword, tokens.get(++count).getType());
+        assertEquals("print", tokens.get(count).getValue());
+        assertEquals(6, tokens.get(count).getRow());
+
+        assertEquals(TokenType.Text, tokens.get(++count).getType());
+        assertEquals("a is less than 1", tokens.get(count).getValue());
+        assertEquals(6, tokens.get(count).getRow());
+
+        assertEquals(TokenType.LineBreak, tokens.get(++count).getType());
+        assertEquals("\n", tokens.get(count).getValue());
+        assertEquals(6, tokens.get(count).getRow());
+
+        assertEquals(TokenType.Keyword, tokens.get(++count).getType());
+        assertEquals("end", tokens.get(count).getValue());
+        assertEquals(7, tokens.get(count).getRow());
     }
 
     @Test

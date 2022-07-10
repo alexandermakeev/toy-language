@@ -6,6 +6,7 @@ import org.example.toylanguage.exception.SyntaxException;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 @RequiredArgsConstructor
@@ -37,11 +38,12 @@ public class TokensStack {
 		return position < tokens.size();
 	}
 
-	public Token next(TokenType type, String value) {
+	public Token next(TokenType type, String value, String... values) {
 		skipEmptyTokens();
 		if (position < tokens.size()) {
+			String[] allValues = ArrayUtils.add(values, value);
 			Token token = tokens.get(position);
-			if (token.getType() == type && token.getValue().equals(value)) {
+			if (token.getType() == type && Arrays.stream(allValues).anyMatch(t -> Objects.equals(t, token.getValue()))) {
 				position++;
 				return token;
 			}
@@ -54,15 +56,16 @@ public class TokensStack {
 		return tokens.get(position++);
 	}
 
-	public boolean peek(TokenType type, String content) {
+	public boolean peek(TokenType type, String value, String... values) {
 		skipEmptyTokens();
-		return peekSameLine(type, content);
+		return peekSameLine(type, value, values);
 	}
 
-	public boolean peekSameLine(TokenType type, String content) {
+	public boolean peekSameLine(TokenType type, String value, String... values) {
 		if (position < tokens.size()) {
+			String[] allValues = ArrayUtils.add(values, value);
 			Token token = tokens.get(position);
-			return type == token.getType() && token.getValue().equals(content);
+			return type == token.getType() && Arrays.stream(allValues).anyMatch(t -> Objects.equals(t, token.getValue()));
 		}
 		return false;
 	}

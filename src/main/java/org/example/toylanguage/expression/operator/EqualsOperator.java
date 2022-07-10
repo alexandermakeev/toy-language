@@ -1,7 +1,6 @@
 package org.example.toylanguage.expression.operator;
 
 import org.example.toylanguage.expression.Expression;
-import org.example.toylanguage.expression.value.ComparableValue;
 import org.example.toylanguage.expression.value.LogicalValue;
 import org.example.toylanguage.expression.value.Value;
 
@@ -14,18 +13,15 @@ public class EqualsOperator extends BinaryOperatorExpression {
         super(left, right);
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public Value<?> calc(Value<?> left, Value<?> right) {
         boolean result;
-        if (left == NULL_INSTANCE && right == NULL_INSTANCE) {
-            result = true;
-        } else if (left == NULL_INSTANCE || right == NULL_INSTANCE) {
-            result = false;
-        } else if (Objects.equals(left.getClass(), right.getClass()) && left instanceof ComparableValue) {
-            result = ((Comparable) left.getValue()).compareTo(right.getValue()) == 0;
+        if (left == NULL_INSTANCE || right == NULL_INSTANCE) {
+            result = left == right;
+        } else if (Objects.equals(left.getClass(), right.getClass())) {
+            result = left.getValue().equals(right.getValue());
         } else {
-            result = ((Comparable) left.toString()).compareTo(right.toString()) == 0;
+            result = left.toString().equals(right.toString());
         }
         return new LogicalValue(result);
     }

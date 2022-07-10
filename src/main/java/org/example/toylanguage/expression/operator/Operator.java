@@ -23,7 +23,9 @@ public enum Operator {
     Equals("==", EqualsOperator.class, 4),
     NotEquals("!=", NotEqualsOperator.class, 4),
     LessThan("<", LessThanOperator.class, 4),
+    LessThanOrEqualTo("<=", LessThanOrEqualToOperator.class, 4),
     GreaterThan(">", GreaterThanOperator.class, 4),
+    GreaterThanOrEqualTo(">=", GreaterThanOrEqualToOperator.class, 4),
 
     LeftParen("(", 3),
     RightParen(")", 3),

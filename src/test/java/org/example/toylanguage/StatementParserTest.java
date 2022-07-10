@@ -1,11 +1,14 @@
 package org.example.toylanguage;
 
 import org.example.toylanguage.definition.StructureDefinition;
+import org.example.toylanguage.expression.Expression;
 import org.example.toylanguage.expression.StructureExpression;
 import org.example.toylanguage.expression.VariableExpression;
 import org.example.toylanguage.expression.operator.AdditionOperator;
 import org.example.toylanguage.expression.operator.GreaterThanOperator;
+import org.example.toylanguage.expression.operator.GreaterThanOrEqualToOperator;
 import org.example.toylanguage.expression.operator.StructureInstanceOperator;
+import org.example.toylanguage.expression.value.LogicalValue;
 import org.example.toylanguage.expression.value.NumericValue;
 import org.example.toylanguage.expression.value.TextValue;
 import org.example.toylanguage.statement.*;
@@ -13,8 +16,7 @@ import org.example.toylanguage.token.Token;
 import org.example.toylanguage.token.TokenType;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -99,10 +101,21 @@ class StatementParserTest {
                 Token.builder().type(TokenType.Keyword).value("if").build(),
                 Token.builder().type(TokenType.Variable).value("a").build(),
                 Token.builder().type(TokenType.Operator).value(">").build(),
+                Token.builder().type(TokenType.Numeric).value("5").build(),
+                Token.builder().type(TokenType.Keyword).value("then").build(),
+                Token.builder().type(TokenType.Keyword).value("print").build(),
+                Token.builder().type(TokenType.Text).value("a is greater than 5").build(),
+                Token.builder().type(TokenType.Keyword).value("elif").build(),
+                Token.builder().type(TokenType.Variable).value("a").build(),
+                Token.builder().type(TokenType.Operator).value(">=").build(),
                 Token.builder().type(TokenType.Numeric).value("1").build(),
                 Token.builder().type(TokenType.Keyword).value("then").build(),
                 Token.builder().type(TokenType.Keyword).value("print").build(),
-                Token.builder().type(TokenType.Text).value("a is greater than 1").build(),
+                Token.builder().type(TokenType.Text).value("a is greater than or equal to 1").build(),
+                Token.builder().type(TokenType.Keyword).value("else").build(),
+                Token.builder().type(TokenType.Keyword).value("then").build(),
+                Token.builder().type(TokenType.Keyword).value("print").build(),
+                Token.builder().type(TokenType.Text).value("a is less than 1").build(),
                 Token.builder().type(TokenType.Keyword).value("end").build()
         );
         StatementParser parser = new StatementParser(tokens);
@@ -114,25 +127,68 @@ class StatementParserTest {
         assertEquals(ConditionStatement.class, statements.get(0).getClass());
         ConditionStatement conditionStatement = (ConditionStatement) statements.get(0);
 
-        assertEquals(GreaterThanOperator.class, conditionStatement.getCondition().getClass());
-        GreaterThanOperator condition = (GreaterThanOperator) conditionStatement.getCondition();
+        Map<Expression, CompositeStatement> cases = conditionStatement.getCases();
+        assertEquals(3, cases.size());
 
-        assertEquals(VariableExpression.class, condition.getLeft().getClass());
-        VariableExpression left = (VariableExpression) condition.getLeft();
-        assertEquals("a", left.getName());
+        List<Expression> conditions = new ArrayList<>(cases.keySet());
 
-        NumericValue right = (NumericValue) condition.getRight();
-        assertEquals(1, right.getValue());
+        //if case
+        assertEquals(GreaterThanOperator.class, conditions.get(0).getClass());
+        GreaterThanOperator ifCondition = (GreaterThanOperator) conditions.get(0);
 
-        List<Statement> conditionStatements = conditionStatement.getStatements2Execute();
-        assertEquals(1, conditionStatements.size());
+        assertEquals(VariableExpression.class, ifCondition.getLeft().getClass());
+        VariableExpression ifLeftExpression = (VariableExpression) ifCondition.getLeft();
+        assertEquals("a", ifLeftExpression.getName());
 
-        assertEquals(PrintStatement.class, conditionStatements.get(0).getClass());
-        PrintStatement printStatement = (PrintStatement) conditionStatements.get(0);
+        NumericValue ifRightExpression = (NumericValue) ifCondition.getRight();
+        assertEquals(5, ifRightExpression.getValue());
 
-        assertEquals(TextValue.class, printStatement.getExpression().getClass());
-        TextValue printValue = (TextValue) printStatement.getExpression();
-        assertEquals("a is greater than 1", printValue.getValue());
+        List<Statement> ifStatements = cases.get(ifCondition).getStatements2Execute();
+        assertEquals(1, ifStatements.size());
+
+        assertEquals(PrintStatement.class, ifStatements.get(0).getClass());
+        PrintStatement ifPrintStatement = (PrintStatement) ifStatements.get(0);
+
+        assertEquals(TextValue.class, ifPrintStatement.getExpression().getClass());
+        TextValue ifPrintValue = (TextValue) ifPrintStatement.getExpression();
+        assertEquals("a is greater than 5", ifPrintValue.getValue());
+
+        //elif case
+        assertEquals(GreaterThanOrEqualToOperator.class, conditions.get(1).getClass());
+        GreaterThanOrEqualToOperator elifCondition = (GreaterThanOrEqualToOperator) conditions.get(1);
+
+        assertEquals(VariableExpression.class, elifCondition.getLeft().getClass());
+        VariableExpression elifLeftExpression = (VariableExpression) elifCondition.getLeft();
+        assertEquals("a", elifLeftExpression.getName());
+
+        NumericValue elifRightExpression = (NumericValue) elifCondition.getRight();
+        assertEquals(1, elifRightExpression.getValue());
+
+        List<Statement> elifStatements = cases.get(elifCondition).getStatements2Execute();
+        assertEquals(1, elifStatements.size());
+
+        assertEquals(PrintStatement.class, elifStatements.get(0).getClass());
+        PrintStatement elifPrintStatement = (PrintStatement) elifStatements.get(0);
+
+        assertEquals(TextValue.class, elifPrintStatement.getExpression().getClass());
+        TextValue elifPrintValue = (TextValue) elifPrintStatement.getExpression();
+        assertEquals("a is greater than or equal to 1", elifPrintValue.getValue());
+
+        //else case
+        assertEquals(LogicalValue.class, conditions.get(2).getClass());
+        LogicalValue elseCondition = (LogicalValue) conditions.get(2);
+
+        assertEquals(true, elseCondition.getValue());
+
+        List<Statement> elseStatements = cases.get(elseCondition).getStatements2Execute();
+        assertEquals(1, elseStatements.size());
+
+        assertEquals(PrintStatement.class, elseStatements.get(0).getClass());
+        PrintStatement elsePrintStatement = (PrintStatement) elseStatements.get(0);
+
+        assertEquals(TextValue.class, elsePrintStatement.getExpression().getClass());
+        TextValue elsePrintValue = (TextValue) elsePrintStatement.getExpression();
+        assertEquals("a is less than 1", elsePrintValue.getValue());
     }
 
     @Test

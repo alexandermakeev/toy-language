@@ -78,18 +78,35 @@ public class StatementParser {
                         Token variable = tokens.next(TokenType.Variable);
                         return new InputStatement(variable.getValue(), scanner::nextLine);
                     }
-                    case "if":
-                        Expression condition = new ExpressionReader().readExpression();
-                        tokens.next(TokenType.Keyword, "then"); //skip then
+                    case "if": {
+                        tokens.back();
+                        ConditionStatement conditionStatement = new ConditionStatement();
 
-                        ConditionStatement conditionStatement = new ConditionStatement(condition);
                         while (!tokens.peek(TokenType.Keyword, "end")) {
-                            Statement statement = parseExpression();
-                            conditionStatement.addStatement(statement);
+                            //read condition case
+                            Token type = tokens.next(TokenType.Keyword, "if", "elif", "else");
+                            Expression caseCondition;
+                            if (type.getValue().equals("else")) {
+                                caseCondition = new LogicalValue(true); //else case does not have the condition
+                            } else {
+                                caseCondition = new ExpressionReader().readExpression();
+                            }
+                            tokens.next(TokenType.Keyword, "then"); //skip then
+
+                            //read case statements
+                            CompositeStatement caseStatement = new CompositeStatement();
+                            while (!tokens.peek(TokenType.Keyword, "elif", "else", "end")) {
+                                Statement statement = parseExpression();
+                                caseStatement.addStatement(statement);
+                            }
+
+                            //add case
+                            conditionStatement.addCase(caseCondition, caseStatement);
                         }
-                        tokens.next(TokenType.Keyword, "end"); //skip end
+                        tokens.next(TokenType.Keyword, "end");
 
                         return conditionStatement;
+                    }
                     case "struct": {
                         Token type = tokens.next(TokenType.Variable);
 
