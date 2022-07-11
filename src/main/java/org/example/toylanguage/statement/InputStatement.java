@@ -2,7 +2,8 @@ package org.example.toylanguage.statement;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.example.toylanguage.context.MemoryContext;
+import org.example.toylanguage.expression.VariableExpression;
+import org.example.toylanguage.expression.operator.AssignmentOperator;
 import org.example.toylanguage.expression.value.LogicalValue;
 import org.example.toylanguage.expression.value.NumericValue;
 import org.example.toylanguage.expression.value.TextValue;
@@ -10,8 +11,6 @@ import org.example.toylanguage.expression.value.Value;
 import org.example.toylanguage.token.TokenType;
 
 import java.util.function.Supplier;
-
-import static org.example.toylanguage.context.VariableScope.Global;
 
 @AllArgsConstructor
 @Getter
@@ -33,6 +32,8 @@ public class InputStatement implements Statement {
             value = new TextValue(line);
         }
 
-        MemoryContext.getMemory().set(name, value, Global);
+        VariableExpression key = new VariableExpression(name);
+        AssignmentOperator assignmentOperator = new AssignmentOperator(key, value);
+        assignmentOperator.evaluate();
     }
 }

@@ -60,4 +60,29 @@ class ToyLanguageTest {
         }
     }
 
+    @Test
+    void binarySearch() throws URISyntaxException, IOException {
+        URL resource = getClass().getClassLoader().getResource("binary_search.toy");
+        Path path = Paths.get(resource.toURI());
+
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+             PrintStream out = new PrintStream(baos)) {
+
+            System.setOut(out);
+
+            ToyLanguage lang = new ToyLanguage();
+            lang.execute(path);
+
+            assertEquals(
+                    "0\n" +
+                            "5\n" +
+                            "9\n" +
+                            "-1\n" +
+                            "-1\n" +
+                            "-1\n",
+                    baos.toString()
+            );
+        }
+    }
+
 }
