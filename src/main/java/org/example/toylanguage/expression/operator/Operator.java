@@ -15,6 +15,7 @@ public enum Operator {
 
     Multiplication("*", MultiplicationOperator.class, 6),
     Division("/", DivisionOperator.class, 6),
+    FloorDivision("//", FloorDivisionOperator.class, 6),
     Modulo("%", ModuloOperator.class, 6),
 
     Addition("+", AdditionOperator.class, 5),

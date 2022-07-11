@@ -12,10 +12,10 @@ public enum TokenType {
     Keyword("(if|elif|else|then|end|print|input|struct|fun|return)(?=\\s|$)"),
     GroupDivider("(\\[|\\]|[,])"),
     Logical("(true|false)(?=\\s|$)"),
-    Numeric("[+-]?((?=[.]?[0-9])[0-9]*[.]?[0-9]*)"),
+    Numeric("([+-]?(?=[.]?[0-9])[0-9]*[.]?[0-9]*)"),
     Null("(null)(?=,|\\s|$)"),
     Text("\"([^\"]*)\""),
-    Operator("([+]|[-]|[*]|[/]|[%]|>=|>|<=|<|[=]{1,2}|!=|[!]|[:]{2}|[(]|[)]|(new|and|or)(?=\\s|$))"),
+    Operator("([+]|[-]|[*]|[/]{1,2}|[%]|>=|>|<=|<|[=]{1,2}|!=|[!]|[:]{2}|[(]|[)]|(new|and|or)(?=\\s|$))"),
     Variable("[a-zA-Z_]+[a-zA-Z0-9_]*");
 
     private final String regex;
