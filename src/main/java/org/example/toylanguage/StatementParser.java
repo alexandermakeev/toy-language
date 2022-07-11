@@ -4,10 +4,7 @@ import lombok.SneakyThrows;
 import org.example.toylanguage.definition.FunctionDefinition;
 import org.example.toylanguage.definition.StructureDefinition;
 import org.example.toylanguage.exception.SyntaxException;
-import org.example.toylanguage.expression.Expression;
-import org.example.toylanguage.expression.FunctionExpression;
-import org.example.toylanguage.expression.StructureExpression;
-import org.example.toylanguage.expression.VariableExpression;
+import org.example.toylanguage.expression.*;
 import org.example.toylanguage.expression.operator.*;
 import org.example.toylanguage.expression.value.LogicalValue;
 import org.example.toylanguage.expression.value.NumericValue;
@@ -176,8 +173,17 @@ public class StatementParser {
             this.operators = new Stack<>();
         }
 
+        private boolean hasNextToken() {
+            if (tokens.peekSameLine(TokenType.Operator, TokenType.Variable, TokenType.Numeric, TokenType.Logical, TokenType.Null, TokenType.Text))
+                return true;
+            //beginning of an array
+            if (tokens.peekSameLine(TokenType.GroupDivider, "{"))
+                return true;
+            return false;
+        }
+
         private Expression readExpression() {
-            while (tokens.peekSameLine(TokenType.Operator, TokenType.Variable, TokenType.Numeric, TokenType.Logical, TokenType.Null, TokenType.Text)) {
+            while (hasNextToken()) {
                 Token token = tokens.next();
                 switch (token.getType()) {
                     case Operator:
@@ -212,6 +218,11 @@ public class StatementParser {
                             case Text:
                                 operand = new TextValue(value);
                                 break;
+                            case GroupDivider:
+                                if (Objects.equals(token.getValue(), "{")) {
+                                    operand = readArrayInstance();
+                                    break;
+                                }
                             case Null:
                                 operand = NULL_INSTANCE;
                                 break;
@@ -221,6 +232,8 @@ public class StatementParser {
                                     operand = readStructureInstance(token);
                                 } else if (tokens.peekSameLine(TokenType.GroupDivider, "[")) {
                                     operand = readFunctionInvocation(token);
+                                } else if (tokens.peekSameLine(TokenType.GroupDivider, "{")) {
+                                    operand = readArrayValue(token);
                                 } else {
                                     operand = new VariableExpression(value);
                                 }
@@ -261,6 +274,7 @@ public class StatementParser {
             }
         }
 
+        // read structure instance: new Struct[arguments]
         private StructureExpression readStructureInstance(Token token) {
             StructureDefinition definition = structures.get(token.getValue());
             if (definition == null) {
@@ -285,6 +299,7 @@ public class StatementParser {
             return new StructureExpression(definition, arguments);
         }
 
+        // read function invocation: function_call[arguments]
         private FunctionExpression readFunctionInvocation(Token token) {
             FunctionDefinition definition = functions.get(token.getValue());
             if (definition == null) {
@@ -308,6 +323,33 @@ public class StatementParser {
             }
 
             return new FunctionExpression(definition, arguments);
+        }
+
+        // read array instantiation: array = {1,2,3}
+        private ArrayExpression readArrayInstance() {
+            List<Expression> values = new ArrayList<>();
+
+            while (!tokens.peekSameLine(TokenType.GroupDivider, "}")) {
+                Expression value = new ExpressionReader().readExpression();
+                values.add(value);
+
+                if (tokens.peekSameLine(TokenType.GroupDivider, ","))
+                    tokens.next();
+            }
+
+            tokens.next(TokenType.GroupDivider, "}"); //skip close square bracket
+
+            return new ArrayExpression(values);
+        }
+
+        // read array value: array{index}
+        private ArrayValueOperator readArrayValue(Token token) {
+            VariableExpression array = new VariableExpression(token.getValue());
+            tokens.next(TokenType.GroupDivider, "{");
+            Expression arrayIndex = new ExpressionReader().readExpression();
+            tokens.next(TokenType.GroupDivider, "}");
+
+            return new ArrayValueOperator(array, arrayIndex);
         }
     }
 }
