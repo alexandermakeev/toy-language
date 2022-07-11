@@ -9,8 +9,8 @@ public class StructureInstanceOperator extends UnaryOperatorExpression {
     }
 
     @Override
-    public Value<?> calc(Value<?> value) {
-        return value; // will return toString() value
+    public Value<?> evaluate() {
+        return getValue().evaluate(); // will return toString() value
     }
 }
 

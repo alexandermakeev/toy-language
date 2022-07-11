@@ -1,6 +1,6 @@
 package org.example.toylanguage.context;
 
-public enum VariableScopeType {
+public enum VariableScope {
     Local,
     Global
 }

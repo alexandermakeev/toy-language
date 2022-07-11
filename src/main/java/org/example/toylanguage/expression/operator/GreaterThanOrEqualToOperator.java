@@ -16,7 +16,9 @@ public class GreaterThanOrEqualToOperator extends BinaryOperatorExpression {
     }
 
     @Override
-    public Value<?> calc(Value<?> left, Value<?> right) {
+    public Value<?> evaluate() {
+        Value<?> left = getLeft().evaluate();
+        Value<?> right = getRight().evaluate();
         boolean result;
         if (left == NULL_INSTANCE || right == NULL_INSTANCE) {
             throw new ExecutionException(String.format("Unable to perform greater than or equal to for NULL values `%s`, '%s'", left, right));

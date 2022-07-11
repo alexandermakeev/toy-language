@@ -11,7 +11,7 @@ import org.example.toylanguage.token.TokenType;
 
 import java.util.function.Supplier;
 
-import static org.example.toylanguage.context.VariableScopeType.Global;
+import static org.example.toylanguage.context.VariableScope.Global;
 
 @AllArgsConstructor
 @Getter

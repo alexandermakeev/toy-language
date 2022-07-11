@@ -4,10 +4,7 @@ import org.example.toylanguage.definition.StructureDefinition;
 import org.example.toylanguage.expression.Expression;
 import org.example.toylanguage.expression.StructureExpression;
 import org.example.toylanguage.expression.VariableExpression;
-import org.example.toylanguage.expression.operator.AdditionOperator;
-import org.example.toylanguage.expression.operator.GreaterThanOperator;
-import org.example.toylanguage.expression.operator.GreaterThanOrEqualToOperator;
-import org.example.toylanguage.expression.operator.StructureInstanceOperator;
+import org.example.toylanguage.expression.operator.*;
 import org.example.toylanguage.expression.value.LogicalValue;
 import org.example.toylanguage.expression.value.NumericValue;
 import org.example.toylanguage.expression.value.TextValue;
@@ -16,7 +13,10 @@ import org.example.toylanguage.token.Token;
 import org.example.toylanguage.token.TokenType;
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -78,12 +78,18 @@ class StatementParserTest {
         List<Statement> statements = statement.getStatements2Execute();
         assertEquals(1, statements.size());
 
-        assertEquals(AssignStatement.class, statements.get(0).getClass());
-        AssignStatement assignmentStatement = (AssignStatement) statements.get(0);
-        assertEquals("a", assignmentStatement.getName());
+        assertEquals(ExpressionStatement.class, statements.get(0).getClass());
+        ExpressionStatement expressionStatement = (ExpressionStatement) statements.get(0);
 
-        assertEquals(AdditionOperator.class, assignmentStatement.getExpression().getClass());
-        AdditionOperator operator = (AdditionOperator) assignmentStatement.getExpression();
+        assertEquals(expressionStatement.getExpression().getClass(), AssignmentOperator.class);
+        AssignmentOperator assignOperator = (AssignmentOperator) expressionStatement.getExpression();
+
+        assertEquals(assignOperator.getLeft().getClass(), VariableExpression.class);
+        VariableExpression variableExpression = (VariableExpression) assignOperator.getLeft();
+        assertEquals("a", variableExpression.getName());
+
+        assertEquals(AdditionOperator.class, assignOperator.getRight().getClass());
+        AdditionOperator operator = (AdditionOperator) assignOperator.getRight();
 
         assertEquals(NumericValue.class, operator.getLeft().getClass());
         NumericValue left = (NumericValue) operator.getLeft();
@@ -232,12 +238,18 @@ class StatementParserTest {
         assertEquals(2, statements.size());
 
         // 1st statement
-        assertEquals(AssignStatement.class, statements.get(0).getClass());
-        AssignStatement assignmentStatement = (AssignStatement) statements.get(0);
-        assertEquals("person", assignmentStatement.getName());
+        assertEquals(ExpressionStatement.class, statements.get(0).getClass());
+        ExpressionStatement expressionStatement = (ExpressionStatement) statements.get(0);
 
-        assertEquals(StructureInstanceOperator.class, assignmentStatement.getExpression().getClass());
-        StructureInstanceOperator instanceOperator = (StructureInstanceOperator) assignmentStatement.getExpression();
+        assertEquals(expressionStatement.getExpression().getClass(), AssignmentOperator.class);
+        AssignmentOperator assignStatement = (AssignmentOperator) expressionStatement.getExpression();
+
+        assertEquals(assignStatement.getLeft().getClass(), VariableExpression.class);
+        VariableExpression variableExpression = (VariableExpression) assignStatement.getLeft();
+        assertEquals("person", variableExpression.getName());
+
+        assertEquals(StructureInstanceOperator.class, assignStatement.getRight().getClass());
+        StructureInstanceOperator instanceOperator = (StructureInstanceOperator) assignStatement.getRight();
 
         assertEquals(StructureExpression.class, instanceOperator.getValue().getClass());
         StructureExpression structure = (StructureExpression) instanceOperator.getValue();
@@ -270,12 +282,17 @@ class StatementParserTest {
         List<Statement> statements = statement.getStatements2Execute();
         assertEquals(1, statements.size());
 
-        assertEquals(AssignStatement.class, statements.get(0).getClass());
-        AssignStatement assignStatement = (AssignStatement) statements.get(0);
+        assertEquals(ExpressionStatement.class, statements.get(0).getClass());
+        ExpressionStatement expressionStatement = (ExpressionStatement) statements.get(0);
 
-        assertEquals("a", assignStatement.getName());
-        assertEquals(NumericValue.class, assignStatement.getExpression().getClass());
-        NumericValue numericValue = (NumericValue) assignStatement.getExpression();
+        assertEquals(expressionStatement.getExpression().getClass(), AssignmentOperator.class);
+        AssignmentOperator assignStatement = (AssignmentOperator) expressionStatement.getExpression();
+
+        assertEquals(assignStatement.getLeft().getClass(), VariableExpression.class);
+        VariableExpression variableExpression = (VariableExpression) assignStatement.getLeft();
+        assertEquals("a", variableExpression.getName());
+        assertEquals(NumericValue.class, assignStatement.getRight().getClass());
+        NumericValue numericValue = (NumericValue) assignStatement.getRight();
 
         assertEquals(5, numericValue.getValue());
     }

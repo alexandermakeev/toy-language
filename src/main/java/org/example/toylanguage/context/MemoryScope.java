@@ -22,7 +22,7 @@ public class MemoryScope {
 		return value;
 	}
 
-	public void set(String name, Value<?> value, VariableScopeType scopeType) {
+	public void set(String name, Value<?> value, VariableScope scopeType) {
 		switch (scopeType) {
 			case Global:
 				MemoryScope variableScope = findScope(name);

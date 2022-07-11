@@ -32,6 +32,10 @@ public class StructureValue extends Value<Map<String, Value<?>>> {
         return result != null ? result : NULL_INSTANCE;
     }
 
+    public void setValue(String name, Value<?> value) {
+        getValue().put(name, value);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

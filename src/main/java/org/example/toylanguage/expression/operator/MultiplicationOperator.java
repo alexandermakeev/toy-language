@@ -14,7 +14,9 @@ public class MultiplicationOperator extends BinaryOperatorExpression {
     }
 
     @Override
-    public Value<?> calc(Value<?> left, Value<?> right) {
+    public Value<?> evaluate() {
+        Value<?> left = getLeft().evaluate();
+        Value<?> right = getRight().evaluate();
         if (left == NULL_INSTANCE || right == NULL_INSTANCE) {
             throw new ExecutionException(String.format("Unable to perform multiplication for NULL values `%s`, '%s'", left, right));
         } else if (left instanceof NumericValue && right instanceof NumericValue) {

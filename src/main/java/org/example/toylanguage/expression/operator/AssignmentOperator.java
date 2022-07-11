@@ -1,24 +1,32 @@
 package org.example.toylanguage.expression.operator;
 
-import org.example.toylanguage.exception.ExecutionException;
+import org.example.toylanguage.context.VariableScope;
+import org.example.toylanguage.expression.AssignExpression;
 import org.example.toylanguage.expression.Expression;
-import org.example.toylanguage.expression.VariableExpression;
 import org.example.toylanguage.expression.value.Value;
 
-import static org.example.toylanguage.expression.value.NullValue.NULL_INSTANCE;
+import static org.example.toylanguage.context.VariableScope.Global;
 
 public class AssignmentOperator extends BinaryOperatorExpression {
+    private final VariableScope variableScope;
+
     public AssignmentOperator(Expression left, Expression right) {
+        this(left, right, Global);
+    }
+
+    public AssignmentOperator(Expression left, Expression right, VariableScope variableScope) {
         super(left, right);
+        this.variableScope = variableScope;
     }
 
     @Override
-    public Value<?> calc(Value<?> left, Value<?> right) {
-        if (left == NULL_INSTANCE) {
-            throw new ExecutionException(String.format("Unable to perform assignment for NULL value `%s`", left));
-        } else if (getLeft() instanceof VariableExpression) {
-            ((VariableExpression) getLeft()).setValue(right);
+    public Value<?> evaluate() {
+        if (getLeft() instanceof AssignExpression) {
+            Value<?> right = getRight().evaluate();
+            ((AssignExpression) getLeft()).assign(right, variableScope);
+        } else {
+            throw new UnsupportedOperationException();
         }
-        return left;
+        return getLeft().evaluate();
     }
 }

@@ -1,7 +1,6 @@
 package org.example.toylanguage.expression.operator;
 
 import org.example.toylanguage.expression.Expression;
-import org.example.toylanguage.expression.value.ComparableValue;
 import org.example.toylanguage.expression.value.LogicalValue;
 import org.example.toylanguage.expression.value.Value;
 
@@ -15,11 +14,13 @@ public class NotEqualsOperator extends BinaryOperatorExpression {
     }
 
     @Override
-    public Value<?> calc(Value<?> left, Value<?> right) {
+    public Value<?> evaluate() {
+        Value<?> left = getLeft().evaluate();
+        Value<?> right = getRight().evaluate();
         boolean result;
         if (left == NULL_INSTANCE || right == NULL_INSTANCE) {
             result = left != right;
-        } else if (Objects.equals(left.getClass(), right.getClass()) && left instanceof ComparableValue) {
+        } else if (Objects.equals(left.getClass(), right.getClass())) {
             result = !left.getValue().equals(right.getValue());
         } else {
             result = !left.toString().equals(right.toString());

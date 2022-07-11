@@ -11,7 +11,8 @@ public class NotOperator extends UnaryOperatorExpression {
     }
 
     @Override
-    public Value<?> calc(Value<?> value) {
+    public Value<?> evaluate() {
+        Value<?> value = getValue().evaluate();
         if (value instanceof LogicalValue) {
             return new LogicalValue(!(((LogicalValue) value).getValue()));
         } else {

@@ -61,13 +61,7 @@ public class StatementParser {
             case Operator:
                 tokens.back(); // go back to read an expression from the beginning
                 Expression value = new ExpressionReader().readExpression();
-
-                if (value instanceof AssignmentOperator) {
-                    VariableExpression variable = (VariableExpression) ((AssignmentOperator) value).getLeft();
-                    return new AssignStatement(variable.getName(), ((AssignmentOperator) value).getRight());
-                } else {
-                    return new ExpressionStatement(value);
-                }
+                return new ExpressionStatement(value);
             case Keyword:
                 switch (token.getValue()) {
                     case "print": {

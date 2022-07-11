@@ -14,7 +14,9 @@ public class EqualsOperator extends BinaryOperatorExpression {
     }
 
     @Override
-    public Value<?> calc(Value<?> left, Value<?> right) {
+    public Value<?> evaluate() {
+        Value<?> left = getLeft().evaluate();
+        Value<?> right = getRight().evaluate();
         boolean result;
         if (left == NULL_INSTANCE || right == NULL_INSTANCE) {
             result = left == right;
