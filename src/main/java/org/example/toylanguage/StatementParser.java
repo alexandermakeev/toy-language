@@ -10,6 +10,7 @@ import org.example.toylanguage.expression.value.LogicalValue;
 import org.example.toylanguage.expression.value.NumericValue;
 import org.example.toylanguage.expression.value.TextValue;
 import org.example.toylanguage.statement.*;
+import org.example.toylanguage.statement.loop.*;
 import org.example.toylanguage.token.Token;
 import org.example.toylanguage.token.TokenType;
 import org.example.toylanguage.token.TokensStack;
@@ -158,6 +159,57 @@ public class StatementParser {
                         Expression expression = new ExpressionReader().readExpression();
                         return new ReturnStatement(expression);
                     }
+                    case "loop": {
+                        Expression loopExpression = new ExpressionReader().readExpression();
+                        if (loopExpression instanceof OperatorExpression || loopExpression instanceof VariableExpression) {
+                            AbstractLoopStatement loopStatement;
+
+                            if (loopExpression instanceof OperatorExpression) {
+
+                                if (loopExpression instanceof AssignmentOperator) {
+                                    // loop <seed> to <condition> step <increment>
+                                    AssignmentOperator seed = (AssignmentOperator) loopExpression;
+
+                                    tokens.next(TokenType.Keyword, "to");
+                                    Expression hasNext = new ExpressionReader().readExpression();
+
+                                    Expression next = null;
+                                    if (tokens.peek(TokenType.Keyword, "step")) {
+                                        //...step <increment>
+                                        tokens.next(TokenType.Keyword, "step");
+                                        next = new ExpressionReader().readExpression();
+                                    }
+
+                                    loopStatement = new LoopStatement(seed, hasNext, next);
+                                } else {
+                                    // loop <condition>
+                                    loopStatement = new WhileLoopStatement(loopExpression);
+                                }
+
+                            } else {
+                                // loop <variable> in <iterable>
+                                VariableExpression variableExpression = (VariableExpression) loopExpression;
+                                tokens.next(TokenType.Keyword, "in");
+                                Expression iterableExpression = new ExpressionReader().readExpression();
+
+                                loopStatement = new IterableLoopStatement(variableExpression, iterableExpression);
+                            }
+
+                            while (!tokens.peek(TokenType.Keyword, "end")) {
+                                Statement statement = parseExpression();
+                                loopStatement.addStatement(statement);
+                            }
+
+                            tokens.next(TokenType.Keyword, "end");
+
+                            return loopStatement;
+                        }
+
+                    }
+                    case "break":
+                        return new BreakStatement();
+                    case "next":
+                        return new NextStatement();
                 }
             default:
                 throw new SyntaxException(String.format("Statement can't start with the following lexeme `%s`", token));

@@ -9,7 +9,7 @@ public enum TokenType {
     Comment("\\#.*"),
     LineBreak("[\\n\\r]"),
     Whitespace("[\\s\\t]"),
-    Keyword("(if|elif|else|then|end|print|input|struct|fun|return)(?=\\s|$)"),
+    Keyword("(if|elif|else|then|end|print|input|struct|fun|return|loop|to|step|in|break|next)(?=\\s|$)"),
     GroupDivider("(\\[|\\]|\\,|\\{|})"),
     Logical("(true|false)(?=\\s|$)"),
     Numeric("([-]?(?=[.]?[0-9])[0-9]*[.]?[0-9]*)"),

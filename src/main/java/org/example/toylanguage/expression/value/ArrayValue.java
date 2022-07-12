@@ -4,12 +4,13 @@ import org.example.toylanguage.expression.ArrayExpression;
 import org.example.toylanguage.expression.Expression;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.example.toylanguage.expression.value.NullValue.NULL_INSTANCE;
 
-public class ArrayValue extends Value<List<Value<?>>> {
+public class ArrayValue extends IterableValue<List<Value<?>>> {
     public ArrayValue(ArrayExpression expression) {
         this(expression.getValues()
                 .stream()
@@ -44,5 +45,10 @@ public class ArrayValue extends Value<List<Value<?>>> {
         //noinspection unchecked
         List<Value<?>> oValue = (List<Value<?>>) o;
         return new HashSet<>(getValue()).containsAll(oValue);
+    }
+
+    @Override
+    public Iterator<Value<?>> iterator() {
+        return getValue().iterator();
     }
 }
