@@ -85,4 +85,27 @@ class ToyLanguageTest {
         }
     }
 
+    @Test
+    void bubbleSort() throws URISyntaxException, IOException {
+        URL resource = getClass().getClassLoader().getResource("bubble_sort.toy");
+        Path path = Paths.get(resource.toURI());
+
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+             PrintStream out = new PrintStream(baos)) {
+
+            System.setOut(out);
+
+            ToyLanguage lang = new ToyLanguage();
+            lang.execute(path);
+
+            assertEquals(
+                    "[-1, 14, 12, 10, 8, 6, 4, 2, 0, 15, 13, 11, 9, 7, 5, 3, 1, -1, 14, 12]\n" +
+                            "false\n" +
+                            "[-1, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 12, 13, 14, 14, 15]\n" +
+                            "true\n",
+                    baos.toString()
+            );
+        }
+    }
+
 }
