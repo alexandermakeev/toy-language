@@ -22,11 +22,30 @@ public class MemoryScope {
 		return value;
 	}
 
+	public void set(String name, Value<?> value, VariableScope scopeType) {
+		switch (scopeType) {
+			case Global:
+				MemoryScope variableScope = findScope(name);
+				if (variableScope != null) {
+					variableScope.set(name, value);
+					break;
+				}
+			case Local:
+				set(name, value);
+		}
+	}
+
 	public void set(String name, Value<?> value) {
 		variables.put(name, value);
 	}
 
 	MemoryScope getParent() {
 		return parent;
+	}
+
+	private MemoryScope findScope(String name) {
+		if (variables.containsKey(name))
+			return this;
+		return parent == null ? null : parent.findScope(name);
 	}
 }

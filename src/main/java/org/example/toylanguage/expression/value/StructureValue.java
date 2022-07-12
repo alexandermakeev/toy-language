@@ -27,8 +27,26 @@ public class StructureValue extends Value<Map<String, Value<?>>> {
                 .collect(Collectors.joining(", ", definition.getName() + " [ ", " ]"));
     }
 
-    public Value<?> getValue(String value) {
-        Value<?> result = getValue().get(value);
+    public Value<?> getValue(String name) {
+        Value<?> result = getValue().get(name);
         return result != null ? result : NULL_INSTANCE;
+    }
+
+    public void setValue(String name, Value<?> value) {
+        getValue().put(name, value);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null) return false;
+        if (getClass() != o.getClass()) return false;
+        //noinspection unchecked
+        Map<String, Value<?>> oValue = (Map<String, Value<?>>) o;
+
+        if (getValue().size() != oValue.size()) return false;
+        return getValue().entrySet()
+                .stream()
+                .allMatch(e -> e.getValue().equals(oValue.get(e.getKey())));
     }
 }

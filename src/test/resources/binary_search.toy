@@ -1,0 +1,25 @@
+fun binary_search [ arr, n, lo, hi, key ]
+    if hi >= lo then
+        mid = (hi + lo) // 2
+        if arr{mid} < key then
+            return binary_search [ arr, n, mid + 1, hi, key ]
+        elif arr{mid} > key then
+            return binary_search [ arr, n, lo, mid - 1, key ]
+        else then
+            return mid
+        end
+    else then
+        return -1
+    end
+    return
+end
+
+arr = {10, 20, 30, 50, 60, 80, 110, 130, 140, 170}
+n = 10
+
+print binary_search [ arr, n, 0, n - 1, 10 ] # 0
+print binary_search [ arr, n, 0, n - 1, 80 ] # 3
+print binary_search [ arr, n, 0, n - 1, 170 ] # 9
+print binary_search [ arr, n, 0, n - 1, 5 ] # -1
+print binary_search [ arr, n, 0, n - 1, 85 ] # -1
+print binary_search [ arr, n, 0, n - 1, 175 ] # -1

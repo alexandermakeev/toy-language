@@ -5,13 +5,15 @@ import lombok.RequiredArgsConstructor;
 import org.example.toylanguage.context.MemoryContext;
 import org.example.toylanguage.context.ReturnContext;
 import org.example.toylanguage.definition.FunctionDefinition;
+import org.example.toylanguage.expression.operator.AssignmentOperator;
+import org.example.toylanguage.expression.operator.BinaryOperatorExpression;
 import org.example.toylanguage.expression.value.Value;
-import org.example.toylanguage.statement.AssignStatement;
 import org.example.toylanguage.statement.FunctionStatement;
-import org.example.toylanguage.statement.Statement;
 
 import java.util.List;
 import java.util.stream.IntStream;
+
+import static org.example.toylanguage.context.VariableScope.Local;
 
 @RequiredArgsConstructor
 @Getter
@@ -27,8 +29,8 @@ public class FunctionExpression implements Expression {
         //initialize function arguments
         IntStream.range(0, values.size())
                 .boxed()
-                .map(i -> new AssignStatement(definition.getArguments().get(i), values.get(i)))
-                .forEach(Statement::execute);
+                .map(i -> new AssignmentOperator(new VariableExpression(definition.getArguments().get(i)), values.get(i), Local))
+                .forEach(BinaryOperatorExpression::evaluate);
 
         //execute function body
         try {

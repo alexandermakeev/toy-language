@@ -10,8 +10,8 @@ import java.util.Objects;
 
 import static org.example.toylanguage.expression.value.NullValue.NULL_INSTANCE;
 
-public class LessThanOperator extends BinaryOperatorExpression {
-    public LessThanOperator(Expression left, Expression right) {
+public class LessThanOrEqualToOperator extends BinaryOperatorExpression {
+    public LessThanOrEqualToOperator(Expression left, Expression right) {
         super(left, right);
     }
 
@@ -21,14 +21,13 @@ public class LessThanOperator extends BinaryOperatorExpression {
         Value<?> right = getRight().evaluate();
         boolean result;
         if (left == NULL_INSTANCE || right == NULL_INSTANCE) {
-            throw new ExecutionException(String.format("Unable to perform less than for NULL values `%s`, '%s'", left, right));
+            throw new ExecutionException(String.format("Unable to perform less than or equal to for NULL values `%s`, '%s'", left, right));
         } else if (Objects.equals(left.getClass(), right.getClass()) && left instanceof ComparableValue) {
             //noinspection unchecked,rawtypes
-            result = ((Comparable) left.getValue()).compareTo(right.getValue()) < 0;
+            result = ((Comparable) left.getValue()).compareTo(right.getValue()) <= 0;
         } else {
-            result = left.toString().compareTo(right.toString()) < 0;
+            result = left.toString().compareTo(right.toString()) <= 0;
         }
         return new LogicalValue(result);
     }
 }
-

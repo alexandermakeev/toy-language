@@ -11,7 +11,9 @@ public class LogicalAndOperator extends BinaryOperatorExpression {
     }
 
     @Override
-    public Value<?> calc(Value<?> left, Value<?> right) {
+    public Value<?> evaluate() {
+        Value<?> left = getLeft().evaluate();
+        Value<?> right = getRight().evaluate();
         if (left instanceof LogicalValue && right instanceof LogicalValue) {
             return new LogicalValue(((LogicalValue) left).getValue() && ((LogicalValue) right).getValue());
         } else {
