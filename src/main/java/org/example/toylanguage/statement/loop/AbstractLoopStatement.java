@@ -10,7 +10,9 @@ public abstract class AbstractLoopStatement extends CompositeStatement {
 
     protected abstract boolean hasNext();
 
-    protected abstract void increment();
+    protected abstract void preIncrement();
+
+    protected abstract void postIncrement();
 
     @Override
     public void execute() {
@@ -19,6 +21,8 @@ public abstract class AbstractLoopStatement extends CompositeStatement {
             init();
 
             while (hasNext()) {
+                preIncrement();
+
                 MemoryContext.newScope();
 
                 try {
@@ -32,7 +36,7 @@ public abstract class AbstractLoopStatement extends CompositeStatement {
                 } finally {
                     MemoryContext.endScope();
 
-                    increment();
+                    postIncrement();
                 }
 
             }

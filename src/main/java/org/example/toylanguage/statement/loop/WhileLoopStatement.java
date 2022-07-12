@@ -20,6 +20,10 @@ public class WhileLoopStatement extends AbstractLoopStatement {
     }
 
     @Override
-    protected void increment() {
+    protected void preIncrement() {
+    }
+
+    @Override
+    protected void postIncrement() {
     }
 }

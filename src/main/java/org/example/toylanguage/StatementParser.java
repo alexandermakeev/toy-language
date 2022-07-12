@@ -10,9 +10,7 @@ import org.example.toylanguage.expression.value.LogicalValue;
 import org.example.toylanguage.expression.value.NumericValue;
 import org.example.toylanguage.expression.value.TextValue;
 import org.example.toylanguage.statement.*;
-import org.example.toylanguage.statement.loop.AbstractLoopStatement;
-import org.example.toylanguage.statement.loop.LoopStatement;
-import org.example.toylanguage.statement.loop.WhileLoopStatement;
+import org.example.toylanguage.statement.loop.*;
 import org.example.toylanguage.token.Token;
 import org.example.toylanguage.token.TokenType;
 import org.example.toylanguage.token.TokensStack;
@@ -163,27 +161,38 @@ public class StatementParser {
                     }
                     case "loop": {
                         Expression loopExpression = new ExpressionReader().readExpression();
-                        if (loopExpression instanceof OperatorExpression) {
+                        if (loopExpression instanceof OperatorExpression || loopExpression instanceof VariableExpression) {
                             AbstractLoopStatement loopStatement;
 
-                            if (loopExpression instanceof AssignmentOperator) {
-                                //loop <seed> to <condition> step <increment>
-                                AssignmentOperator seed = (AssignmentOperator) loopExpression;
+                            if (loopExpression instanceof OperatorExpression) {
 
-                                tokens.next(TokenType.Keyword, "to");
-                                Expression hasNext = new ExpressionReader().readExpression();
+                                if (loopExpression instanceof AssignmentOperator) {
+                                    //loop <seed> to <condition> step <increment>
+                                    AssignmentOperator seed = (AssignmentOperator) loopExpression;
 
-                                Expression next = null;
-                                if (tokens.peek(TokenType.Keyword, "step")) {
-                                    //loop i = 0 to i < n step i = i + 1
-                                    tokens.next(TokenType.Keyword, "step");
-                                    next = new ExpressionReader().readExpression();
+                                    tokens.next(TokenType.Keyword, "to");
+                                    Expression hasNext = new ExpressionReader().readExpression();
+
+                                    Expression next = null;
+                                    if (tokens.peek(TokenType.Keyword, "step")) {
+                                        //loop i = 0 to i < n step i = i + 1
+                                        tokens.next(TokenType.Keyword, "step");
+                                        next = new ExpressionReader().readExpression();
+                                    }
+
+                                    loopStatement = new LoopStatement(seed, hasNext, next);
+                                } else {
+                                    // loop <condition>
+                                    loopStatement = new WhileLoopStatement(loopExpression);
                                 }
 
-                                loopStatement = new LoopStatement(seed, hasNext, next);
                             } else {
-                                // loop <condition>
-                                loopStatement = new WhileLoopStatement(loopExpression);
+                                // loop <variable> in <iterable>
+                                VariableExpression variableExpression = (VariableExpression) loopExpression;
+                                tokens.next(TokenType.Keyword, "in");
+                                Expression iterableExpression = new ExpressionReader().readExpression();
+
+                                loopStatement = new IterableLoopStatement(variableExpression, iterableExpression);
                             }
 
                             while (!tokens.peek(TokenType.Keyword, "end")) {

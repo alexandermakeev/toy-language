@@ -24,7 +24,11 @@ public class LoopStatement extends AbstractLoopStatement {
     }
 
     @Override
-    protected void increment() {
+    protected void preIncrement() {
+    }
+
+    @Override
+    protected void postIncrement() {
         next.evaluate();
     }
 }
