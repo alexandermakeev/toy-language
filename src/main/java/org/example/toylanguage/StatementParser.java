@@ -167,7 +167,7 @@ public class StatementParser {
                             if (loopExpression instanceof OperatorExpression) {
 
                                 if (loopExpression instanceof AssignmentOperator) {
-                                    //loop <seed> to <condition> step <increment>
+                                    // loop <seed> to <condition> step <increment>
                                     AssignmentOperator seed = (AssignmentOperator) loopExpression;
 
                                     tokens.next(TokenType.Keyword, "to");
@@ -175,7 +175,7 @@ public class StatementParser {
 
                                     Expression next = null;
                                     if (tokens.peek(TokenType.Keyword, "step")) {
-                                        //loop i = 0 to i < n step i = i + 1
+                                        //...step <increment>
                                         tokens.next(TokenType.Keyword, "step");
                                         next = new ExpressionReader().readExpression();
                                     }
@@ -206,6 +206,10 @@ public class StatementParser {
                         }
 
                     }
+                    case "break":
+                        return new BreakStatement();
+                    case "next":
+                        return new NextStatement();
                 }
             default:
                 throw new SyntaxException(String.format("Statement can't start with the following lexeme `%s`", token));
