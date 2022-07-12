@@ -32,6 +32,10 @@ public class ArrayValue extends Value<List<Value<?>>> {
             getValue().set(index, value);
     }
 
+    public void appendValue(Value<?> value) {
+        getValue().add(value);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

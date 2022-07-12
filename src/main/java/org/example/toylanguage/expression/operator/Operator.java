@@ -34,6 +34,7 @@ public enum Operator {
     LogicalAnd("and", LogicalAndOperator.class, 2),
     LogicalOr("or", LogicalOrOperator.class, 1),
 
+    ArrayAppend("<<", ArrayAppendOperator.class, 0),
     Assignment("=", AssignmentOperator.class, 0);
 
     private final String character;
