@@ -1,6 +1,6 @@
 fun bubble_sort [ arr, n ]
-    loop i = 0 to i < n - 1 step i = i + 1
-        loop j = 0 to j < n - i - 1 step j = j + 1
+    loop i in 0..n - 1
+        loop j in 0..n - i - 1
             if arr{j+1} < arr{j} then
                 temp = arr{j}
                 arr{j} = arr{j + 1}
@@ -11,7 +11,7 @@ fun bubble_sort [ arr, n ]
 end
 
 fun is_sorted [ arr, n ]
-    loop i = 0 to i < n - 1 step i = i + 1
+    loop i in 0..n - 1
         if arr{i} > arr{i+1} then
             return false
         end
@@ -21,7 +21,7 @@ end
 
 arr = {}
 arr_len = 20
-loop i = 0 to i < arr_len step i = i + 1
+loop i in 0..arr_len by 1
     arr << i * 117 % 17 - 1
 end
 

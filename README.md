@@ -74,35 +74,36 @@ end
 ```
 6) Loops
 ```
-loop <seed> to <condition> step <increment>
+# For loop
+loop <variable> in <lower_bound>..<upper_bound>
     # statements
 end
 
-# without <step>
-loop <seed> to <condition>
+# Specify the step
+loop <variable> in <lower_bound>..<upper_bound> by <step>
     # statements
     # seed increment statement
 end
 
-# without <seed> and <step> (while)
+# While loop
 loop <condition>
     # statements
 end
 
-# iterable loop (for-each)
+# Iterable loop (for-each)
 loop <variable> in <iterable>
     # statements
 end
 
 # terminate the loop
-loop <seed> to <condition> step <increment>
+loop <variable> in <lower_bound>..<upper_bound> by <step>
     if <other_condition> then
         break
     end
 end
 
 # jump to the next iteration
-loop <seed> to <condition> step <increment>
+loop <variable> in <lower_bound>..<upper_bound> by <step>
     if <other_condition> then
         next
     end
@@ -151,10 +152,6 @@ tree :: right = new TreeNode [ tree :: right :: value + 1 ]
 <array> = { <value1>, <value2>, ... }
 example_array = { 1, 2, "three", new TreeNode [ 4 ] }
 empty_array = {}
-
-# set an array's value
-<array> { <index> } = <value>
-items{1} = 123
 
 # get an array's value
 <value> = <array> { <index> }

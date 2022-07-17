@@ -18,7 +18,7 @@ public abstract class AbstractLoopStatement extends CompositeStatement {
 
     @Override
     public void execute() {
-        // memory scope for seed variables
+        // memory scope for counter variables
         MemoryContext.newScope();
         try {
 
