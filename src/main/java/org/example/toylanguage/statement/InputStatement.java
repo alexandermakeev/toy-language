@@ -3,6 +3,7 @@ package org.example.toylanguage.statement;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.example.toylanguage.expression.VariableExpression;
+import org.example.toylanguage.expression.operator.AssignmentOperator;
 import org.example.toylanguage.expression.value.LogicalValue;
 import org.example.toylanguage.expression.value.NumericValue;
 import org.example.toylanguage.expression.value.TextValue;
@@ -31,7 +32,7 @@ public class InputStatement implements Statement {
             value = new TextValue(line);
         }
 
-        VariableExpression key = new VariableExpression(name);
-        AssignStatement.execute(key, value);
+        new AssignmentOperator(new VariableExpression(name), value)
+                .evaluate();
     }
 }

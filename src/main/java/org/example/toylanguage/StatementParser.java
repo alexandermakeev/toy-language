@@ -164,35 +164,34 @@ public class StatementParser {
                         if (loopExpression instanceof OperatorExpression || loopExpression instanceof VariableExpression) {
                             AbstractLoopStatement loopStatement;
 
-                            if (loopExpression instanceof OperatorExpression) {
+                            if (loopExpression instanceof VariableExpression && tokens.peek(TokenType.Keyword, "in")) {
+                                // loop <variable> in <bounds>
+                                VariableExpression variable = (VariableExpression) loopExpression;
+                                tokens.next(TokenType.Keyword, "in");
+                                Expression bounds = new ExpressionReader().readExpression();
 
-                                if (loopExpression instanceof AssignmentOperator) {
-                                    // loop <seed> to <condition> step <increment>
-                                    AssignmentOperator seed = (AssignmentOperator) loopExpression;
+                                if (tokens.peek(TokenType.GroupDivider, "..")) {
+                                    // loop <variable> in <lower_bound>..<upper_bound>
+                                    tokens.next(TokenType.GroupDivider, "..");
+                                    Expression upperBound = new ExpressionReader().readExpression();
 
-                                    tokens.next(TokenType.Keyword, "to");
-                                    Expression hasNext = new ExpressionReader().readExpression();
-
-                                    Expression next = null;
-                                    if (tokens.peek(TokenType.Keyword, "step")) {
-                                        //...step <increment>
-                                        tokens.next(TokenType.Keyword, "step");
-                                        next = new ExpressionReader().readExpression();
+                                    Expression step = null;
+                                    if (tokens.peek(TokenType.Keyword, "by")) {
+                                        // loop <variable> in <lower_bound>..<upper_bound> by <step>
+                                        tokens.next(TokenType.Keyword, "by");
+                                        step = new ExpressionReader().readExpression();
                                     }
 
-                                    loopStatement = new LoopStatement(seed, hasNext, next);
+                                    loopStatement = new ForLoopStatement(variable, bounds, upperBound, step);
+
                                 } else {
-                                    // loop <condition>
-                                    loopStatement = new WhileLoopStatement(loopExpression);
+                                    // loop <variable> in <iterable>
+                                    loopStatement = new IterableLoopStatement(variable, bounds);
                                 }
 
                             } else {
-                                // loop <variable> in <iterable>
-                                VariableExpression variableExpression = (VariableExpression) loopExpression;
-                                tokens.next(TokenType.Keyword, "in");
-                                Expression iterableExpression = new ExpressionReader().readExpression();
-
-                                loopStatement = new IterableLoopStatement(variableExpression, iterableExpression);
+                                // loop <condition>
+                                loopStatement = new WhileLoopStatement(loopExpression);
                             }
 
                             while (!tokens.peek(TokenType.Keyword, "end")) {
