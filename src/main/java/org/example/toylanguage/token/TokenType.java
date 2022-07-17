@@ -12,7 +12,7 @@ public enum TokenType {
     Keyword("(if|elif|else|then|end|print|input|struct|fun|return|loop|in|by|break|next)(?=\\s|$)"),
     GroupDivider("(\\[|\\]|\\,|\\{|}|[.]{2})"),
     Logical("(true|false)(?=\\s|$)"),
-    Numeric("([-]?(?=[.]?[0-9])[0-9]*[.]?[0-9]*)"),
+    Numeric("([-]?(?=[.]?[0-9])[0-9]*(?![.]{2})[.]?[0-9]*)"),
     Null("(null)(?=,|\\s|$)"),
     Text("\"([^\"]*)\""),
     Operator("([+]|[-]|[*]|[/]{1,2}|[%]|>=|>|<=|[<]{1,2}|[=]{1,2}|!=|[!]|[:]{2}|[(]|[)]|(new|and|or)(?=\\s|$))"),
