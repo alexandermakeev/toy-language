@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.example.toylanguage.context.MemoryContext;
 import org.example.toylanguage.context.ReturnContext;
-import org.example.toylanguage.definition.FunctionDefinition;
+import org.example.toylanguage.context.definition.FunctionDefinition;
 import org.example.toylanguage.expression.value.NullValue;
 import org.example.toylanguage.expression.value.Value;
 import org.example.toylanguage.statement.FunctionStatement;

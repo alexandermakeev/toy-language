@@ -1,7 +1,7 @@
 package org.example.toylanguage.expression;
 
 import lombok.Getter;
-import org.example.toylanguage.definition.ClassDefinition;
+import org.example.toylanguage.context.definition.ClassDefinition;
 import org.example.toylanguage.expression.value.ClassValue;
 import org.example.toylanguage.expression.value.Value;
 

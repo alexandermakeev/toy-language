@@ -1,8 +1,10 @@
 package org.example.toylanguage;
 
-import org.example.toylanguage.definition.ClassDefinition;
-import org.example.toylanguage.expression.Expression;
+import org.example.toylanguage.context.MemoryContext;
+import org.example.toylanguage.context.definition.ClassDefinition;
+import org.example.toylanguage.context.definition.DefinitionContext;
 import org.example.toylanguage.expression.ClassExpression;
+import org.example.toylanguage.expression.Expression;
 import org.example.toylanguage.expression.VariableExpression;
 import org.example.toylanguage.expression.operator.*;
 import org.example.toylanguage.expression.value.LogicalValue;
@@ -19,14 +21,20 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class StatementParserTest {
 
     @Test
     public void printTest() {
-        List<Token> tokens = Arrays.asList(Token.builder().type(TokenType.Keyword).value("print").build(), Token.builder().type(TokenType.Text).value("Hello World").build());
-        StatementParser parser = new StatementParser(tokens);
-        CompositeStatement statement = (CompositeStatement) parser.parse();
+        List<Token> tokens = List.of(
+                Token.builder().type(TokenType.Keyword).value("print").build(),
+                Token.builder().type(TokenType.Text).value("Hello World").build()
+        );
+        DefinitionContext.pushScope(DefinitionContext.newScope());
+        MemoryContext.pushScope(MemoryContext.newScope());
+        CompositeStatement statement = new CompositeStatement();
+        StatementParser.parse(tokens, statement);
 
         List<Statement> statements = statement.getStatements2Execute();
         assertEquals(1, statements.size());
@@ -38,14 +46,21 @@ class StatementParserTest {
         TextValue textValue = (TextValue) printStatement.getExpression();
 
         assertEquals("Hello World", textValue.getValue());
+
+        DefinitionContext.endScope();
+        MemoryContext.endScope();
     }
 
     @Test
     public void testInput() {
-
-        List<Token> tokens = Arrays.asList(Token.builder().type(TokenType.Keyword).value("input").build(), Token.builder().type(TokenType.Variable).value("a").build());
-        StatementParser parser = new StatementParser(tokens);
-        CompositeStatement statement = (CompositeStatement) parser.parse();
+        List<Token> tokens = List.of(
+                Token.builder().type(TokenType.Keyword).value("input").build(),
+                Token.builder().type(TokenType.Variable).value("a").build()
+        );
+        DefinitionContext.pushScope(DefinitionContext.newScope());
+        MemoryContext.pushScope(MemoryContext.newScope());
+        CompositeStatement statement = new CompositeStatement();
+        StatementParser.parse(tokens, statement);
 
         List<Statement> statements = statement.getStatements2Execute();
         assertEquals(1, statements.size());
@@ -54,14 +69,24 @@ class StatementParserTest {
         InputStatement inputStatement = (InputStatement) statements.get(0);
 
         assertEquals("a", inputStatement.getName());
+
+        DefinitionContext.endScope();
+        MemoryContext.endScope();
     }
 
     @Test
     public void testAssignment() {
-
-        List<Token> tokens = Arrays.asList(Token.builder().type(TokenType.Variable).value("a").build(), Token.builder().type(TokenType.Operator).value("=").build(), Token.builder().type(TokenType.Numeric).value("2").build(), Token.builder().type(TokenType.Operator).value("+").build(), Token.builder().type(TokenType.Numeric).value("5").build());
-        StatementParser parser = new StatementParser(tokens);
-        CompositeStatement statement = (CompositeStatement) parser.parse();
+        List<Token> tokens = List.of(
+                Token.builder().type(TokenType.Variable).value("a").build(),
+                Token.builder().type(TokenType.Operator).value("=").build(),
+                Token.builder().type(TokenType.Numeric).value("2").build(),
+                Token.builder().type(TokenType.Operator).value("+").build(),
+                Token.builder().type(TokenType.Numeric).value("5").build()
+        );
+        DefinitionContext.pushScope(DefinitionContext.newScope());
+        MemoryContext.pushScope(MemoryContext.newScope());
+        CompositeStatement statement = new CompositeStatement();
+        StatementParser.parse(tokens, statement);
 
         List<Statement> statements = statement.getStatements2Execute();
         assertEquals(1, statements.size());
@@ -72,7 +97,7 @@ class StatementParserTest {
         assertEquals(expressionStatement.getExpression().getClass(), AssignmentOperator.class);
         AssignmentOperator assignOperator = (AssignmentOperator) expressionStatement.getExpression();
 
-        assertEquals(assignOperator.getLeft().getClass(), VariableExpression.class);
+        assertTrue(assignOperator.getLeft() instanceof VariableExpression);
         VariableExpression variableExpression = (VariableExpression) assignOperator.getLeft();
         assertEquals("a", variableExpression.getName());
 
@@ -86,14 +111,35 @@ class StatementParserTest {
         assertEquals(NumericValue.class, operator.getRight().getClass());
         NumericValue right = (NumericValue) operator.getRight();
         assertEquals(5, right.getValue());
+
+        DefinitionContext.endScope();
+        MemoryContext.endScope();
     }
 
     @Test
     public void testCondition() {
-
-        List<Token> tokens = Arrays.asList(Token.builder().type(TokenType.Keyword).value("if").build(), Token.builder().type(TokenType.Variable).value("a").build(), Token.builder().type(TokenType.Operator).value(">").build(), Token.builder().type(TokenType.Numeric).value("5").build(), Token.builder().type(TokenType.Keyword).value("print").build(), Token.builder().type(TokenType.Text).value("a is greater than 5").build(), Token.builder().type(TokenType.Keyword).value("elif").build(), Token.builder().type(TokenType.Variable).value("a").build(), Token.builder().type(TokenType.Operator).value(">=").build(), Token.builder().type(TokenType.Numeric).value("1").build(), Token.builder().type(TokenType.Keyword).value("print").build(), Token.builder().type(TokenType.Text).value("a is greater than or equal to 1").build(), Token.builder().type(TokenType.Keyword).value("else").build(), Token.builder().type(TokenType.Keyword).value("print").build(), Token.builder().type(TokenType.Text).value("a is less than 1").build(), Token.builder().type(TokenType.Keyword).value("end").build());
-        StatementParser parser = new StatementParser(tokens);
-        CompositeStatement statement = (CompositeStatement) parser.parse();
+        List<Token> tokens = List.of(
+                Token.builder().type(TokenType.Keyword).value("if").build(),
+                Token.builder().type(TokenType.Variable).value("a").build(),
+                Token.builder().type(TokenType.Operator).value(">").build(),
+                Token.builder().type(TokenType.Numeric).value("5").build(),
+                Token.builder().type(TokenType.Keyword).value("print").build(),
+                Token.builder().type(TokenType.Text).value("a is greater than 5").build(),
+                Token.builder().type(TokenType.Keyword).value("elif").build(),
+                Token.builder().type(TokenType.Variable).value("a").build(),
+                Token.builder().type(TokenType.Operator).value(">=").build(),
+                Token.builder().type(TokenType.Numeric).value("1").build(),
+                Token.builder().type(TokenType.Keyword).value("print").build(),
+                Token.builder().type(TokenType.Text).value("a is greater than or equal to 1").build(),
+                Token.builder().type(TokenType.Keyword).value("else").build(),
+                Token.builder().type(TokenType.Keyword).value("print").build(),
+                Token.builder().type(TokenType.Text).value("a is less than 1").build(),
+                Token.builder().type(TokenType.Keyword).value("end").build()
+        );
+        DefinitionContext.pushScope(DefinitionContext.newScope());
+        MemoryContext.pushScope(MemoryContext.newScope());
+        CompositeStatement statement = new CompositeStatement();
+        StatementParser.parse(tokens, statement);
 
         List<Statement> statements = statement.getStatements2Execute();
         assertEquals(1, statements.size());
@@ -110,7 +156,7 @@ class StatementParserTest {
         assertEquals(GreaterThanOperator.class, conditions.get(0).getClass());
         GreaterThanOperator ifCondition = (GreaterThanOperator) conditions.get(0);
 
-        assertEquals(VariableExpression.class, ifCondition.getLeft().getClass());
+        assertTrue(ifCondition.getLeft() instanceof VariableExpression);
         VariableExpression ifLeftExpression = (VariableExpression) ifCondition.getLeft();
         assertEquals("a", ifLeftExpression.getName());
 
@@ -131,7 +177,7 @@ class StatementParserTest {
         assertEquals(GreaterThanOrEqualToOperator.class, conditions.get(1).getClass());
         GreaterThanOrEqualToOperator elifCondition = (GreaterThanOrEqualToOperator) conditions.get(1);
 
-        assertEquals(VariableExpression.class, elifCondition.getLeft().getClass());
+        assertTrue(elifCondition.getLeft() instanceof VariableExpression);
         VariableExpression elifLeftExpression = (VariableExpression) elifCondition.getLeft();
         assertEquals("a", elifLeftExpression.getName());
 
@@ -163,13 +209,51 @@ class StatementParserTest {
         assertEquals(TextValue.class, elsePrintStatement.getExpression().getClass());
         TextValue elsePrintValue = (TextValue) elsePrintStatement.getExpression();
         assertEquals("a is less than 1", elsePrintValue.getValue());
+
+        DefinitionContext.endScope();
+        MemoryContext.endScope();
     }
 
     @Test
     public void testClass() {
-        List<Token> tokens = Arrays.asList(Token.builder().type(TokenType.Keyword).value("class").row(1).build(), Token.builder().type(TokenType.Variable).value("Person").row(1).build(), Token.builder().type(TokenType.GroupDivider).value("[").row(1).build(), Token.builder().type(TokenType.Variable).value("name").row(1).build(), Token.builder().type(TokenType.GroupDivider).value(",").row(1).build(), Token.builder().type(TokenType.Variable).value("age").row(1).build(), Token.builder().type(TokenType.GroupDivider).value("]").row(1).build(), Token.builder().type(TokenType.LineBreak).value("\n").row(1).build(), Token.builder().type(TokenType.Keyword).value("end").row(2).build(), Token.builder().type(TokenType.LineBreak).value("\n").row(2).build(), Token.builder().type(TokenType.Variable).value("person").row(3).build(), Token.builder().type(TokenType.Operator).value("=").row(3).build(), Token.builder().type(TokenType.Operator).value("new").row(3).build(), Token.builder().type(TokenType.Variable).value("Person").row(3).build(), Token.builder().type(TokenType.GroupDivider).value("[").row(3).build(), Token.builder().type(TokenType.Text).value("Randy Marsh").row(3).build(), Token.builder().type(TokenType.GroupDivider).value(",").row(3).build(), Token.builder().type(TokenType.Numeric).value("45").row(3).build(), Token.builder().type(TokenType.GroupDivider).value("]").row(3).build(), Token.builder().type(TokenType.LineBreak).value("\n").row(3).build(), Token.builder().type(TokenType.Keyword).value("print").row(4).build(), Token.builder().type(TokenType.Variable).value("person").row(4).build(), Token.builder().type(TokenType.Operator).value("::").row(4).build(), Token.builder().type(TokenType.Variable).value("name").row(4).build(), Token.builder().type(TokenType.Operator).value("+").row(4).build(), Token.builder().type(TokenType.Text).value(" is ").row(4).build(), Token.builder().type(TokenType.Operator).value("+").row(4).build(), Token.builder().type(TokenType.Variable).value("person").row(4).build(), Token.builder().type(TokenType.Operator).value("::").row(4).build(), Token.builder().type(TokenType.Variable).value("age").row(4).build(), Token.builder().type(TokenType.Operator).value("+").row(4).build(), Token.builder().type(TokenType.Text).value(" years old").row(4).build());
-        StatementParser parser = new StatementParser(tokens);
-        CompositeStatement statement = (CompositeStatement) parser.parse();
+        List<Token> tokens = List.of(
+                Token.builder().type(TokenType.Keyword).value("class").row(1).build(),
+                Token.builder().type(TokenType.Variable).value("Person").row(1).build(),
+                Token.builder().type(TokenType.GroupDivider).value("[").row(1).build(),
+                Token.builder().type(TokenType.Variable).value("name").row(1).build(),
+                Token.builder().type(TokenType.GroupDivider).value(",").row(1).build(),
+                Token.builder().type(TokenType.Variable).value("age").row(1).build(),
+                Token.builder().type(TokenType.GroupDivider).value("]").row(1).build(),
+                Token.builder().type(TokenType.LineBreak).value("\n").row(1).build(),
+                Token.builder().type(TokenType.Keyword).value("end").row(2).build(),
+                Token.builder().type(TokenType.LineBreak).value("\n").row(2).build(),
+                Token.builder().type(TokenType.Variable).value("person").row(3).build(),
+                Token.builder().type(TokenType.Operator).value("=").row(3).build(),
+                Token.builder().type(TokenType.Operator).value("new").row(3).build(),
+                Token.builder().type(TokenType.Variable).value("Person").row(3).build(),
+                Token.builder().type(TokenType.GroupDivider).value("[").row(3).build(),
+                Token.builder().type(TokenType.Text).value("Randy Marsh").row(3).build(),
+                Token.builder().type(TokenType.GroupDivider).value(",").row(3).build(),
+                Token.builder().type(TokenType.Numeric).value("45").row(3).build(),
+                Token.builder().type(TokenType.GroupDivider).value("]").row(3).build(),
+                Token.builder().type(TokenType.LineBreak).value("\n").row(3).build(),
+                Token.builder().type(TokenType.Keyword).value("print").row(4).build(),
+                Token.builder().type(TokenType.Variable).value("person").row(4).build(),
+                Token.builder().type(TokenType.Operator).value("::").row(4).build(),
+                Token.builder().type(TokenType.Variable).value("name").row(4).build(),
+                Token.builder().type(TokenType.Operator).value("+").row(4).build(),
+                Token.builder().type(TokenType.Text).value(" is ").row(4).build(),
+                Token.builder().type(TokenType.Operator).value("+").row(4).build(),
+                Token.builder().type(TokenType.Variable).value("person").row(4).build(),
+                Token.builder().type(TokenType.Operator).value("::").row(4).build(),
+                Token.builder().type(TokenType.Variable).value("age").row(4).build(),
+                Token.builder().type(TokenType.Operator).value("+").row(4).build(),
+                Token.builder().type(TokenType.Text).value(" years old").row(4).build()
+        );
+        DefinitionContext.pushScope(DefinitionContext.newScope());
+        MemoryContext.pushScope(MemoryContext.newScope());
+        CompositeStatement statement = new CompositeStatement();
+        StatementParser.parse(tokens, statement);
 
         List<Statement> statements = statement.getStatements2Execute();
         assertEquals(2, statements.size());
@@ -181,7 +265,7 @@ class StatementParserTest {
         assertEquals(expressionStatement.getExpression().getClass(), AssignmentOperator.class);
         AssignmentOperator assignStatement = (AssignmentOperator) expressionStatement.getExpression();
 
-        assertEquals(assignStatement.getLeft().getClass(), VariableExpression.class);
+        assertTrue(assignStatement.getLeft() instanceof VariableExpression);
         VariableExpression variableExpression = (VariableExpression) assignStatement.getLeft();
         assertEquals("person", variableExpression.getName());
 
@@ -201,13 +285,25 @@ class StatementParserTest {
         // 2nd statement
         PrintStatement printStatement = (PrintStatement) statements.get(1);
         assertEquals(AdditionOperator.class, printStatement.getExpression().getClass());
+
+        DefinitionContext.endScope();
+        MemoryContext.endScope();
     }
 
     @Test
     public void testComment() {
-        List<Token> tokens = Arrays.asList(Token.builder().type(TokenType.Comment).value("# a = 5").build(), Token.builder().type(TokenType.LineBreak).value("\n").build(), Token.builder().type(TokenType.Variable).value("a").build(), Token.builder().type(TokenType.Operator).value("=").build(), Token.builder().type(TokenType.Numeric).value("5").build(), Token.builder().type(TokenType.Comment).value("# a is equal to 5").build());
-        StatementParser parser = new StatementParser(tokens);
-        CompositeStatement statement = (CompositeStatement) parser.parse();
+        List<Token> tokens = List.of(
+                Token.builder().type(TokenType.Comment).value("# a = 5").build(),
+                Token.builder().type(TokenType.LineBreak).value("\n").build(),
+                Token.builder().type(TokenType.Variable).value("a").build(),
+                Token.builder().type(TokenType.Operator).value("=").build(),
+                Token.builder().type(TokenType.Numeric).value("5").build(),
+                Token.builder().type(TokenType.Comment).value("# a is equal to 5").build()
+        );
+        DefinitionContext.pushScope(DefinitionContext.newScope());
+        MemoryContext.pushScope(MemoryContext.newScope());
+        CompositeStatement statement = new CompositeStatement();
+        StatementParser.parse(tokens, statement);
 
         List<Statement> statements = statement.getStatements2Execute();
         assertEquals(1, statements.size());
@@ -218,13 +314,16 @@ class StatementParserTest {
         assertEquals(expressionStatement.getExpression().getClass(), AssignmentOperator.class);
         AssignmentOperator assignStatement = (AssignmentOperator) expressionStatement.getExpression();
 
-        assertEquals(assignStatement.getLeft().getClass(), VariableExpression.class);
+        assertTrue(assignStatement.getLeft() instanceof VariableExpression);
         VariableExpression variableExpression = (VariableExpression) assignStatement.getLeft();
         assertEquals("a", variableExpression.getName());
         assertEquals(NumericValue.class, assignStatement.getRight().getClass());
         NumericValue numericValue = (NumericValue) assignStatement.getRight();
 
         assertEquals(5, numericValue.getValue());
+
+        DefinitionContext.endScope();
+        MemoryContext.endScope();
     }
 
 }

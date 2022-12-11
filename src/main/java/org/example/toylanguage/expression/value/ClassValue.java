@@ -1,6 +1,6 @@
 package org.example.toylanguage.expression.value;
 
-import org.example.toylanguage.definition.ClassDefinition;
+import org.example.toylanguage.context.definition.ClassDefinition;
 import org.example.toylanguage.expression.ClassExpression;
 
 import java.util.Iterator;
