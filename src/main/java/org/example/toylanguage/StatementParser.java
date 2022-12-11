@@ -83,7 +83,6 @@ public class StatementParser {
                             } else {
                                 caseCondition = new ExpressionReader().readExpression();
                             }
-                            tokens.next(TokenType.Keyword, "then"); //skip then
 
                             //read case statements
                             CompositeStatement caseStatement = new CompositeStatement();

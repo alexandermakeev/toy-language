@@ -3,7 +3,7 @@
 #
 
 fun fibonacci_number [ n ]
-    if n < 2 then
+    if n < 2
         return n
     end
     return fibonacci_number [ n - 1 ] + fibonacci_number [ n - 2 ]

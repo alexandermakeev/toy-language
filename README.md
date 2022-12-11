@@ -32,19 +32,19 @@ empty_array = {}
 ```
 2) Conditions
 ```
-if <condition> then
+if <condition>
     # statements
-elif <condition> then
+elif <condition>
     # statements
-else then
+else
     # statements
 end
 
-if a1 > 5 and tree_node :: value == 3 then
+if a1 > 5 and tree_node :: value == 3
     # statements
-elif a2 == "hello" or a3 == "world" then
+elif a2 == "hello" or a3 == "world"
     # statements
-else then
+else
     # statements
 end  
 ```
@@ -66,7 +66,7 @@ fun <function name> [ <argument1, argument2>, ... ]
 end
 
 fun fibonacci_number [ n ]
-    if n < 2 then
+    if n < 2
         return n
     end
     return fibonacci_number [ n - 1 ] + fibonacci_number [ n - 2 ]
@@ -97,14 +97,14 @@ end
 
 # terminate the loop
 loop <variable> in <lower_bound>..<upper_bound> by <step>
-    if <other_condition> then
+    if <other_condition>
         break
     end
 end
 
 # jump to the next iteration
 loop <variable> in <lower_bound>..<upper_bound> by <step>
-    if <other_condition> then
+    if <other_condition>
         next
     end
 end

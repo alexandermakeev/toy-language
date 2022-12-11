@@ -108,18 +108,15 @@ class StatementParserTest {
                 Token.builder().type(TokenType.Variable).value("a").build(),
                 Token.builder().type(TokenType.Operator).value(">").build(),
                 Token.builder().type(TokenType.Numeric).value("5").build(),
-                Token.builder().type(TokenType.Keyword).value("then").build(),
                 Token.builder().type(TokenType.Keyword).value("print").build(),
                 Token.builder().type(TokenType.Text).value("a is greater than 5").build(),
                 Token.builder().type(TokenType.Keyword).value("elif").build(),
                 Token.builder().type(TokenType.Variable).value("a").build(),
                 Token.builder().type(TokenType.Operator).value(">=").build(),
                 Token.builder().type(TokenType.Numeric).value("1").build(),
-                Token.builder().type(TokenType.Keyword).value("then").build(),
                 Token.builder().type(TokenType.Keyword).value("print").build(),
                 Token.builder().type(TokenType.Text).value("a is greater than or equal to 1").build(),
                 Token.builder().type(TokenType.Keyword).value("else").build(),
-                Token.builder().type(TokenType.Keyword).value("then").build(),
                 Token.builder().type(TokenType.Keyword).value("print").build(),
                 Token.builder().type(TokenType.Text).value("a is less than 1").build(),
                 Token.builder().type(TokenType.Keyword).value("end").build()
@@ -213,9 +210,9 @@ class StatementParserTest {
                 Token.builder().type(TokenType.Operator).value("new").row(2).build(),
                 Token.builder().type(TokenType.Variable).value("Person").row(2).build(),
                 Token.builder().type(TokenType.GroupDivider).value("[").row(2).build(),
-                Token.builder().type(TokenType.Text).value("Robert").row(2).build(),
+                Token.builder().type(TokenType.Text).value("Randy Marsh").row(2).build(),
                 Token.builder().type(TokenType.GroupDivider).value(",").row(2).build(),
-                Token.builder().type(TokenType.Numeric).value("25").row(2).build(),
+                Token.builder().type(TokenType.Numeric).value("45").row(2).build(),
                 Token.builder().type(TokenType.GroupDivider).value("]").row(2).build(),
                 Token.builder().type(TokenType.LineBreak).value("\n").row(2).build(),
                 Token.builder().type(TokenType.Keyword).value("print").row(3).build(),
@@ -258,8 +255,8 @@ class StatementParserTest {
         assertEquals("Person", definition.getName());
         assertEquals(Arrays.asList("name", "age"), definition.getArguments());
 
-        assertEquals("Robert", structure.getArguments().get("name").toString());
-        assertEquals("25", structure.getArguments().get("age").toString());
+        assertEquals("Randy Marsh", structure.getArguments().get("name").toString());
+        assertEquals("45", structure.getArguments().get("age").toString());
 
         // 2nd statement
         PrintStatement printStatement = (PrintStatement) statements.get(1);

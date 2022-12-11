@@ -1,14 +1,14 @@
 fun binary_search [ arr, n, lo, hi, key ]
-    if hi >= lo then
+    if hi >= lo
         mid = (hi + lo) // 2
-        if arr{mid} < key then
+        if arr{mid} < key
             return binary_search [ arr, n, mid + 1, hi, key ]
-        elif arr{mid} > key then
+        elif arr{mid} > key
             return binary_search [ arr, n, lo, mid - 1, key ]
-        else then
+        else
             return mid
         end
-    else then
+    else
         return -1
     end
     return
