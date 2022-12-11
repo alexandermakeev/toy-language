@@ -1,6 +1,7 @@
 package org.example.toylanguage;
 
 import lombok.SneakyThrows;
+import org.example.toylanguage.context.MemoryContext;
 import org.example.toylanguage.statement.Statement;
 import org.example.toylanguage.token.Token;
 
@@ -15,9 +16,15 @@ public class ToyLanguage {
         String source = Files.readString(path);
         LexicalParser lexicalParser = new LexicalParser(source);
         List<Token> tokens = lexicalParser.parse();
-        StatementParser statementParser = new StatementParser(tokens);
-        Statement statement = statementParser.parse();
-        statement.execute();
+
+        MemoryContext.pushScope(MemoryContext.newScope());
+        try {
+            StatementParser statementParser = new StatementParser(tokens);
+            Statement statement = statementParser.parse();
+            statement.execute();
+        } finally {
+            MemoryContext.endScope();
+        }
     }
 
 }

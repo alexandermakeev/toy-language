@@ -33,7 +33,7 @@ public class ConditionStatement implements Statement {
                 throw new ExecutionException(String.format("Cannot compare non logical value `%s`", value));
             }
             if (((LogicalValue) value).getValue()) {
-                MemoryContext.newScope();
+                MemoryContext.pushScope(MemoryContext.newScope());
                 try {
                     CompositeStatement statement = entry.getValue();
                     statement.execute();
