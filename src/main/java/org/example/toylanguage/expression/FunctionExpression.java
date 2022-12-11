@@ -3,9 +3,13 @@ package org.example.toylanguage.expression;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.example.toylanguage.context.MemoryContext;
+import org.example.toylanguage.context.MemoryScope;
 import org.example.toylanguage.context.ReturnContext;
+import org.example.toylanguage.context.definition.ClassDefinition;
 import org.example.toylanguage.context.definition.DefinitionContext;
+import org.example.toylanguage.context.definition.DefinitionScope;
 import org.example.toylanguage.context.definition.FunctionDefinition;
+import org.example.toylanguage.expression.value.ClassValue;
 import org.example.toylanguage.expression.value.NullValue;
 import org.example.toylanguage.expression.value.Value;
 import org.example.toylanguage.statement.FunctionStatement;
@@ -24,7 +28,38 @@ public class FunctionExpression implements Expression {
     public Value<?> evaluate() {
         //initialize function arguments
         List<Value<?>> values = argumentExpressions.stream().map(Expression::evaluate).collect(Collectors.toList());
+        return evaluate(values);
+    }
 
+    /**
+     * Evaluate class's function
+     *
+     * @param classValue instance of class where the function is placed in
+     */
+    public Value<?> evaluate(ClassValue classValue) {
+        //initialize function arguments
+        List<Value<?>> values = argumentExpressions.stream().map(Expression::evaluate).collect(Collectors.toList());
+
+        //get definition and memory scopes from class definition
+        ClassDefinition classDefinition = classValue.getValue();
+        DefinitionScope classDefinitionScope = classDefinition.getDefinitionScope();
+        MemoryScope memoryScope = classValue.getMemoryScope();
+
+        //set class's definition and memory scopes
+        DefinitionContext.pushScope(classDefinitionScope);
+        MemoryContext.pushScope(memoryScope);
+
+        try {
+            //proceed function
+            return evaluate(values);
+        } finally {
+            //release class's DefinitionScope and MemoryScope
+            DefinitionContext.endScope();
+            MemoryContext.endScope();
+        }
+    }
+
+    public Value<?> evaluate(List<Value<?>> values) {
         //get function's definition and statement
         FunctionDefinition definition = DefinitionContext.getScope().getFunction(name);
         FunctionStatement statement = definition.getStatement();
