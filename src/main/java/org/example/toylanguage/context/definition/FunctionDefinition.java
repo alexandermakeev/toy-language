@@ -1,4 +1,4 @@
-package org.example.toylanguage.definition;
+package org.example.toylanguage.context.definition;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
