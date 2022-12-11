@@ -2,25 +2,25 @@ package org.example.toylanguage;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.example.toylanguage.context.definition.ClassDefinition;
 import org.example.toylanguage.context.definition.DefinitionContext;
+import org.example.toylanguage.context.definition.DefinitionScope;
 import org.example.toylanguage.context.definition.FunctionDefinition;
 import org.example.toylanguage.exception.SyntaxException;
-import org.example.toylanguage.expression.*;
-import org.example.toylanguage.expression.operator.*;
+import org.example.toylanguage.expression.Expression;
+import org.example.toylanguage.expression.ExpressionReader;
+import org.example.toylanguage.expression.VariableExpression;
+import org.example.toylanguage.expression.operator.OperatorExpression;
 import org.example.toylanguage.expression.value.LogicalValue;
-import org.example.toylanguage.expression.value.NumericValue;
-import org.example.toylanguage.expression.value.TextValue;
 import org.example.toylanguage.statement.*;
 import org.example.toylanguage.statement.loop.*;
 import org.example.toylanguage.token.Token;
 import org.example.toylanguage.token.TokenType;
 import org.example.toylanguage.token.TokensStack;
 
-import java.util.*;
-
-import static org.example.toylanguage.expression.value.NullValue.NULL_INSTANCE;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 @RequiredArgsConstructor
 @Getter
@@ -29,10 +29,15 @@ public class StatementParser {
     private final Scanner scanner;
     private final CompositeStatement compositeStatement;
 
-    public static void parse(StatementParser parent, CompositeStatement compositeStatement) {
-        StatementParser parser = new StatementParser(parent.getTokens(), parent.getScanner(), compositeStatement);
-        while (parser.hasNextStatement()) {
-            parser.parseExpression();
+    public static void parse(StatementParser parent, CompositeStatement compositeStatement, DefinitionScope definitionScope) {
+        DefinitionContext.pushScope(definitionScope);
+        try {
+            StatementParser parser = new StatementParser(parent.getTokens(), parent.getScanner(), compositeStatement);
+            while (parser.hasNextStatement()) {
+                parser.parseExpression();
+            }
+        } finally {
+            DefinitionContext.endScope();
         }
     }
 
@@ -138,7 +143,8 @@ public class StatementParser {
 
             //read case statements
             CompositeStatement caseStatement = new CompositeStatement();
-            StatementParser.parse(this, caseStatement);
+            DefinitionScope caseScope = DefinitionContext.newScope();
+            StatementParser.parse(this, caseStatement, caseScope);
 
             //add case
             conditionStatement.addCase(caseCondition, caseStatement);
@@ -169,10 +175,13 @@ public class StatementParser {
         }
 
         // add class definition
-        ClassDefinition classDefinition = new ClassDefinition(type.getValue(), arguments);
+        ClassStatement classStatement = new ClassStatement();
+        DefinitionScope classScope = DefinitionContext.newScope();
+        ClassDefinition classDefinition = new ClassDefinition(type.getValue(), arguments, classStatement, classScope);
         DefinitionContext.getScope().addClass(classDefinition);
 
         //parse class statements
+        StatementParser.parse(this, classStatement, classScope);
         tokens.next(TokenType.Keyword, "end");
     }
 
@@ -198,11 +207,12 @@ public class StatementParser {
 
         //add function definition
         FunctionStatement functionStatement = new FunctionStatement();
-        FunctionDefinition functionDefinition = new FunctionDefinition(type.getValue(), arguments, functionStatement);
+        DefinitionScope functionScope = DefinitionContext.newScope();
+        FunctionDefinition functionDefinition = new FunctionDefinition(type.getValue(), arguments, functionStatement, functionScope);
         DefinitionContext.getScope().addFunction(functionDefinition);
 
         //parse function statements
-        StatementParser.parse(this, functionStatement);
+        StatementParser.parse(this, functionStatement, functionScope);
         tokens.next(TokenType.Keyword, "end");
     }
 
@@ -247,7 +257,8 @@ public class StatementParser {
                 loopStatement = new WhileLoopStatement(loopExpression);
             }
 
-            StatementParser.parse(this, loopStatement);
+            DefinitionScope loopScope = DefinitionContext.newScope();
+            StatementParser.parse(this, loopStatement, loopScope);
             tokens.next(TokenType.Keyword, "end");
 
             compositeStatement.addStatement(loopStatement);

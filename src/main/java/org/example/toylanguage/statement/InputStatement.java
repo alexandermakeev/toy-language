@@ -2,8 +2,7 @@ package org.example.toylanguage.statement;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.example.toylanguage.expression.VariableExpression;
-import org.example.toylanguage.expression.operator.AssignmentOperator;
+import org.example.toylanguage.context.MemoryContext;
 import org.example.toylanguage.expression.value.LogicalValue;
 import org.example.toylanguage.expression.value.NumericValue;
 import org.example.toylanguage.expression.value.TextValue;
@@ -32,7 +31,6 @@ public class InputStatement implements Statement {
             value = new TextValue(line);
         }
 
-        new AssignmentOperator(new VariableExpression(name), value)
-                .evaluate();
+        MemoryContext.getScope().set(name, value);
     }
 }

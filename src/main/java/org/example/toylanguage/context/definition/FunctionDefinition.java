@@ -15,4 +15,5 @@ public class FunctionDefinition implements Definition {
     private final String name;
     private final List<String> arguments;
     private final FunctionStatement statement;
+    private final DefinitionScope definitionScope;
 }
