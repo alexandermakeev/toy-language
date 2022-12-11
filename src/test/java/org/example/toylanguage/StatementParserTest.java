@@ -1,7 +1,6 @@
 package org.example.toylanguage;
 
 import org.example.toylanguage.context.MemoryContext;
-import org.example.toylanguage.context.definition.ClassDefinition;
 import org.example.toylanguage.context.definition.DefinitionContext;
 import org.example.toylanguage.expression.ClassExpression;
 import org.example.toylanguage.expression.Expression;
@@ -16,7 +15,6 @@ import org.example.toylanguage.token.TokenType;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -273,14 +271,11 @@ class StatementParserTest {
         ClassInstanceOperator instanceOperator = (ClassInstanceOperator) assignStatement.getRight();
 
         assertEquals(ClassExpression.class, instanceOperator.getValue().getClass());
-        ClassExpression classExpression = (ClassExpression) instanceOperator.getValue();
-        ClassDefinition definition = classExpression.getDefinition();
+        ClassExpression type = (ClassExpression) instanceOperator.getValue();
 
-        assertEquals("Person", definition.getName());
-        assertEquals(Arrays.asList("name", "age"), definition.getArguments());
-
-        assertEquals("Randy Marsh", classExpression.getArguments().get("name").toString());
-        assertEquals("45", classExpression.getArguments().get("age").toString());
+        assertEquals("Person", type.getName());
+        assertEquals("Randy Marsh", type.getArgumentExpressions().get(0).toString());
+        assertEquals("45", type.getArgumentExpressions().get(1).toString());
 
         // 2nd statement
         PrintStatement printStatement = (PrintStatement) statements.get(1);

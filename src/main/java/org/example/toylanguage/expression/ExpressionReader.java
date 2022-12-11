@@ -2,9 +2,6 @@ package org.example.toylanguage.expression;
 
 import lombok.Getter;
 import lombok.SneakyThrows;
-import org.example.toylanguage.context.definition.ClassDefinition;
-import org.example.toylanguage.context.definition.DefinitionContext;
-import org.example.toylanguage.context.definition.FunctionDefinition;
 import org.example.toylanguage.exception.SyntaxException;
 import org.example.toylanguage.expression.operator.*;
 import org.example.toylanguage.expression.value.LogicalValue;
@@ -145,7 +142,6 @@ public class ExpressionReader {
 
     // read class instance: new Class[arguments]
     private ClassExpression readClassInstance(Token token) {
-        ClassDefinition definition = DefinitionContext.getScope().getClass(token.getValue());
         List<Expression> arguments = new ArrayList<>();
         if (tokens.peekSameLine(TokenType.GroupDivider, "[")) {
 
@@ -161,12 +157,11 @@ public class ExpressionReader {
 
             tokens.next(TokenType.GroupDivider, "]"); //skip close square bracket
         }
-        return new ClassExpression(definition, arguments);
+        return new ClassExpression(token.getValue(), arguments);
     }
 
     // read function invocation: function_call[arguments]
     private FunctionExpression readFunctionInvocation(Token token) {
-        FunctionDefinition definition = DefinitionContext.getScope().getFunction(token.getValue());
         List<Expression> arguments = new ArrayList<>();
         if (tokens.peekSameLine(TokenType.GroupDivider, "[")) {
 
@@ -183,7 +178,7 @@ public class ExpressionReader {
             tokens.next(TokenType.GroupDivider, "]"); //skip close square bracket
         }
 
-        return new FunctionExpression(definition, arguments);
+        return new FunctionExpression(token.getValue(), arguments);
     }
 
     // read array instantiation: array = {1,2,3}

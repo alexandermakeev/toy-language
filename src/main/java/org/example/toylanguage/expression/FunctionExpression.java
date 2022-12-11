@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.example.toylanguage.context.MemoryContext;
 import org.example.toylanguage.context.ReturnContext;
+import org.example.toylanguage.context.definition.DefinitionContext;
 import org.example.toylanguage.context.definition.FunctionDefinition;
 import org.example.toylanguage.expression.value.NullValue;
 import org.example.toylanguage.expression.value.Value;
@@ -16,15 +17,17 @@ import java.util.stream.IntStream;
 @RequiredArgsConstructor
 @Getter
 public class FunctionExpression implements Expression {
-    private final FunctionDefinition definition;
-    private final List<Expression> arguments;
+    private final String name;
+    private final List<Expression> argumentExpressions;
 
     @Override
     public Value<?> evaluate() {
-        FunctionStatement statement = definition.getStatement();
-
         //initialize function arguments
-        List<Value<?>> values = arguments.stream().map(Expression::evaluate).collect(Collectors.toList());
+        List<Value<?>> values = argumentExpressions.stream().map(Expression::evaluate).collect(Collectors.toList());
+
+        //get function's definition and statement
+        FunctionDefinition definition = DefinitionContext.getScope().getFunction(name);
+        FunctionStatement statement = definition.getStatement();
 
         //set new memory scope
         MemoryContext.pushScope(MemoryContext.newScope());
