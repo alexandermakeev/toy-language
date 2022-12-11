@@ -9,7 +9,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Getter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class StructureDefinition implements Definition {
+public class ClassDefinition implements Definition {
     @EqualsAndHashCode.Include
     private final String name;
     private final List<String> arguments;

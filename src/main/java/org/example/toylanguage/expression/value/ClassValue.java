@@ -1,7 +1,7 @@
 package org.example.toylanguage.expression.value;
 
-import org.example.toylanguage.definition.StructureDefinition;
-import org.example.toylanguage.expression.StructureExpression;
+import org.example.toylanguage.definition.ClassDefinition;
+import org.example.toylanguage.expression.ClassExpression;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -10,10 +10,10 @@ import java.util.stream.Collectors;
 
 import static org.example.toylanguage.expression.value.NullValue.NULL_INSTANCE;
 
-public class StructureValue extends IterableValue<Map<String, Value<?>>> {
-    private final StructureDefinition definition;
+public class ClassValue extends IterableValue<Map<String, Value<?>>> {
+    private final ClassDefinition definition;
 
-    public StructureValue(StructureExpression expression) {
+    public ClassValue(ClassExpression expression) {
         super(expression.getArguments()
                 .entrySet()
                 .stream()

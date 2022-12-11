@@ -1,8 +1,8 @@
 package org.example.toylanguage;
 
-import org.example.toylanguage.definition.StructureDefinition;
+import org.example.toylanguage.definition.ClassDefinition;
 import org.example.toylanguage.expression.Expression;
-import org.example.toylanguage.expression.StructureExpression;
+import org.example.toylanguage.expression.ClassExpression;
 import org.example.toylanguage.expression.VariableExpression;
 import org.example.toylanguage.expression.operator.*;
 import org.example.toylanguage.expression.value.LogicalValue;
@@ -24,10 +24,7 @@ class StatementParserTest {
 
     @Test
     public void printTest() {
-        List<Token> tokens = Arrays.asList(
-                Token.builder().type(TokenType.Keyword).value("print").build(),
-                Token.builder().type(TokenType.Text).value("Hello World").build()
-        );
+        List<Token> tokens = Arrays.asList(Token.builder().type(TokenType.Keyword).value("print").build(), Token.builder().type(TokenType.Text).value("Hello World").build());
         StatementParser parser = new StatementParser(tokens);
         CompositeStatement statement = (CompositeStatement) parser.parse();
 
@@ -46,10 +43,7 @@ class StatementParserTest {
     @Test
     public void testInput() {
 
-        List<Token> tokens = Arrays.asList(
-                Token.builder().type(TokenType.Keyword).value("input").build(),
-                Token.builder().type(TokenType.Variable).value("a").build()
-        );
+        List<Token> tokens = Arrays.asList(Token.builder().type(TokenType.Keyword).value("input").build(), Token.builder().type(TokenType.Variable).value("a").build());
         StatementParser parser = new StatementParser(tokens);
         CompositeStatement statement = (CompositeStatement) parser.parse();
 
@@ -65,13 +59,7 @@ class StatementParserTest {
     @Test
     public void testAssignment() {
 
-        List<Token> tokens = Arrays.asList(
-                Token.builder().type(TokenType.Variable).value("a").build(),
-                Token.builder().type(TokenType.Operator).value("=").build(),
-                Token.builder().type(TokenType.Numeric).value("2").build(),
-                Token.builder().type(TokenType.Operator).value("+").build(),
-                Token.builder().type(TokenType.Numeric).value("5").build()
-        );
+        List<Token> tokens = Arrays.asList(Token.builder().type(TokenType.Variable).value("a").build(), Token.builder().type(TokenType.Operator).value("=").build(), Token.builder().type(TokenType.Numeric).value("2").build(), Token.builder().type(TokenType.Operator).value("+").build(), Token.builder().type(TokenType.Numeric).value("5").build());
         StatementParser parser = new StatementParser(tokens);
         CompositeStatement statement = (CompositeStatement) parser.parse();
 
@@ -103,24 +91,7 @@ class StatementParserTest {
     @Test
     public void testCondition() {
 
-        List<Token> tokens = Arrays.asList(
-                Token.builder().type(TokenType.Keyword).value("if").build(),
-                Token.builder().type(TokenType.Variable).value("a").build(),
-                Token.builder().type(TokenType.Operator).value(">").build(),
-                Token.builder().type(TokenType.Numeric).value("5").build(),
-                Token.builder().type(TokenType.Keyword).value("print").build(),
-                Token.builder().type(TokenType.Text).value("a is greater than 5").build(),
-                Token.builder().type(TokenType.Keyword).value("elif").build(),
-                Token.builder().type(TokenType.Variable).value("a").build(),
-                Token.builder().type(TokenType.Operator).value(">=").build(),
-                Token.builder().type(TokenType.Numeric).value("1").build(),
-                Token.builder().type(TokenType.Keyword).value("print").build(),
-                Token.builder().type(TokenType.Text).value("a is greater than or equal to 1").build(),
-                Token.builder().type(TokenType.Keyword).value("else").build(),
-                Token.builder().type(TokenType.Keyword).value("print").build(),
-                Token.builder().type(TokenType.Text).value("a is less than 1").build(),
-                Token.builder().type(TokenType.Keyword).value("end").build()
-        );
+        List<Token> tokens = Arrays.asList(Token.builder().type(TokenType.Keyword).value("if").build(), Token.builder().type(TokenType.Variable).value("a").build(), Token.builder().type(TokenType.Operator).value(">").build(), Token.builder().type(TokenType.Numeric).value("5").build(), Token.builder().type(TokenType.Keyword).value("print").build(), Token.builder().type(TokenType.Text).value("a is greater than 5").build(), Token.builder().type(TokenType.Keyword).value("elif").build(), Token.builder().type(TokenType.Variable).value("a").build(), Token.builder().type(TokenType.Operator).value(">=").build(), Token.builder().type(TokenType.Numeric).value("1").build(), Token.builder().type(TokenType.Keyword).value("print").build(), Token.builder().type(TokenType.Text).value("a is greater than or equal to 1").build(), Token.builder().type(TokenType.Keyword).value("else").build(), Token.builder().type(TokenType.Keyword).value("print").build(), Token.builder().type(TokenType.Text).value("a is less than 1").build(), Token.builder().type(TokenType.Keyword).value("end").build());
         StatementParser parser = new StatementParser(tokens);
         CompositeStatement statement = (CompositeStatement) parser.parse();
 
@@ -195,39 +166,8 @@ class StatementParserTest {
     }
 
     @Test
-    public void testObject() {
-        List<Token> tokens = Arrays.asList(
-                Token.builder().type(TokenType.Keyword).value("struct").row(1).build(),
-                Token.builder().type(TokenType.Variable).value("Person").row(1).build(),
-                Token.builder().type(TokenType.GroupDivider).value("[").row(1).build(),
-                Token.builder().type(TokenType.Variable).value("name").row(1).build(),
-                Token.builder().type(TokenType.GroupDivider).value(",").row(1).build(),
-                Token.builder().type(TokenType.Variable).value("age").row(1).build(),
-                Token.builder().type(TokenType.GroupDivider).value("]").row(1).build(),
-                Token.builder().type(TokenType.LineBreak).value("\n").row(1).build(),
-                Token.builder().type(TokenType.Variable).value("person").row(2).build(),
-                Token.builder().type(TokenType.Operator).value("=").row(2).build(),
-                Token.builder().type(TokenType.Operator).value("new").row(2).build(),
-                Token.builder().type(TokenType.Variable).value("Person").row(2).build(),
-                Token.builder().type(TokenType.GroupDivider).value("[").row(2).build(),
-                Token.builder().type(TokenType.Text).value("Randy Marsh").row(2).build(),
-                Token.builder().type(TokenType.GroupDivider).value(",").row(2).build(),
-                Token.builder().type(TokenType.Numeric).value("45").row(2).build(),
-                Token.builder().type(TokenType.GroupDivider).value("]").row(2).build(),
-                Token.builder().type(TokenType.LineBreak).value("\n").row(2).build(),
-                Token.builder().type(TokenType.Keyword).value("print").row(3).build(),
-                Token.builder().type(TokenType.Variable).value("person").row(3).build(),
-                Token.builder().type(TokenType.Operator).value("::").row(3).build(),
-                Token.builder().type(TokenType.Variable).value("name").row(3).build(),
-                Token.builder().type(TokenType.Operator).value("+").row(3).build(),
-                Token.builder().type(TokenType.Text).value(" is ").row(3).build(),
-                Token.builder().type(TokenType.Operator).value("+").row(3).build(),
-                Token.builder().type(TokenType.Variable).value("person").row(3).build(),
-                Token.builder().type(TokenType.Operator).value("::").row(3).build(),
-                Token.builder().type(TokenType.Variable).value("age").row(3).build(),
-                Token.builder().type(TokenType.Operator).value("+").row(3).build(),
-                Token.builder().type(TokenType.Text).value(" years old").row(3).build()
-        );
+    public void testClass() {
+        List<Token> tokens = Arrays.asList(Token.builder().type(TokenType.Keyword).value("class").row(1).build(), Token.builder().type(TokenType.Variable).value("Person").row(1).build(), Token.builder().type(TokenType.GroupDivider).value("[").row(1).build(), Token.builder().type(TokenType.Variable).value("name").row(1).build(), Token.builder().type(TokenType.GroupDivider).value(",").row(1).build(), Token.builder().type(TokenType.Variable).value("age").row(1).build(), Token.builder().type(TokenType.GroupDivider).value("]").row(1).build(), Token.builder().type(TokenType.LineBreak).value("\n").row(1).build(), Token.builder().type(TokenType.Keyword).value("end").row(2).build(), Token.builder().type(TokenType.LineBreak).value("\n").row(2).build(), Token.builder().type(TokenType.Variable).value("person").row(3).build(), Token.builder().type(TokenType.Operator).value("=").row(3).build(), Token.builder().type(TokenType.Operator).value("new").row(3).build(), Token.builder().type(TokenType.Variable).value("Person").row(3).build(), Token.builder().type(TokenType.GroupDivider).value("[").row(3).build(), Token.builder().type(TokenType.Text).value("Randy Marsh").row(3).build(), Token.builder().type(TokenType.GroupDivider).value(",").row(3).build(), Token.builder().type(TokenType.Numeric).value("45").row(3).build(), Token.builder().type(TokenType.GroupDivider).value("]").row(3).build(), Token.builder().type(TokenType.LineBreak).value("\n").row(3).build(), Token.builder().type(TokenType.Keyword).value("print").row(4).build(), Token.builder().type(TokenType.Variable).value("person").row(4).build(), Token.builder().type(TokenType.Operator).value("::").row(4).build(), Token.builder().type(TokenType.Variable).value("name").row(4).build(), Token.builder().type(TokenType.Operator).value("+").row(4).build(), Token.builder().type(TokenType.Text).value(" is ").row(4).build(), Token.builder().type(TokenType.Operator).value("+").row(4).build(), Token.builder().type(TokenType.Variable).value("person").row(4).build(), Token.builder().type(TokenType.Operator).value("::").row(4).build(), Token.builder().type(TokenType.Variable).value("age").row(4).build(), Token.builder().type(TokenType.Operator).value("+").row(4).build(), Token.builder().type(TokenType.Text).value(" years old").row(4).build());
         StatementParser parser = new StatementParser(tokens);
         CompositeStatement statement = (CompositeStatement) parser.parse();
 
@@ -245,18 +185,18 @@ class StatementParserTest {
         VariableExpression variableExpression = (VariableExpression) assignStatement.getLeft();
         assertEquals("person", variableExpression.getName());
 
-        assertEquals(StructureInstanceOperator.class, assignStatement.getRight().getClass());
-        StructureInstanceOperator instanceOperator = (StructureInstanceOperator) assignStatement.getRight();
+        assertEquals(ClassInstanceOperator.class, assignStatement.getRight().getClass());
+        ClassInstanceOperator instanceOperator = (ClassInstanceOperator) assignStatement.getRight();
 
-        assertEquals(StructureExpression.class, instanceOperator.getValue().getClass());
-        StructureExpression structure = (StructureExpression) instanceOperator.getValue();
-        StructureDefinition definition = structure.getDefinition();
+        assertEquals(ClassExpression.class, instanceOperator.getValue().getClass());
+        ClassExpression classExpression = (ClassExpression) instanceOperator.getValue();
+        ClassDefinition definition = classExpression.getDefinition();
 
         assertEquals("Person", definition.getName());
         assertEquals(Arrays.asList("name", "age"), definition.getArguments());
 
-        assertEquals("Randy Marsh", structure.getArguments().get("name").toString());
-        assertEquals("45", structure.getArguments().get("age").toString());
+        assertEquals("Randy Marsh", classExpression.getArguments().get("name").toString());
+        assertEquals("45", classExpression.getArguments().get("age").toString());
 
         // 2nd statement
         PrintStatement printStatement = (PrintStatement) statements.get(1);
@@ -265,14 +205,7 @@ class StatementParserTest {
 
     @Test
     public void testComment() {
-        List<Token> tokens = Arrays.asList(
-                Token.builder().type(TokenType.Comment).value("# a = 5").build(),
-                Token.builder().type(TokenType.LineBreak).value("\n").build(),
-                Token.builder().type(TokenType.Variable).value("a").build(),
-                Token.builder().type(TokenType.Operator).value("=").build(),
-                Token.builder().type(TokenType.Numeric).value("5").build(),
-                Token.builder().type(TokenType.Comment).value("# a is equal to 5").build()
-        );
+        List<Token> tokens = Arrays.asList(Token.builder().type(TokenType.Comment).value("# a = 5").build(), Token.builder().type(TokenType.LineBreak).value("\n").build(), Token.builder().type(TokenType.Variable).value("a").build(), Token.builder().type(TokenType.Operator).value("=").build(), Token.builder().type(TokenType.Numeric).value("5").build(), Token.builder().type(TokenType.Comment).value("# a is equal to 5").build());
         StatementParser parser = new StatementParser(tokens);
         CompositeStatement statement = (CompositeStatement) parser.parse();
 

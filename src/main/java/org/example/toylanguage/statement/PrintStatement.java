@@ -1,11 +1,11 @@
 package org.example.toylanguage.statement;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.example.toylanguage.expression.Expression;
 import org.example.toylanguage.expression.value.Value;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Getter
 public class PrintStatement implements Statement {
     private final Expression expression;

@@ -5,7 +5,8 @@
 # - right sub trees are identical
 #
 
-struct TreeNode [ value, left, right ]
+class TreeNode [ value, left, right ]
+end
 
 fun is_same_tree [ node1, node2 ]
     if node1 == null and node2 == null

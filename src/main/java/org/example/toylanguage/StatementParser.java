@@ -1,8 +1,8 @@
 package org.example.toylanguage;
 
 import lombok.SneakyThrows;
+import org.example.toylanguage.definition.ClassDefinition;
 import org.example.toylanguage.definition.FunctionDefinition;
-import org.example.toylanguage.definition.StructureDefinition;
 import org.example.toylanguage.exception.SyntaxException;
 import org.example.toylanguage.expression.*;
 import org.example.toylanguage.expression.operator.*;
@@ -21,13 +21,13 @@ import static org.example.toylanguage.expression.value.NullValue.NULL_INSTANCE;
 
 public class StatementParser {
     private final TokensStack tokens;
-    private final Map<String, StructureDefinition> structures;
+    private final Map<String, ClassDefinition> classes;
     private final Map<String, FunctionDefinition> functions;
     private final Scanner scanner;
 
     public StatementParser(List<Token> tokens) {
         this.tokens = new TokensStack(tokens);
-        this.structures = new HashMap<>();
+        this.classes = new HashMap<>();
         this.functions = new HashMap<>();
         this.scanner = new Scanner(System.in);
     }
@@ -98,7 +98,7 @@ public class StatementParser {
 
                         return conditionStatement;
                     }
-                    case "struct": {
+                    case "class": {
                         Token type = tokens.next(TokenType.Variable);
 
                         List<String> args = new ArrayList<>();
@@ -118,7 +118,9 @@ public class StatementParser {
                             tokens.next(TokenType.GroupDivider, "]"); //skip close square bracket
                         }
 
-                        structures.put(type.getValue(), new StructureDefinition(type.getValue(), new ArrayList<>(args)));
+                        classes.put(type.getValue(), new ClassDefinition(type.getValue(), new ArrayList<>(args)));
+
+                        tokens.next(TokenType.Keyword, "end");
 
                         return null;
                     }
@@ -278,8 +280,8 @@ public class StatementParser {
                                 break;
                             case Variable:
                             default:
-                                if (!operators.isEmpty() && operators.peek() == Operator.StructureInstance) {
-                                    operand = readStructureInstance(token);
+                                if (!operators.isEmpty() && operators.peek() == Operator.ClassInstance) {
+                                    operand = readClassInstance(token);
                                 } else if (tokens.peekSameLine(TokenType.GroupDivider, "[")) {
                                     operand = readFunctionInvocation(token);
                                 } else if (tokens.peekSameLine(TokenType.GroupDivider, "{")) {
@@ -324,11 +326,11 @@ public class StatementParser {
             }
         }
 
-        // read structure instance: new Struct[arguments]
-        private StructureExpression readStructureInstance(Token token) {
-            StructureDefinition definition = structures.get(token.getValue());
+        // read class instance: new Class[arguments]
+        private ClassExpression readClassInstance(Token token) {
+            ClassDefinition definition = classes.get(token.getValue());
             if (definition == null) {
-                throw new SyntaxException(String.format("Structure is not defined: %s", token.getValue()));
+                throw new SyntaxException(String.format("Class is not defined: %s", token.getValue()));
             }
 
             List<Expression> arguments = new ArrayList<>();
@@ -346,7 +348,7 @@ public class StatementParser {
 
                 tokens.next(TokenType.GroupDivider, "]"); //skip close square bracket
             }
-            return new StructureExpression(definition, arguments);
+            return new ClassExpression(definition, arguments);
         }
 
         // read function invocation: function_call[arguments]

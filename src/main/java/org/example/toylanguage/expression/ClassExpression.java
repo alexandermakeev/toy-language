@@ -1,8 +1,8 @@
 package org.example.toylanguage.expression;
 
 import lombok.Getter;
-import org.example.toylanguage.definition.StructureDefinition;
-import org.example.toylanguage.expression.value.StructureValue;
+import org.example.toylanguage.definition.ClassDefinition;
+import org.example.toylanguage.expression.value.ClassValue;
 import org.example.toylanguage.expression.value.Value;
 
 import java.util.List;
@@ -11,11 +11,11 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Getter
-public class StructureExpression implements Expression {
-    private final StructureDefinition definition;
+public class ClassExpression implements Expression {
+    private final ClassDefinition definition;
     private final Map<String, Expression> arguments;
 
-    public StructureExpression(StructureDefinition definition, List<Expression> arguments) {
+    public ClassExpression(ClassDefinition definition, List<Expression> arguments) {
         this.definition = definition;
         this.arguments = IntStream.range(0, arguments.size())
                 .boxed()
@@ -24,6 +24,6 @@ public class StructureExpression implements Expression {
 
     @Override
     public Value<?> evaluate() {
-        return new StructureValue(this);
+        return new ClassValue(this);
     }
 }
