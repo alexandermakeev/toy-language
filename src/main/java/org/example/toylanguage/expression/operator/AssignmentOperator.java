@@ -14,9 +14,9 @@ public class AssignmentOperator extends BinaryOperatorExpression {
         if (getLeft() instanceof AssignExpression) {
             Value<?> right = getRight().evaluate();
             ((AssignExpression) getLeft()).assign(right);
+            return getLeft().evaluate();
         } else {
             throw new UnsupportedOperationException();
         }
-        return getLeft().evaluate();
     }
 }

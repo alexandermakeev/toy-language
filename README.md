@@ -171,7 +171,7 @@ lamp_is_on = lamp_instance :: is_on
 lamp_instance :: type = "Led"
 
 # invoke class's function
-led_instance :: turn_off []
+lamp_instance :: turn_off []
 ```
 
 5. Arrays

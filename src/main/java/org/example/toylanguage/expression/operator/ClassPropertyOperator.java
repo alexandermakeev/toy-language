@@ -6,6 +6,7 @@ import org.example.toylanguage.expression.Expression;
 import org.example.toylanguage.expression.FunctionExpression;
 import org.example.toylanguage.expression.VariableExpression;
 import org.example.toylanguage.expression.value.ClassValue;
+import org.example.toylanguage.expression.value.ThisValue;
 import org.example.toylanguage.expression.value.Value;
 
 public class ClassPropertyOperator extends BinaryOperatorExpression implements AssignExpression {
@@ -16,6 +17,12 @@ public class ClassPropertyOperator extends BinaryOperatorExpression implements A
     @Override
     public Value<?> evaluate() {
         Value<?> left = getLeft().evaluate();
+
+        // access class's property via this instance
+        // this :: class_argument
+        if (left instanceof ThisValue) {
+            left = ((ThisValue) left).getValue();
+        }
 
         if (left instanceof ClassValue) {
             if (getRight() instanceof VariableExpression) {
@@ -35,6 +42,13 @@ public class ClassPropertyOperator extends BinaryOperatorExpression implements A
     @Override
     public void assign(Value<?> value) {
         Value<?> left = getLeft().evaluate();
+
+        // access class's property via this instance
+        // this :: class_argument
+        if (left instanceof ThisValue) {
+            left = ((ThisValue) left).getValue();
+        }
+
         if (left instanceof ClassValue && getRight() instanceof VariableExpression) {
             String propertyName = ((VariableExpression) getRight()).getName();
             ((ClassValue) left).setValue(propertyName, value);

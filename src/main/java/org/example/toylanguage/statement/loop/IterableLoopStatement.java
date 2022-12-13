@@ -1,10 +1,10 @@
 package org.example.toylanguage.statement.loop;
 
 import lombok.RequiredArgsConstructor;
+import org.example.toylanguage.context.MemoryContext;
 import org.example.toylanguage.exception.ExecutionException;
 import org.example.toylanguage.expression.Expression;
 import org.example.toylanguage.expression.VariableExpression;
-import org.example.toylanguage.expression.operator.AssignmentOperator;
 import org.example.toylanguage.expression.value.IterableValue;
 import org.example.toylanguage.expression.value.Value;
 
@@ -32,9 +32,7 @@ public class IterableLoopStatement extends AbstractLoopStatement {
 
     @Override
     protected void preIncrement() {
-        Value<?> next = iterator.next();
-        new AssignmentOperator(variableExpression, next)
-                .evaluate();
+        MemoryContext.getScope().set(variableExpression.getName(), iterator.next());
     }
 
     @Override

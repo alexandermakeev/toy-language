@@ -2,6 +2,7 @@ package org.example.toylanguage.expression;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.example.toylanguage.context.ClassInstanceContext;
 import org.example.toylanguage.context.MemoryContext;
 import org.example.toylanguage.context.MemoryScope;
 import org.example.toylanguage.context.ReturnContext;
@@ -48,18 +49,19 @@ public class FunctionExpression implements Expression {
         //set class's definition and memory scopes
         DefinitionContext.pushScope(classDefinitionScope);
         MemoryContext.pushScope(memoryScope);
+        ClassInstanceContext.pushValue(classValue);
 
         try {
             //proceed function
             return evaluate(values);
         } finally {
-            //release class's DefinitionScope and MemoryScope
             DefinitionContext.endScope();
             MemoryContext.endScope();
+            ClassInstanceContext.popValue();
         }
     }
 
-    public Value<?> evaluate(List<Value<?>> values) {
+    private Value<?> evaluate(List<Value<?>> values) {
         //get function's definition and statement
         FunctionDefinition definition = DefinitionContext.getScope().getFunction(name);
         FunctionStatement statement = definition.getStatement();

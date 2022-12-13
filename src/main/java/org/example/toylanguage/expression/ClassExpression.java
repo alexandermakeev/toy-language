@@ -2,6 +2,7 @@ package org.example.toylanguage.expression;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.example.toylanguage.context.ClassInstanceContext;
 import org.example.toylanguage.context.MemoryContext;
 import org.example.toylanguage.context.MemoryScope;
 import org.example.toylanguage.context.definition.ClassDefinition;
@@ -37,6 +38,7 @@ public class ClassExpression implements Expression {
         try {
             //initialize constructor arguments
             ClassValue classValue = new ClassValue(definition, classScope);
+            ClassInstanceContext.pushValue(classValue);
             IntStream.range(0, definition.getArguments().size()).boxed()
                     .forEach(i -> MemoryContext.getScope()
                             .setLocal(definition.getArguments().get(i), values.size() > i ? values.get(i) : NullValue.NULL_INSTANCE));
@@ -51,8 +53,8 @@ public class ClassExpression implements Expression {
 
             return classValue;
         } finally {
-            // release class memory
             MemoryContext.endScope();
+            ClassInstanceContext.popValue();
         }
     }
 }

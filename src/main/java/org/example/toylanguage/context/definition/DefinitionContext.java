@@ -2,6 +2,11 @@ package org.example.toylanguage.context.definition;
 
 import java.util.Stack;
 
+/**
+ * Holds constructions definitions declared at specific place of code
+ *
+ * @see DefinitionScope
+ */
 public class DefinitionContext {
     private final static Stack<DefinitionScope> scopes = new Stack<>();
 

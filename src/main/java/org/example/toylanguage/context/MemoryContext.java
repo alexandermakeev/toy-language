@@ -3,7 +3,9 @@ package org.example.toylanguage.context;
 import java.util.Stack;
 
 /**
- * Memory context management to isolate locally defined variables
+ * Memory management to isolate defined variables
+ *
+ * @see MemoryScope
  */
 public class MemoryContext {
     private static final Stack<MemoryScope> scopes = new Stack<>();

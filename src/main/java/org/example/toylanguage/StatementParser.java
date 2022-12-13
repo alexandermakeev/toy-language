@@ -51,7 +51,7 @@ public class StatementParser {
     private boolean hasNextStatement() {
         if (!tokens.hasNext())
             return false;
-        if (tokens.peek(TokenType.Operator, TokenType.Variable))
+        if (tokens.peek(TokenType.Operator, TokenType.Variable, TokenType.This))
             return true;
         if (tokens.peek(TokenType.Keyword)) {
             return !tokens.peek(TokenType.Keyword, "elif", "else", "end");
@@ -60,10 +60,11 @@ public class StatementParser {
     }
 
     private void parseExpression() {
-        Token token = tokens.next(TokenType.Keyword, TokenType.Variable, TokenType.Operator);
+        Token token = tokens.next(TokenType.Keyword, TokenType.Variable, TokenType.This, TokenType.Operator);
         switch (token.getType()) {
             case Variable:
             case Operator:
+            case This:
                 parseExpressionStatement();
                 break;
             case Keyword:
@@ -238,14 +239,16 @@ public class StatementParser {
                     tokens.next(TokenType.GroupDivider, "..");
                     Expression upperBound = ExpressionReader.readExpression(tokens);
 
-                    Expression step = null;
                     if (tokens.peek(TokenType.Keyword, "by")) {
                         // loop <variable> in <lower_bound>..<upper_bound> by <step>
                         tokens.next(TokenType.Keyword, "by");
-                        step = ExpressionReader.readExpression(tokens);
+                        Expression step = ExpressionReader.readExpression(tokens);
+                        loopStatement = new ForLoopStatement(variable, bounds, upperBound, step);
+                    } else {
+                        // use default step
+                        // loop <variable> in <lower_bound>..<upper_bound>
+                        loopStatement = new ForLoopStatement(variable, bounds, upperBound);
                     }
-
-                    loopStatement = new ForLoopStatement(variable, bounds, upperBound, step);
 
                 } else {
                     // loop <variable> in <iterable>

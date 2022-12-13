@@ -1,16 +1,14 @@
 package org.example.toylanguage.statement.loop;
 
 import lombok.RequiredArgsConstructor;
+import org.example.toylanguage.context.MemoryContext;
 import org.example.toylanguage.expression.Expression;
 import org.example.toylanguage.expression.VariableExpression;
 import org.example.toylanguage.expression.operator.AdditionOperator;
-import org.example.toylanguage.expression.operator.AssignmentOperator;
 import org.example.toylanguage.expression.operator.LessThanOperator;
 import org.example.toylanguage.expression.value.LogicalValue;
 import org.example.toylanguage.expression.value.NumericValue;
 import org.example.toylanguage.expression.value.Value;
-
-import java.util.Objects;
 
 @RequiredArgsConstructor
 public class ForLoopStatement extends AbstractLoopStatement {
@@ -18,11 +16,15 @@ public class ForLoopStatement extends AbstractLoopStatement {
     private final Expression lowerBound;
     private final Expression uppedBound;
     private final Expression step;
+    private static final Expression DEFAULT_STEP = new NumericValue(1.0);
+
+    public ForLoopStatement(VariableExpression variable, Expression lowerBound, Expression uppedBound) {
+        this(variable, lowerBound, uppedBound, DEFAULT_STEP);
+    }
 
     @Override
     protected void init() {
-        new AssignmentOperator(variable, lowerBound)
-                .evaluate();
+        MemoryContext.getScope().set(variable.getName(), lowerBound.evaluate());
     }
 
     @Override
@@ -38,8 +40,7 @@ public class ForLoopStatement extends AbstractLoopStatement {
 
     @Override
     protected void postIncrement() {
-        AdditionOperator stepOperator = new AdditionOperator(variable, Objects.requireNonNullElseGet(step, () -> new NumericValue(1.0)));
-        new AssignmentOperator(variable, stepOperator)
-                .evaluate();
+        AdditionOperator stepOperator = new AdditionOperator(variable, step);
+        MemoryContext.getScope().set(variable.getName(), stepOperator.evaluate());
     }
 }

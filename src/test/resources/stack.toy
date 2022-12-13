@@ -1,3 +1,19 @@
+main []
+
+fun main []
+    stack = new Stack []
+    loop num in 0..5
+        # push 0,1,2,3,4
+        stack :: push [ num ]
+    end
+
+    size = stack :: size []
+    loop i in 0..size
+        # should print 4,3,2,1,0
+        print stack :: pop []
+    end
+end
+
 class Stack []
     arr = {}
     n = 0
@@ -18,17 +34,3 @@ class Stack []
         return this :: n
     end
 end
-
-fun main []
-    stack = new Stack []
-    loop num in 0..5
-        stack :: push [ num ]
-    end
-
-    size = stack :: size []
-    loop i in 0..size
-        print stack :: pop []
-    end
-end
-
-main []

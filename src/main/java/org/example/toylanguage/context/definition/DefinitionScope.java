@@ -1,7 +1,7 @@
 package org.example.toylanguage.context.definition;
 
 import lombok.Getter;
-import org.example.toylanguage.exception.SyntaxException;
+import org.example.toylanguage.exception.ExecutionException;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -19,10 +19,6 @@ public class DefinitionScope {
         this.parent = parent;
     }
 
-    public DefinitionScope() {
-        this(null);
-    }
-
     public ClassDefinition getClass(String name) {
         Optional<ClassDefinition> classDefinition = classes.stream()
                 .filter(t -> t.getName().equals(name))
@@ -32,14 +28,7 @@ public class DefinitionScope {
         else if (parent != null)
             return parent.getClass(name);
         else
-            throw new SyntaxException(String.format("Class is not defined: %s", name));
-    }
-
-    public boolean containsClass(String name) {
-        if (functions.stream().anyMatch(t -> t.getName().equals(name)))
-            return true;
-        else
-            return parent != null && parent.containsClass(name);
+            throw new ExecutionException(String.format("Class is not defined: %s", name));
     }
 
     public void addClass(ClassDefinition classDefinition) {
@@ -55,14 +44,7 @@ public class DefinitionScope {
         else if (parent != null)
             return parent.getFunction(name);
         else
-            throw new SyntaxException(String.format("Function is not defined: %s", name));
-    }
-
-    public boolean containsFunction(String name) {
-        if (functions.stream().anyMatch(t -> t.getName().equals(name)))
-            return true;
-        else
-            return parent != null && parent.containsFunction(name);
+            throw new ExecutionException(String.format("Function is not defined: %s", name));
     }
 
     public void addFunction(FunctionDefinition functionDefinition) {

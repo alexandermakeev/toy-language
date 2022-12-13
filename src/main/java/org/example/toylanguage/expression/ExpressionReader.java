@@ -17,6 +17,7 @@ import java.util.Objects;
 import java.util.Stack;
 
 import static org.example.toylanguage.expression.value.NullValue.NULL_INSTANCE;
+import static org.example.toylanguage.expression.value.ThisValue.THIS_INSTANCE;
 
 public class ExpressionReader {
     private final Stack<Expression> operands;
@@ -40,7 +41,8 @@ public class ExpressionReader {
     }
 
     private boolean hasNextToken() {
-        if (tokens.peekSameLine(TokenType.Operator, TokenType.Variable, TokenType.Numeric, TokenType.Logical, TokenType.Null, TokenType.Text))
+        if (tokens.peekSameLine(TokenType.Operator, TokenType.Variable, TokenType.Numeric, TokenType.Logical,
+                TokenType.Null, TokenType.This, TokenType.Text))
             return true;
         //beginning of an array
         if (tokens.peekSameLine(TokenType.GroupDivider, "{"))
@@ -91,6 +93,9 @@ public class ExpressionReader {
                             }
                         case Null:
                             operand = NULL_INSTANCE;
+                            break;
+                        case This:
+                            operand = THIS_INSTANCE;
                             break;
                         case Variable:
                         default:
