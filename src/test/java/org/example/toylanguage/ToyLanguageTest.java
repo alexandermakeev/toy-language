@@ -108,4 +108,28 @@ class ToyLanguageTest {
         }
     }
 
+    @Test
+    void stack() throws URISyntaxException, IOException {
+        URL resource = getClass().getClassLoader().getResource("stack.toy");
+        Path path = Paths.get(resource.toURI());
+
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+             PrintStream out = new PrintStream(baos)) {
+
+            System.setOut(out);
+
+            ToyLanguage lang = new ToyLanguage();
+            lang.execute(path);
+
+            assertEquals(
+                    "4\n" +
+                            "3\n" +
+                            "2\n" +
+                            "1\n" +
+                            "0\n",
+                    baos.toString()
+            );
+        }
+    }
+
 }

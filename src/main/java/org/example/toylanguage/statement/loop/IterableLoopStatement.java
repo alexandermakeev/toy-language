@@ -1,24 +1,21 @@
 package org.example.toylanguage.statement.loop;
 
+import lombok.RequiredArgsConstructor;
+import org.example.toylanguage.context.MemoryContext;
 import org.example.toylanguage.exception.ExecutionException;
 import org.example.toylanguage.expression.Expression;
 import org.example.toylanguage.expression.VariableExpression;
-import org.example.toylanguage.expression.operator.AssignmentOperator;
 import org.example.toylanguage.expression.value.IterableValue;
 import org.example.toylanguage.expression.value.Value;
 
 import java.util.Iterator;
 
+@RequiredArgsConstructor
 public class IterableLoopStatement extends AbstractLoopStatement {
     private final VariableExpression variableExpression;
     private final Expression iterableExpression;
 
     private Iterator<Value<?>> iterator;
-
-    public IterableLoopStatement(VariableExpression variableExpression, Expression iterableExpression) {
-        this.variableExpression = variableExpression;
-        this.iterableExpression = iterableExpression;
-    }
 
     @Override
     protected void init() {
@@ -35,9 +32,7 @@ public class IterableLoopStatement extends AbstractLoopStatement {
 
     @Override
     protected void preIncrement() {
-        Value<?> next = iterator.next();
-        new AssignmentOperator(variableExpression, next)
-                .evaluate();
+        MemoryContext.getScope().set(variableExpression.getName(), iterator.next());
     }
 
     @Override

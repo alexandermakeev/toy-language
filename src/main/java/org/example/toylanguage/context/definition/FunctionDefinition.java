@@ -1,4 +1,4 @@
-package org.example.toylanguage.definition;
+package org.example.toylanguage.context.definition;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -15,4 +15,5 @@ public class FunctionDefinition implements Definition {
     private final String name;
     private final List<String> arguments;
     private final FunctionStatement statement;
+    private final DefinitionScope definitionScope;
 }

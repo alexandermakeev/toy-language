@@ -1,6 +1,5 @@
 package org.example.toylanguage.expression.operator;
 
-import org.example.toylanguage.context.VariableScope;
 import org.example.toylanguage.expression.AssignExpression;
 import org.example.toylanguage.expression.Expression;
 import org.example.toylanguage.expression.value.ArrayValue;
@@ -22,7 +21,7 @@ public class ArrayValueOperator extends BinaryOperatorExpression implements Assi
     }
 
     @Override
-    public void assign(Value<?> value, VariableScope variableScope) {
+    public void assign(Value<?> value) {
         Value<?> left = getLeft().evaluate();
         if (left instanceof ArrayValue) {
             Value<?> right = getRight().evaluate();

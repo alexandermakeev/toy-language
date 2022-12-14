@@ -1,17 +1,20 @@
-package org.example.toylanguage.definition;
+package org.example.toylanguage.context.definition;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.example.toylanguage.statement.ClassStatement;
 
 import java.util.List;
 
 @RequiredArgsConstructor
 @Getter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class StructureDefinition implements Definition {
+public class ClassDefinition implements Definition {
     @EqualsAndHashCode.Include
     private final String name;
     private final List<String> arguments;
+    private final ClassStatement statement;
+    private final DefinitionScope definitionScope;
 }
 

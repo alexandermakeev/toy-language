@@ -81,17 +81,17 @@ class LexicalParserTest {
     @Test
     public void testCondition() {
 
-        String source = "if a > 5 then\n" +
+        String source = "if a > 5\n" +
                         "    print \"a is greater than 5\"\n" +
-                        "elif a >= 1 then\n" +
+                        "elif a >= 1\n" +
                         "    print \"a is greater than or equal to 1\"\n" +
-                        "else then\n" +
+                        "else\n" +
                         "    print \"a is less than 1\"\n" +
                         "end";
         LexicalParser parser = new LexicalParser(source);
         List<Token> tokens = parser.parse();
 
-        assertEquals(25, tokens.size());
+        assertEquals(22, tokens.size());
 
         int count = 0;
         assertEquals(TokenType.Keyword, tokens.get(count).getType());
@@ -108,10 +108,6 @@ class LexicalParserTest {
 
         assertEquals(TokenType.Numeric, tokens.get(++count).getType());
         assertEquals("5", tokens.get(count).getValue());
-        assertEquals(1, tokens.get(count).getRow());
-
-        assertEquals(TokenType.Keyword, tokens.get(++count).getType());
-        assertEquals("then", tokens.get(count).getValue());
         assertEquals(1, tokens.get(count).getRow());
 
         assertEquals(TokenType.LineBreak, tokens.get(++count).getType());
@@ -146,10 +142,6 @@ class LexicalParserTest {
         assertEquals("1", tokens.get(count).getValue());
         assertEquals(3, tokens.get(count).getRow());
 
-        assertEquals(TokenType.Keyword, tokens.get(++count).getType());
-        assertEquals("then", tokens.get(count).getValue());
-        assertEquals(3, tokens.get(count).getRow());
-
         assertEquals(TokenType.LineBreak, tokens.get(++count).getType());
         assertEquals("\n", tokens.get(count).getValue());
         assertEquals(3, tokens.get(count).getRow());
@@ -168,10 +160,6 @@ class LexicalParserTest {
 
         assertEquals(TokenType.Keyword, tokens.get(++count).getType());
         assertEquals("else", tokens.get(count).getValue());
-        assertEquals(5, tokens.get(count).getRow());
-
-        assertEquals(TokenType.Keyword, tokens.get(++count).getType());
-        assertEquals("then", tokens.get(count).getValue());
         assertEquals(5, tokens.get(count).getRow());
 
         assertEquals(TokenType.LineBreak, tokens.get(++count).getType());
@@ -196,19 +184,20 @@ class LexicalParserTest {
     }
 
     @Test
-    public void testObject() {
+    public void testClass() {
 
-        String source = "struct Person [ name, age ]\n" +
-                        "person = new Person[\"Robert\", 25]\n" +
+        String source = "class Person [ name, age ]\n" +
+                        "end\n" +
+                        "person = new Person[\"Randy Marsh\", 45]\n" +
                         "print person :: name + \" is \" + person :: age + \" years old\"";
         LexicalParser parser = new LexicalParser(source);
         List<Token> tokens = parser.parse();
 
-        assertEquals(30, tokens.size());
+        assertEquals(32, tokens.size());
 
         int count = 0;
         assertEquals(TokenType.Keyword, tokens.get(count).getType());
-        assertEquals("struct", tokens.get(count).getValue());
+        assertEquals("class", tokens.get(count).getValue());
         assertEquals(1, tokens.get(count).getRow());
 
         assertEquals(TokenType.Variable, tokens.get(++count).getType());
@@ -239,93 +228,101 @@ class LexicalParserTest {
         assertEquals("\n", tokens.get(count).getValue());
         assertEquals(1, tokens.get(count).getRow());
 
+        assertEquals(TokenType.Keyword, tokens.get(++count).getType());
+        assertEquals("end", tokens.get(count).getValue());
+        assertEquals(2, tokens.get(count).getRow());
+
+        assertEquals(TokenType.LineBreak, tokens.get(++count).getType());
+        assertEquals("\n", tokens.get(count).getValue());
+        assertEquals(2, tokens.get(count).getRow());
+
         assertEquals(TokenType.Variable, tokens.get(++count).getType());
         assertEquals("person", tokens.get(count).getValue());
-        assertEquals(2, tokens.get(count).getRow());
+        assertEquals(3, tokens.get(count).getRow());
 
         assertEquals(TokenType.Operator, tokens.get(++count).getType());
         assertEquals("=", tokens.get(count).getValue());
-        assertEquals(2, tokens.get(count).getRow());
+        assertEquals(3, tokens.get(count).getRow());
 
         assertEquals(TokenType.Operator, tokens.get(++count).getType());
         assertEquals("new", tokens.get(count).getValue());
-        assertEquals(2, tokens.get(count).getRow());
+        assertEquals(3, tokens.get(count).getRow());
 
         assertEquals(TokenType.Variable, tokens.get(++count).getType());
         assertEquals("Person", tokens.get(count).getValue());
-        assertEquals(2, tokens.get(count).getRow());
+        assertEquals(3, tokens.get(count).getRow());
 
         assertEquals(TokenType.GroupDivider, tokens.get(++count).getType());
         assertEquals("[", tokens.get(count).getValue());
-        assertEquals(2, tokens.get(count).getRow());
+        assertEquals(3, tokens.get(count).getRow());
 
         assertEquals(TokenType.Text, tokens.get(++count).getType());
-        assertEquals("Robert", tokens.get(count).getValue());
-        assertEquals(2, tokens.get(count).getRow());
+        assertEquals("Randy Marsh", tokens.get(count).getValue());
+        assertEquals(3, tokens.get(count).getRow());
 
         assertEquals(TokenType.GroupDivider, tokens.get(++count).getType());
         assertEquals(",", tokens.get(count).getValue());
-        assertEquals(2, tokens.get(count).getRow());
+        assertEquals(3, tokens.get(count).getRow());
 
         assertEquals(TokenType.Numeric, tokens.get(++count).getType());
-        assertEquals("25", tokens.get(count).getValue());
-        assertEquals(2, tokens.get(count).getRow());
+        assertEquals("45", tokens.get(count).getValue());
+        assertEquals(3, tokens.get(count).getRow());
 
         assertEquals(TokenType.GroupDivider, tokens.get(++count).getType());
         assertEquals("]", tokens.get(count).getValue());
-        assertEquals(2, tokens.get(count).getRow());
+        assertEquals(3, tokens.get(count).getRow());
 
         assertEquals(TokenType.LineBreak, tokens.get(++count).getType());
         assertEquals("\n", tokens.get(count).getValue());
-        assertEquals(2, tokens.get(count).getRow());
+        assertEquals(3, tokens.get(count).getRow());
 
         assertEquals(TokenType.Keyword, tokens.get(++count).getType());
         assertEquals("print", tokens.get(count).getValue());
-        assertEquals(3, tokens.get(count).getRow());
+        assertEquals(4, tokens.get(count).getRow());
 
         assertEquals(TokenType.Variable, tokens.get(++count).getType());
         assertEquals("person", tokens.get(count).getValue());
-        assertEquals(3, tokens.get(count).getRow());
+        assertEquals(4, tokens.get(count).getRow());
 
         assertEquals(TokenType.Operator, tokens.get(++count).getType());
         assertEquals("::", tokens.get(count).getValue());
-        assertEquals(3, tokens.get(count).getRow());
+        assertEquals(4, tokens.get(count).getRow());
 
         assertEquals(TokenType.Variable, tokens.get(++count).getType());
         assertEquals("name", tokens.get(count).getValue());
-        assertEquals(3, tokens.get(count).getRow());
+        assertEquals(4, tokens.get(count).getRow());
 
         assertEquals(TokenType.Operator, tokens.get(++count).getType());
         assertEquals("+", tokens.get(count).getValue());
-        assertEquals(3, tokens.get(count).getRow());
+        assertEquals(4, tokens.get(count).getRow());
 
         assertEquals(TokenType.Text, tokens.get(++count).getType());
         assertEquals(" is ", tokens.get(count).getValue());
-        assertEquals(3, tokens.get(count).getRow());
+        assertEquals(4, tokens.get(count).getRow());
 
         assertEquals(TokenType.Operator, tokens.get(++count).getType());
         assertEquals("+", tokens.get(count).getValue());
-        assertEquals(3, tokens.get(count).getRow());
+        assertEquals(4, tokens.get(count).getRow());
 
         assertEquals(TokenType.Variable, tokens.get(++count).getType());
         assertEquals("person", tokens.get(count).getValue());
-        assertEquals(3, tokens.get(count).getRow());
+        assertEquals(4, tokens.get(count).getRow());
 
         assertEquals(TokenType.Operator, tokens.get(++count).getType());
         assertEquals("::", tokens.get(count).getValue());
-        assertEquals(3, tokens.get(count).getRow());
+        assertEquals(4, tokens.get(count).getRow());
 
         assertEquals(TokenType.Variable, tokens.get(++count).getType());
         assertEquals("age", tokens.get(count).getValue());
-        assertEquals(3, tokens.get(count).getRow());
+        assertEquals(4, tokens.get(count).getRow());
 
         assertEquals(TokenType.Operator, tokens.get(++count).getType());
         assertEquals("+", tokens.get(count).getValue());
-        assertEquals(3, tokens.get(count).getRow());
+        assertEquals(4, tokens.get(count).getRow());
 
         assertEquals(TokenType.Text, tokens.get(++count).getType());
         assertEquals(" years old", tokens.get(count).getValue());
-        assertEquals(3, tokens.get(count).getRow());
+        assertEquals(4, tokens.get(count).getRow());
     }
 
     @Test

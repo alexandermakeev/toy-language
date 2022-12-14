@@ -10,8 +10,8 @@ import java.util.Objects;
 @Getter
 public enum Operator {
     Not("!", NotOperator.class, 7),
-    StructureInstance("new", StructureInstanceOperator.class, 7),
-    StructureValue("::", StructureValueOperator.class, 7),
+    ClassInstance("new", ClassInstanceOperator.class, 7),
+    ClassProperty("::", ClassPropertyOperator.class, 7),
 
     Multiplication("*", MultiplicationOperator.class, 6),
     Division("/", DivisionOperator.class, 6),

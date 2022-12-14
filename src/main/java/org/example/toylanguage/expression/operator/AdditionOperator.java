@@ -1,6 +1,5 @@
 package org.example.toylanguage.expression.operator;
 
-import org.example.toylanguage.exception.ExecutionException;
 import org.example.toylanguage.expression.Expression;
 import org.example.toylanguage.expression.value.ArrayValue;
 import org.example.toylanguage.expression.value.NumericValue;
@@ -11,8 +10,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.example.toylanguage.expression.value.NullValue.NULL_INSTANCE;
-
 public class AdditionOperator extends BinaryOperatorExpression {
     public AdditionOperator(Expression left, Expression right) {
         super(left, right);
@@ -22,9 +19,7 @@ public class AdditionOperator extends BinaryOperatorExpression {
     public Value<?> evaluate() {
         Value<?> left = getLeft().evaluate();
         Value<?> right = getRight().evaluate();
-        if (left == NULL_INSTANCE || right == NULL_INSTANCE) {
-            throw new ExecutionException(String.format("Unable to perform addition for NULL values `%s`, '%s'", left, right));
-        } else if (left instanceof NumericValue && right instanceof NumericValue) {
+        if (left instanceof NumericValue && right instanceof NumericValue) {
             return new NumericValue(((NumericValue) left).getValue() + ((NumericValue) right).getValue());
         } else if (left instanceof ArrayValue || right instanceof ArrayValue) {
             List<Value<?>> newArray;

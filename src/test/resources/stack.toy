@@ -1,0 +1,36 @@
+main []
+
+fun main []
+    stack = new Stack []
+    loop num in 0..5
+        # push 0,1,2,3,4
+        stack :: push [ num ]
+    end
+
+    size = stack :: size []
+    loop i in 0..size
+        # should print 4,3,2,1,0
+        print stack :: pop []
+    end
+end
+
+class Stack []
+    arr = {}
+    n = 0
+
+    fun push [ item ]
+        this :: arr << item
+        n = n + 1
+    end
+
+    fun pop []
+        n = n - 1
+        item = arr { n }
+        arr { n } = null
+        return item
+    end
+
+    fun size []
+        return this :: n
+    end
+end

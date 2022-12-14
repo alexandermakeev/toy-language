@@ -19,7 +19,7 @@ public abstract class AbstractLoopStatement extends CompositeStatement {
     @Override
     public void execute() {
         // memory scope for counter variables
-        MemoryContext.newScope();
+        MemoryContext.pushScope(MemoryContext.newScope());
         try {
 
             // init loop
@@ -29,7 +29,7 @@ public abstract class AbstractLoopStatement extends CompositeStatement {
                 preIncrement();
 
                 // isolated memory scope for each iteration
-                MemoryContext.newScope();
+                MemoryContext.pushScope(MemoryContext.newScope());
 
                 try {
 

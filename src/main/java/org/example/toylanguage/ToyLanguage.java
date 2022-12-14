@@ -1,7 +1,9 @@
 package org.example.toylanguage;
 
 import lombok.SneakyThrows;
-import org.example.toylanguage.statement.Statement;
+import org.example.toylanguage.context.MemoryContext;
+import org.example.toylanguage.context.definition.DefinitionContext;
+import org.example.toylanguage.statement.CompositeStatement;
 import org.example.toylanguage.token.Token;
 
 import java.nio.file.Files;
@@ -15,9 +17,17 @@ public class ToyLanguage {
         String source = Files.readString(path);
         LexicalParser lexicalParser = new LexicalParser(source);
         List<Token> tokens = lexicalParser.parse();
-        StatementParser statementParser = new StatementParser(tokens);
-        Statement statement = statementParser.parse();
-        statement.execute();
+
+        DefinitionContext.pushScope(DefinitionContext.newScope());
+        MemoryContext.pushScope(MemoryContext.newScope());
+        try {
+            CompositeStatement statement = new CompositeStatement();
+            StatementParser.parse(tokens, statement);
+            statement.execute();
+        } finally {
+            DefinitionContext.endScope();
+            MemoryContext.endScope();
+        }
     }
 
 }

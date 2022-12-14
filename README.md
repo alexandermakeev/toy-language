@@ -9,7 +9,7 @@ This is a simple toy language implementation. More details: [Building Your Own P
 ## Syntax
 
 ### Basic constructions
-1) Variables declaration
+1. Variables declaration
 ```
 # plain types
 <variable name> = <expression>
@@ -17,8 +17,8 @@ This is a simple toy language implementation. More details: [Building Your Own P
 a1 = 123
 a2 = "hello world"
 
-# structure data type
-<variable name> = new <structure name> [ <argument expression 1>, <argument expression 2>, ... ]
+# class instance
+<variable name> = new <class name> [ <argument expression 1>, <argument expression 2>, ... ]
 
 left_tree_node = new TreeNode [ 1 ]
 right_tree_node = new TreeNode [ 2 ]
@@ -30,35 +30,39 @@ tree_node = new TreeNode [ 3, new TreeNode [ 1 ], null ]
 example_array = { 1, 2, "three", new TreeNode [ 4 ] }
 empty_array = {}
 ```
-2) Conditions
+
+2. Conditions
 ```
-if <condition> then
+if <condition>
     # statements
-elif <condition> then
+elif <condition>
     # statements
-else then
+else
     # statements
 end
 
-if a1 > 5 and tree_node :: value == 3 then
+if a1 > 5 and tree_node :: value == 3
     # statements
-elif a2 == "hello" or a3 == "world" then
+elif a2 == "hello" or a3 == "world"
     # statements
-else then
+else
     # statements
 end  
 ```
-3) Print to console
+
+3. Print to console
 ```
 print <expression>
 print a1 + a2 + tree_node :: value
 ```
-4) Input from console
+
+4. Input from console
 ```
 input <variable name>
 input number
 ```
-5) Functions
+
+5. Functions
 ```
 fun <function name> [ <argument1, argument2>, ... ]
     <body>
@@ -66,13 +70,14 @@ fun <function name> [ <argument1, argument2>, ... ]
 end
 
 fun fibonacci_number [ n ]
-    if n < 2 then
+    if n < 2
         return n
     end
     return fibonacci_number [ n - 1 ] + fibonacci_number [ n - 2 ]
 end
 ```
-6) Loops
+
+6. Loops
 ```
 # For loop
 loop <variable> in <lower_bound>..<upper_bound>
@@ -97,14 +102,14 @@ end
 
 # terminate the loop
 loop <variable> in <lower_bound>..<upper_bound> by <step>
-    if <other_condition> then
+    if <other_condition>
         break
     end
 end
 
 # jump to the next iteration
 loop <variable> in <lower_bound>..<upper_bound> by <step>
-    if <other_condition> then
+    if <other_condition>
         next
     end
 end
@@ -112,7 +117,7 @@ end
 
 ### Data types
 There are the following data types currently supported:
-1) Numeric
+1. Numeric
 ```
 number1 = 1
 number2 = 2.
@@ -121,33 +126,55 @@ number4 = 0.432
 number5 = .543
 number6 = -1
 ```
-2) Text
+
+2. Text
 ```
 text = "hello world"
 ```
-3) Logical
+
+3. Logical
 ```
 logical1 = true
 logical2 = false
 ```
-4) Structure. It's just a wrapper for multiple data types
+
+4. Class
 ```
-struct <struct name> [ <struct arg name1>, <struct arg name2>, ...  ]
+class <class name> [ <property1>, <property2>, ...  ]
+    # inner statements
+    print <property1>
+    
+    fun <function name> [ <property1>, <property2> ]
+        # function statements
+        this :: <property1> = <property1>
+    end
+end
 
-struct TreeNode [ value, left, right ]
-tree = new TreeNode [ 3, null, new TreeNode [ 5 ] ]
+class Lamp [ type, is_on ]
+    fun turn_on []
+        is_on = true
+    end
 
-# get a structure's value
-tree_value = tree :: value
-tree_left_node = tree :: left
-tree_right_node = tree :: right
+    fun turn_off []
+        is_on = false
+    end
 
-# set a structure's value
-tree :: value = tree_value + 1
-tree :: left = new TreeNode [ 5 ]
-tree :: right = new TreeNode [ tree :: right :: value + 1 ]
+    fun set_is_on [ is_on ]
+        this :: is_on = is_on
+    end
+end
+
+lamp_instance = new Lamp [ "Halogen", false ]
+
+# get/set class's property
+lamp_is_on = lamp_instance :: is_on
+lamp_instance :: type = "Led"
+
+# invoke class's function
+lamp_instance :: turn_off []
 ```
-5) Arrays
+
+5. Arrays
 ```
 <array> = { <value1>, <value2>, ... }
 example_array = { 1, 2, "three", new TreeNode [ 4 ] }
@@ -167,7 +194,7 @@ items = {1,2}
 items << 3  #{1,2,3}
 ```
 
-6) Null
+6. Null
 ```
 value = null
 ```
@@ -196,5 +223,5 @@ To calculate a complex expression in the proper order, each of the supported ope
 | Floor Division         | ```//```  | 7          | ```a // 5```                 |
 | Modulo                 | ```%```   | 7          | ```a % 5```                  |
 | NOT                    | ```!```   | 8          | ```!false```                 |
-| Structure Instance     | ```new``` | 8          | ```a = new TreeNode [ 5 ]``` |
-| Structure Value        | ```::```  | 8          | ```b = a :: value```         |
+| Class Instance         | ```new``` | 8          | ```a = new TreeNode [ 5 ]``` |
+| Class Property         | ```::```  | 8          | ```b = a :: value```         |

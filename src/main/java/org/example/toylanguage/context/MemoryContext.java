@@ -1,20 +1,28 @@
 package org.example.toylanguage.context;
 
+import java.util.Stack;
+
 /**
- * Memory context management to isolate locally defined variables
+ * Memory management to isolate defined variables
+ *
+ * @see MemoryScope
  */
 public class MemoryContext {
-	private static MemoryScope memory = new MemoryScope(null);
+    private static final Stack<MemoryScope> scopes = new Stack<>();
 
-	public static MemoryScope getMemory() {
-		return memory;
-	}
+    public static MemoryScope getScope() {
+        return scopes.peek();
+    }
 
-	public static void newScope() {
-		MemoryContext.memory = new MemoryScope(memory);
-	}
+    public static MemoryScope newScope() {
+        return new MemoryScope(scopes.isEmpty() ? null : scopes.peek());
+    }
 
-	public static void endScope() {
-		MemoryContext.memory = memory.getParent();
-	}
+    public static void pushScope(MemoryScope scope) {
+        scopes.push(scope);
+    }
+
+    public static void endScope() {
+        scopes.pop();
+    }
 }
