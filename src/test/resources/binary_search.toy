@@ -18,7 +18,7 @@ arr = {10, 20, 30, 50, 60, 80, 110, 130, 140, 170}
 n = 10
 
 print binary_search [ arr, n, 0, n - 1, 10 ] # 0
-print binary_search [ arr, n, 0, n - 1, 80 ] # 3
+print binary_search [ arr, n, 0, n - 1, 80 ] # 5
 print binary_search [ arr, n, 0, n - 1, 170 ] # 9
 print binary_search [ arr, n, 0, n - 1, 5 ] # -1
 print binary_search [ arr, n, 0, n - 1, 85 ] # -1
