@@ -99,7 +99,7 @@ public class ExpressionReader {
                             break;
                         case Variable:
                         default:
-                            if (!operators.isEmpty() && operators.peek() == Operator.ClassInstance) {
+                            if (!operators.isEmpty() && List.of(Operator.ClassInstance, Operator.NestedClassInstance).contains(operators.peek())) {
                                 operand = readClassInstance(token);
                             } else if (tokens.peekSameLine(TokenType.GroupDivider, "[")) {
                                 operand = readFunctionInvocation(token);

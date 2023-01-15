@@ -16,7 +16,7 @@ public enum TokenType {
     Null("(null)(?=,|\\s|$)"),
     This("(this)(?=,|\\s|$)"),
     Text("\"([^\"]*)\""),
-    Operator("(\\+|-|\\*|/{1,2}|%|>=|>|<=|<{1,2}|={1,2}|!=|!|:{2}|\\(|\\)|(new|and|or)(?=\\s|$))"),
+    Operator("(\\+|-|\\*|/{1,2}|%|>=|>|<=|<{1,2}|={1,2}|!=|!|:{2}\\s+new|:{2}|\\(|\\)|(new|and|or)(?=\\s|$))"),
     Variable("[a-zA-Z_]+[a-zA-Z0-9_]*");
 
     private final String regex;

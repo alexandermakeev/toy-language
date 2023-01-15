@@ -27,11 +27,11 @@ public class ClassPropertyOperator extends BinaryOperatorExpression implements A
         if (left instanceof ClassValue) {
             if (getRight() instanceof VariableExpression) {
                 // access class's property
-                // new ClassInstance[] :: class_argument
+                // new Class [] :: class_property
                 return ((ClassValue) left).getValue(((VariableExpression) getRight()).getName());
             } else if (getRight() instanceof FunctionExpression) {
                 // execute class's function
-                // new ClassInstance[] :: class_function []
+                // new Class [] :: class_function []
                 return ((FunctionExpression) getRight()).evaluate((ClassValue) left);
             }
         }

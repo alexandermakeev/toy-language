@@ -26,7 +26,30 @@ public class ClassExpression implements Expression {
     public Value<?> evaluate() {
         //initialize class arguments
         List<Value<?>> values = argumentExpressions.stream().map(Expression::evaluate).collect(Collectors.toList());
+        return evaluate(values);
+    }
 
+    /**
+     * Evaluate nested class
+     *
+     * @param classValue instance of the parent class
+     */
+    public Value<?> evaluate(ClassValue classValue) {
+        //initialize class arguments
+        List<Value<?>> values = argumentExpressions.stream().map(Expression::evaluate).collect(Collectors.toList());
+
+        //set parent class's definition
+        ClassDefinition classDefinition = classValue.getValue();
+        DefinitionContext.pushScope(classDefinition.getDefinitionScope());
+
+        try {
+            return evaluate(values);
+        } finally {
+            DefinitionContext.endScope();
+        }
+    }
+
+    private Value<?> evaluate(List<Value<?>> values) {
         //get class's definition and statement
         ClassDefinition definition = DefinitionContext.getScope().getClass(name);
         ClassStatement classStatement = definition.getStatement();
