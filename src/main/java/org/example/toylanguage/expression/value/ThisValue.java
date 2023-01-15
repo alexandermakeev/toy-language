@@ -16,6 +16,11 @@ public class ThisValue extends Value<ClassValue> {
     }
 
     @Override
+    public Value<?> evaluate() {
+        return getValue();
+    }
+
+    @Override
     public String toString() {
         return getValue().toString();
     }

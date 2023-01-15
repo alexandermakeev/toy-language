@@ -4,21 +4,21 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
-import java.util.Objects;
 
 @RequiredArgsConstructor
 @Getter
 public enum Operator {
     Not("!", NotOperator.class, 7),
     ClassInstance("new", ClassInstanceOperator.class, 7),
-    ClassProperty("::", ClassPropertyOperator.class, 7),
+    NestedClassInstance(":{2}\\s+new", NestedClassInstanceOperator.class, 7),
+    ClassProperty(":{2}", ClassPropertyOperator.class, 7),
 
-    Multiplication("*", MultiplicationOperator.class, 6),
+    Multiplication("\\*", MultiplicationOperator.class, 6),
     Division("/", DivisionOperator.class, 6),
     FloorDivision("//", FloorDivisionOperator.class, 6),
     Modulo("%", ModuloOperator.class, 6),
 
-    Addition("+", AdditionOperator.class, 5),
+    Addition("\\+", AdditionOperator.class, 5),
     Subtraction("-", SubtractionOperator.class, 5),
 
     Equals("==", EqualsOperator.class, 4),
@@ -28,8 +28,8 @@ public enum Operator {
     GreaterThan(">", GreaterThanOperator.class, 4),
     GreaterThanOrEqualTo(">=", GreaterThanOrEqualToOperator.class, 4),
 
-    LeftParen("(", 3),
-    RightParen(")", 3),
+    LeftParen("\\(", 3),
+    RightParen("\\)", 3),
 
     LogicalAnd("and", LogicalAndOperator.class, 2),
     LogicalOr("or", LogicalOrOperator.class, 1),
@@ -47,7 +47,7 @@ public enum Operator {
 
     public static Operator getType(String character) {
         return Arrays.stream(values())
-                .filter(t -> Objects.equals(t.getCharacter(), character))
+                .filter(t -> character.matches(t.getCharacter()))
                 .findAny().orElse(null);
     }
 
