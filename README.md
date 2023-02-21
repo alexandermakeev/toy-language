@@ -130,6 +130,9 @@ number6 = -1
 2. Text
 ```
 text = "hello world"
+print text{1}
+text{1} = "a"
+print text
 ```
 
 3. Logical
@@ -225,3 +228,10 @@ To calculate a complex expression in the proper order, each of the supported ope
 | NOT                    | ```!```   | 8          | ```!false```                 |
 | Class Instance         | ```new``` | 8          | ```a = new TreeNode [ 5 ]``` |
 | Class Property         | ```::```  | 8          | ```b = a :: value```         |
+
+
+### Run this program
+Firstly, compile and package the program into a uber jar, go to the ./target folder and then run the following command
+
+java -cp toy-language-0.0.8.jar org.example.toylanguage.RunToyLanguage ../src/test/resources/stack.toy
+

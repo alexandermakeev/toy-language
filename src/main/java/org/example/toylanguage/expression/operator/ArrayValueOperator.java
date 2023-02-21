@@ -3,6 +3,7 @@ package org.example.toylanguage.expression.operator;
 import org.example.toylanguage.expression.AssignExpression;
 import org.example.toylanguage.expression.Expression;
 import org.example.toylanguage.expression.value.ArrayValue;
+import org.example.toylanguage.expression.value.TextValue;
 import org.example.toylanguage.expression.value.Value;
 
 public class ArrayValueOperator extends BinaryOperatorExpression implements AssignExpression {
@@ -17,6 +18,11 @@ public class ArrayValueOperator extends BinaryOperatorExpression implements Assi
             Value<?> right = getRight().evaluate();
             return ((ArrayValue) left).getValue(((Double) right.getValue()).intValue());
         }
+        if (left instanceof TextValue) {
+            Value<?> right = getRight().evaluate();
+            return ((TextValue) left).getValue(((Double) right.getValue()).intValue());
+        }
+
         return left;
     }
 
@@ -26,6 +32,10 @@ public class ArrayValueOperator extends BinaryOperatorExpression implements Assi
         if (left instanceof ArrayValue) {
             Value<?> right = getRight().evaluate();
             ((ArrayValue) left).setValue(((Double) right.getValue()).intValue(), value);
+        }
+        if (left instanceof TextValue) {
+            Value<?> right = getRight().evaluate();
+            ((TextValue) left).setValue(((Double) right.getValue()).intValue(), value);
         }
     }
 }
