@@ -21,7 +21,7 @@ public class DefinitionScope {
 
     public ClassDefinition getClass(String name) {
         Optional<ClassDefinition> classDefinition = classes.stream()
-                .filter(t -> t.getName().equals(name))
+                .filter(t -> t.getClassDetails().getName().equals(name))
                 .findAny();
         if (classDefinition.isPresent())
             return classDefinition.get();

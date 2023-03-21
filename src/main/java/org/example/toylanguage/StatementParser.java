@@ -15,9 +15,7 @@ import org.example.toylanguage.token.Token;
 import org.example.toylanguage.token.TokenType;
 import org.example.toylanguage.token.TokensStack;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Getter
@@ -156,17 +154,39 @@ public class StatementParser {
     }
 
     private void parseClassDefinition() {
-        Token type = tokens.next(TokenType.Variable);
+        // read class details
+        ClassDetails classDetails = readClassDetails();
 
-        List<String> arguments = new ArrayList<>();
+        // read inherited types
+        Set<ClassDetails> inheritedTypes = new LinkedHashSet<>();
+        if (tokens.peek(TokenType.GroupDivider, ":")) {
+            while (tokens.peek(TokenType.GroupDivider, ":", ",")) {
+                tokens.next();
+                ClassDetails superClassDetails = readClassDetails();
+                inheritedTypes.add(superClassDetails);
+            }
+        }
 
+        // add class definition
+        ClassStatement classStatement = new ClassStatement();
+        DefinitionScope classScope = DefinitionContext.newScope();
+        ClassDefinition classDefinition = new ClassDefinition(classDetails, inheritedTypes, classStatement, classScope);
+        DefinitionContext.getScope().addClass(classDefinition);
+
+        //parse class's statements
+        StatementParser.parse(this, classStatement, classScope);
+        tokens.next(TokenType.Keyword, "end");
+    }
+
+    private ClassDetails readClassDetails() {
+        Token className = tokens.next(TokenType.Variable);
+        List<String> classArguments = new ArrayList<>();
         if (tokens.peek(TokenType.GroupDivider, "[")) {
-
-            tokens.next(TokenType.GroupDivider, "["); //skip open square bracket
+            tokens.next(); //skip open square bracket
 
             while (!tokens.peek(TokenType.GroupDivider, "]")) {
                 Token argumentToken = tokens.next(TokenType.Variable);
-                arguments.add(argumentToken.getValue());
+                classArguments.add(argumentToken.getValue());
 
                 if (tokens.peek(TokenType.GroupDivider, ","))
                     tokens.next();
@@ -174,16 +194,7 @@ public class StatementParser {
 
             tokens.next(TokenType.GroupDivider, "]"); //skip close square bracket
         }
-
-        // add class definition
-        ClassStatement classStatement = new ClassStatement();
-        DefinitionScope classScope = DefinitionContext.newScope();
-        ClassDefinition classDefinition = new ClassDefinition(type.getValue(), arguments, classStatement, classScope);
-        DefinitionContext.getScope().addClass(classDefinition);
-
-        //parse class statements
-        StatementParser.parse(this, classStatement, classScope);
-        tokens.next(TokenType.Keyword, "end");
+        return new ClassDetails(className.getValue(), classArguments);
     }
 
     private void parseFunctionDefinition() {

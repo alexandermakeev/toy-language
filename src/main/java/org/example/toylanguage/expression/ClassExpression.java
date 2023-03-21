@@ -62,9 +62,9 @@ public class ClassExpression implements Expression {
             //initialize constructor arguments
             ClassValue classValue = new ClassValue(definition, classScope);
             ClassInstanceContext.pushValue(classValue);
-            IntStream.range(0, definition.getArguments().size()).boxed()
+            IntStream.range(0, definition.getClassDetails().getArguments().size()).boxed()
                     .forEach(i -> MemoryContext.getScope()
-                            .setLocal(definition.getArguments().get(i), values.size() > i ? values.get(i) : NullValue.NULL_INSTANCE));
+                            .setLocal(definition.getClassDetails().get(i), values.size() > i ? values.get(i) : NullValue.NULL_INSTANCE));
 
             //execute function body
             DefinitionContext.pushScope(definition.getDefinitionScope());
