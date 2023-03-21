@@ -2,10 +2,7 @@ package org.example.toylanguage;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.example.toylanguage.context.definition.ClassDefinition;
-import org.example.toylanguage.context.definition.DefinitionContext;
-import org.example.toylanguage.context.definition.DefinitionScope;
-import org.example.toylanguage.context.definition.FunctionDefinition;
+import org.example.toylanguage.context.definition.*;
 import org.example.toylanguage.exception.SyntaxException;
 import org.example.toylanguage.expression.Expression;
 import org.example.toylanguage.expression.ExpressionReader;
@@ -110,6 +107,9 @@ public class StatementParser {
                 break;
             case "next":
                 parseNextStatement();
+                break;
+            case "assert":
+                parseAssertStatement(token);
                 break;
             default:
                 throw new SyntaxException(String.format("Failed to parse a keyword: %s", token.getValue()));
@@ -276,6 +276,12 @@ public class StatementParser {
 
     private void parseNextStatement() {
         NextStatement statement = new NextStatement();
+        compositeStatement.addStatement(statement);
+    }
+
+    private void parseAssertStatement(Token rowToken) {
+        Expression expression = ExpressionReader.readExpression(tokens);
+        AssertStatement statement = new AssertStatement(expression, rowToken);
         compositeStatement.addStatement(statement);
     }
 }
