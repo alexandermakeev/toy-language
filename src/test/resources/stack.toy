@@ -7,10 +7,15 @@ fun main []
         stack :: push [ num ]
     end
 
+    assert stack :: arr == {0, 1, 2, 3, 4}
+
     size = stack :: size []
+    assert size == 5
+
     loop i in 0..size
-        # should print 4,3,2,1,0
-        print stack :: pop []
+        # should return 4,3,2,1,0
+        popped_value = stack :: pop []
+        assert popped_value == size - i - 1
     end
 end
 

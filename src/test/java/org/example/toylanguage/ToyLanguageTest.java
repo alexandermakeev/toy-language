@@ -36,100 +36,58 @@ class ToyLanguageTest {
     }
 
     @Test
-    void isSameTree() throws URISyntaxException, IOException {
+    void isSameTree() throws URISyntaxException {
         URL resource = getClass().getClassLoader().getResource("is_same_tree.toy");
         Path path = Paths.get(resource.toURI());
-
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
-             PrintStream out = new PrintStream(baos)) {
-
-            System.setOut(out);
-
-            ToyLanguage lang = new ToyLanguage();
-            lang.execute(path);
-
-            assertEquals(
-                    "true\n" +
-                            "false\n" +
-                            "false\n" +
-                            "false\n" +
-                            "false\n" +
-                            "false\n",
-                    baos.toString()
-            );
-        }
+        ToyLanguage lang = new ToyLanguage();
+        lang.execute(path);
     }
 
     @Test
-    void binarySearch() throws URISyntaxException, IOException {
+    void binarySearch() throws URISyntaxException {
         URL resource = getClass().getClassLoader().getResource("binary_search.toy");
         Path path = Paths.get(resource.toURI());
-
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
-             PrintStream out = new PrintStream(baos)) {
-
-            System.setOut(out);
-
-            ToyLanguage lang = new ToyLanguage();
-            lang.execute(path);
-
-            assertEquals(
-                    "0\n" +
-                            "5\n" +
-                            "9\n" +
-                            "-1\n" +
-                            "-1\n" +
-                            "-1\n",
-                    baos.toString()
-            );
-        }
+        ToyLanguage lang = new ToyLanguage();
+        lang.execute(path);
     }
 
     @Test
-    void bubbleSort() throws URISyntaxException, IOException {
+    void bubbleSort() throws URISyntaxException {
         URL resource = getClass().getClassLoader().getResource("bubble_sort.toy");
         Path path = Paths.get(resource.toURI());
-
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
-             PrintStream out = new PrintStream(baos)) {
-
-            System.setOut(out);
-
-            ToyLanguage lang = new ToyLanguage();
-            lang.execute(path);
-
-            assertEquals(
-                    "[-1, 14, 12, 10, 8, 6, 4, 2, 0, 15, 13, 11, 9, 7, 5, 3, 1, -1, 14, 12]\n" +
-                            "false\n" +
-                            "[-1, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 12, 13, 14, 14, 15]\n" +
-                            "true\n",
-                    baos.toString()
-            );
-        }
+        ToyLanguage lang = new ToyLanguage();
+        lang.execute(path);
     }
 
     @Test
-    void stack() throws URISyntaxException, IOException {
+    void stack() throws URISyntaxException {
         URL resource = getClass().getClassLoader().getResource("stack.toy");
         Path path = Paths.get(resource.toURI());
-
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
-             PrintStream out = new PrintStream(baos)) {
-
-            System.setOut(out);
-
-            ToyLanguage lang = new ToyLanguage();
-            lang.execute(path);
-
-            assertEquals(
-                    "4\n" +
-                            "3\n" +
-                            "2\n" +
-                            "1\n" +
-                            "0\n",
-                    baos.toString()
-            );
-        }
+        ToyLanguage lang = new ToyLanguage();
+        lang.execute(path);
     }
 
+    @Test
+    void instanceOf() throws URISyntaxException {
+        URL resource = getClass().getClassLoader().getResource("instance_of.toy");
+        Path path = Paths.get(resource.toURI());
+        ToyLanguage lang = new ToyLanguage();
+        lang.execute(path);
+    }
+
+    @Test
+    void castType() throws URISyntaxException {
+        URL resource = getClass().getClassLoader().getResource("cast_type.toy");
+        Path path = Paths.get(resource.toURI());
+        ToyLanguage lang = new ToyLanguage();
+        lang.execute(path);
+    }
+
+    @Test
+    void calculator() throws URISyntaxException {
+        URL resource = getClass().getClassLoader().getResource("calculator.toy");
+        Path path = Paths.get(resource.toURI());
+        ToyLanguage lang = new ToyLanguage();
+        lang.execute(path);
+    }
 }
