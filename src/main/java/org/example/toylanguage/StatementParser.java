@@ -157,20 +157,20 @@ public class StatementParser {
         // read class details
         ClassDetails classDetails = readClassDetails();
 
-        // read inherited types
-        Set<ClassDetails> inheritedTypes = new LinkedHashSet<>();
+        // read base types
+        Set<ClassDetails> baseTypes = new LinkedHashSet<>();
         if (tokens.peek(TokenType.GroupDivider, ":")) {
             while (tokens.peek(TokenType.GroupDivider, ":", ",")) {
                 tokens.next();
-                ClassDetails superClassDetails = readClassDetails();
-                inheritedTypes.add(superClassDetails);
+                ClassDetails baseClassDetails = readClassDetails();
+                baseTypes.add(baseClassDetails);
             }
         }
 
         // add class definition
         ClassStatement classStatement = new ClassStatement();
         DefinitionScope classScope = DefinitionContext.newScope();
-        ClassDefinition classDefinition = new ClassDefinition(classDetails, inheritedTypes, classStatement, classScope);
+        ClassDefinition classDefinition = new ClassDefinition(classDetails, baseTypes, classStatement, classScope);
         DefinitionContext.getScope().addClass(classDefinition);
 
         //parse class's statements

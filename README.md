@@ -12,13 +12,13 @@ This is a simple toy language implementation. More details: [Building Your Own P
 1. Variables declaration
 ```
 # plain types
-<variable name> = <expression>
+<variable_name> = <expression>
 
 a1 = 123
 a2 = "hello world"
 
 # class instance
-<variable name> = new <class name> [ <argument expression 1>, <argument expression 2>, ... ]
+<variable name> = new <class_name> [ <argument_expression_1>, <argument_expression_2>, ... ]
 
 left_tree_node = new TreeNode [ 1 ]
 right_tree_node = new TreeNode [ 2 ]
@@ -58,13 +58,17 @@ print a1 + a2 + tree_node :: value
 
 4. Input from console
 ```
-input <variable name>
+input <variable_name>
 input number
 ```
 
 5. Functions
 ```
-fun <function name> [ <argument1, argument2>, ... ]
+fun <function_name>
+    <body>
+end
+
+fun <function_name> [ <argument1, argument2>, ... ]
     <body>
     return <expression>
 end
@@ -140,22 +144,32 @@ logical2 = false
 
 4. Class
 ```
-class <class name> [ <property1>, <property2>, ...  ]
+class <class_name>
+end
+
+class <class_name> [ <property1>, <property2>, ...  ]
     # inner statements
     print <property1>
     
-    fun <function name> [ <property1>, <property2> ]
+    fun <function_name> [ <property1>, <property2> ]
         # function statements
         this :: <property1> = <property1>
     end
 end
 
+# derived classes
+class <derived_class_name>: <base_class_name1>, <base_class_name2>
+end
+
+class <derived_class_name> [ <derived_property>, ... ]: <base_class_name> [ <derived_property>, ... ]
+end
+
 class Lamp [ type, is_on ]
-    fun turn_on []
+    fun turn_on
         is_on = true
     end
 
-    fun turn_off []
+    fun turn_off
         is_on = false
     end
 
@@ -202,26 +216,30 @@ value = null
 ### Operators
 To calculate a complex expression in the proper order, each of the supported operators has its own precedence:
 
-| Operator               | Value     | Precedence | Example                      |
-|------------------------|-----------|------------|------------------------------|
-| Assignment             | ```=```   | 1          | ```a = 5```                  |
-| Append value to array  | ```<<```  | 1          | ```array << "value"```       |
-| Logical OR             | ```or```  | 2          | ```true or false```          |
-| Logical AND            | ```and``` | 3          | ```true and true```          |
-| Left Paren             | ```(```   | 4          |                              |
-| Right Paren            | ```)```   | 4          |                              |
-| Equals                 | ```==```  | 5          | ```a == 5```                 |
-| Not Equals             | ```!=```  | 5          | ```a != 5```                 |
-| Greater Than Or Equals | ```>=```  | 5          | ```a >= 5```                 |
-| Greater Than           | ```>```   | 5          | ```a > 5```                  |
-| Less Than Or Equals    | ```<=```  | 5          | ```a <= 5```                 |
-| Less Than              | ```<```   | 5          | ```a < 5```                  |
-| Addition               | ```+```   | 6          | ```a + 5```                  |
-| Subtraction            | ```-```   | 6          | ```a - 5```                  |
-| Multiplication         | ```*```   | 7          | ```a * 5```                  |
-| Division               | ```/```   | 7          | ```a / 5```                  |
-| Floor Division         | ```//```  | 7          | ```a // 5```                 |
-| Modulo                 | ```%```   | 7          | ```a % 5```                  |
-| NOT                    | ```!```   | 8          | ```!false```                 |
-| Class Instance         | ```new``` | 8          | ```a = new TreeNode [ 5 ]``` |
-| Class Property         | ```::```  | 8          | ```b = a :: value```         |
+| Operator               | Value        | Precedence | Example                          |
+|------------------------|--------------|------------|----------------------------------|
+| Assignment             | ```=```      | 1          | ```a = 5```                      |
+| Append value to array  | ```<<```     | 1          | ```array << "value"```           |
+| Logical OR             | ```or```     | 2          | ```true or false```              |
+| Logical AND            | ```and```    | 3          | ```true and true```              |
+| Left Paren             | ```(```      | 4          |                                  |
+| Right Paren            | ```)```      | 4          |                                  |
+| Equals                 | ```==```     | 5          | ```a == 5```                     |
+| Not Equals             | ```!=```     | 5          | ```a != 5```                     |
+| Greater Than Or Equals | ```>=```     | 5          | ```a >= 5```                     |
+| Greater Than           | ```>```      | 5          | ```a > 5```                      |
+| Less Than Or Equals    | ```<=```     | 5          | ```a <= 5```                     |
+| Less Than              | ```<```      | 5          | ```a < 5```                      |
+| Addition               | ```+```      | 6          | ```a + 5```                      |
+| Subtraction            | ```-```      | 6          | ```a - 5```                      |
+| Exponentiation         | ```**```     | 7          | ```a ** 5```                     |
+| Multiplication         | ```*```      | 7          | ```a * 5```                      |
+| Division               | ```/```      | 7          | ```a / 5```                      |
+| Floor Division         | ```//```     | 7          | ```a // 5```                     |
+| Modulo                 | ```%```      | 7          | ```a % 5```                      |
+| NOT                    | ```!```      | 8          | ```!false```                     |
+| Class Instance         | ```new```    | 8          | ```type = new Type [ value ]```  |
+| Nested Class Instance  | ```:: new``` | 8          | ```type :: new NestedType```     |
+| Class Property         | ```::```     | 8          | ```type_value = type :: value``` |
+| Class Cast             | ```as```     | 8          | ```type as Supertype```          |
+| Class Instance Of      | ```is```     | 8          | ```type is Supertype```          |

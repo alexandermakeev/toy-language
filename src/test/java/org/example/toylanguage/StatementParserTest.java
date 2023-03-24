@@ -274,8 +274,8 @@ class StatementParserTest {
         ClassExpression type = (ClassExpression) instanceOperator.getValue();
 
         assertEquals("Person", type.getName());
-        assertEquals("Randy Marsh", type.getArgumentExpressions().get(0).toString());
-        assertEquals("45", type.getArgumentExpressions().get(1).toString());
+        assertEquals("Randy Marsh", type.getPropertiesExpressions().get(0).toString());
+        assertEquals("45", type.getPropertiesExpressions().get(1).toString());
 
         // 2nd statement
         PrintStatement printStatement = (PrintStatement) statements.get(1);

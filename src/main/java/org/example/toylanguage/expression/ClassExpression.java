@@ -23,18 +23,18 @@ import java.util.stream.IntStream;
 @Getter
 public class ClassExpression implements Expression {
     private final String name;
-    private final List<? extends Expression> argumentExpressions;
-    // super classes and subclasses available to a class instance
+    private final List<? extends Expression> propertiesExpressions;
+    // contains Derived class and all the Base classes chain that Derived class inherits
     private final Map<String, ClassValue> relations;
 
-    public ClassExpression(String name, List<? extends Expression> argumentExpressions) {
-        this(name, argumentExpressions, new HashMap<>());
+    public ClassExpression(String name, List<? extends Expression> propertiesExpressions) {
+        this(name, propertiesExpressions, new HashMap<>());
     }
 
     @Override
     public Value<?> evaluate() {
-        //initialize class arguments
-        List<ValueReference> values = argumentExpressions.stream().map(ValueReference::instanceOf).collect(Collectors.toList());
+        //initialize class's properties
+        List<ValueReference> values = propertiesExpressions.stream().map(ValueReference::instanceOf).collect(Collectors.toList());
         return evaluate(values);
     }
 
@@ -44,8 +44,8 @@ public class ClassExpression implements Expression {
      * @param classValue instance of the parent class
      */
     public Value<?> evaluate(ClassValue classValue) {
-        //initialize class arguments
-        List<ValueReference> values = argumentExpressions.stream().map(ValueReference::instanceOf).collect(Collectors.toList());
+        //initialize class's properties
+        List<ValueReference> values = propertiesExpressions.stream().map(ValueReference::instanceOf).collect(Collectors.toList());
 
         //set parent class's definition
         ClassDefinition classDefinition = classValue.getValue();
@@ -71,34 +71,35 @@ public class ClassExpression implements Expression {
         ClassValue classValue = new ClassValue(definition, classScope, relations);
         relations.put(name, classValue);
 
-        // fulfill missing properties
+        // fill the missing properties with NullValue.NULL_INSTANCE
         // class A [arg1, arg2]
         // new A [arg1] -> new A [arg1, null]
-        List<ValueReference> valuesToSet = IntStream.range(0, definition.getClassDetails().getArguments().size())
+        // new A [arg1, arg2, arg3] -> new A [arg1, arg2]
+        List<ValueReference> valuesToSet = IntStream.range(0, definition.getClassDetails().getProperties().size())
                 .boxed()
                 .map(i -> values.size() > i ? values.get(i) : ValueReference.instanceOf(NullValue.NULL_INSTANCE))
                 .collect(Collectors.toList());
 
-        //invoke super constructors and set a ClassValue relation
-        definition.getInheritedClasses()
+        //invoke constructors of the base classes and set a ClassValue relation
+        definition.getBaseTypes()
                 .stream()
-                .map(superType -> {
-                    // initialize super class's properties
+                .map(baseType -> {
+                    // initialize base class's properties
                     // class A [a_arg]
                     // class B [b_arg1, b_arg2]: A [b_arg1]
-                    List<ValueReference> superTypeArguments = superType.getArguments().stream()
-                            .map(t -> definition.getClassDetails().getArguments().indexOf(t))
+                    List<ValueReference> baseClassProperties = baseType.getProperties().stream()
+                            .map(t -> definition.getClassDetails().getProperties().indexOf(t))
                             .map(valuesToSet::get)
                             .collect(Collectors.toList());
-                    return new ClassExpression(superType.getName(), superTypeArguments, relations);
+                    return new ClassExpression(baseType.getName(), baseClassProperties, relations);
                 })
                 .forEach(ClassExpression::evaluate);
 
         try {
             ClassInstanceContext.pushValue(classValue);
-            IntStream.range(0, definition.getClassDetails().getArguments().size()).boxed()
+            IntStream.range(0, definition.getClassDetails().getProperties().size()).boxed()
                     .forEach(i -> MemoryContext.getScope()
-                            .setLocal(definition.getClassDetails().getArguments().get(i), valuesToSet.get(i)));
+                            .setLocal(definition.getClassDetails().getProperties().get(i), valuesToSet.get(i)));
 
             //execute function body
             DefinitionContext.pushScope(definition.getDefinitionScope());

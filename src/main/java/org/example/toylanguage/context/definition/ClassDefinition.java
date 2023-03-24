@@ -13,7 +13,7 @@ import java.util.Set;
 public class ClassDefinition implements Definition {
     @EqualsAndHashCode.Include
     private final ClassDetails classDetails;
-    private final Set<ClassDetails> inheritedClasses;
+    private final Set<ClassDetails> baseTypes;
     private final ClassStatement statement;
     private final DefinitionScope definitionScope;
 }

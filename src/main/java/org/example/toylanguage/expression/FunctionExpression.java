@@ -40,7 +40,7 @@ public class FunctionExpression implements Expression {
         List<Value<?>> values = argumentExpressions.stream().map(Expression::evaluate).collect(Collectors.toList());
 
         // find a class containing the function
-        ClassDefinition classDefinition = findClassDefinitionForFunction(classValue.getValue(), name, values.size());
+        ClassDefinition classDefinition = findClassDefinitionContainingFunction(classValue.getValue(), name, values.size());
         if (classDefinition == null) {
             throw new ExecutionException(String.format("Function is not defined: %s", name));
         }
@@ -89,14 +89,32 @@ public class FunctionExpression implements Expression {
         }
     }
 
-    private ClassDefinition findClassDefinitionForFunction(ClassDefinition classDefinition, String functionName, int argumentsSize) {
+    /**
+     * Find a Base class that contains the required function
+     *
+     * <pre>{@code
+     * class A
+     *      fun action
+     *      end
+     * end
+     *
+     * class B
+     * end
+     *
+     * b = new B
+     * # Function `action` is not available from the DefinitionScope of class B as it's declared in the class A
+     * b :: action []
+     *
+     * }</pre>
+     */
+    private ClassDefinition findClassDefinitionContainingFunction(ClassDefinition classDefinition, String functionName, int argumentsSize) {
         DefinitionScope definitionScope = classDefinition.getDefinitionScope();
         if (definitionScope.containsFunction(functionName, argumentsSize)) {
             return classDefinition;
         } else {
-            for (ClassDetails inheritedClass : classDefinition.getInheritedClasses()) {
-                ClassDefinition inheritedClassDefinition = definitionScope.getClass(inheritedClass.getName());
-                ClassDefinition functionClassDefinition = findClassDefinitionForFunction(inheritedClassDefinition, functionName, argumentsSize);
+            for (ClassDetails baseType : classDefinition.getBaseTypes()) {
+                ClassDefinition baseTypeDefinition = definitionScope.getClass(baseType.getName());
+                ClassDefinition functionClassDefinition = findClassDefinitionContainingFunction(baseTypeDefinition, functionName, argumentsSize);
                 if (functionClassDefinition != null)
                     return functionClassDefinition;
             }

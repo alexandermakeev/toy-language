@@ -14,7 +14,7 @@ import static org.example.toylanguage.expression.value.NullValue.NULL_INSTANCE;
 @Getter
 public class ClassValue extends IterableValue<ClassDefinition> {
     private final MemoryScope memoryScope;
-    // contains supertypes and subtypes for Upcasting and Downcasting
+    // contains ClassValue for the Derived class and all the Base classes chain that Derived class inherits
     private final Map<String, ClassValue> relations;
 
     public ClassValue(ClassDefinition definition, MemoryScope memoryScope, Map<String, ClassValue> relations) {
@@ -35,7 +35,7 @@ public class ClassValue extends IterableValue<ClassDefinition> {
     public String toString() {
         MemoryContext.pushScope(memoryScope);
         try {
-            return getValue().getClassDetails().getArguments().stream()
+            return getValue().getClassDetails().getProperties().stream()
                     .map(t -> t + " = " + getValue(t))
                     .collect(Collectors.joining(", ", getValue().getClassDetails().getName() + " [ ", " ]"));
         } finally {
@@ -71,7 +71,7 @@ public class ClassValue extends IterableValue<ClassDefinition> {
 
         return getValue()
                 .getClassDetails()
-                .getArguments()
+                .getProperties()
                 .stream()
                 .allMatch(e -> getValue(e).equals(oValue.getValue(e)));
     }
@@ -80,7 +80,7 @@ public class ClassValue extends IterableValue<ClassDefinition> {
     public Iterator<Value<?>> iterator() {
         return getValue()
                 .getClassDetails()
-                .getArguments()
+                .getProperties()
                 .stream()
                 .<Value<?>>map(this::getValue)
                 .iterator();

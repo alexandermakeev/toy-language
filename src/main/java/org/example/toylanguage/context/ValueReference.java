@@ -6,19 +6,25 @@ import org.example.toylanguage.expression.Expression;
 import org.example.toylanguage.expression.value.Value;
 
 /**
- * Value wrapper to keep a reference to the same value for a class instance and its inherited type(s)
+ * Wrapper for the Value to keep the properties relation between a Base class and a Derived class
  *
  * <pre>{@code
+ * # Declare the Base class A
  * class A [a_value]
  * end
  *
- * # Create a class that uses b_value argument to create an instance of class A
+ * # Declare the Derived class B that inherits class A and initializes its `a_value` property with the `b_value` parameter
  * class B [b_value]: A [b_value]
  * end
  *
- * # Create an instance of B class and change b_value property. At this point `A :: a_value` should be updated as well
+ * # Create an instance of class B
  * b = new B [ b_value ]
- * b :: b_value = val3
+ *
+ * # If we change the `b_value` property, the A class's property `a_value` should be updated as well
+ * b :: b_value = new_value
+ *
+ * # a_new_value should contain `new_value`
+ * a_new_value = b as A :: a_value
  * }</pre>
  */
 @Getter

@@ -12,5 +12,5 @@ import java.util.List;
 public class ClassDetails {
     @EqualsAndHashCode.Include
     private final String name;
-    private final List<String> arguments;
+    private final List<String> properties;
 }
