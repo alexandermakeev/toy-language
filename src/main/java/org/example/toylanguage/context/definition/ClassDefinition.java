@@ -5,15 +5,15 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.example.toylanguage.statement.ClassStatement;
 
-import java.util.List;
+import java.util.Set;
 
 @RequiredArgsConstructor
 @Getter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ClassDefinition implements Definition {
     @EqualsAndHashCode.Include
-    private final String name;
-    private final List<String> arguments;
+    private final ClassDetails classDetails;
+    private final Set<ClassDetails> baseTypes;
     private final ClassStatement statement;
     private final DefinitionScope definitionScope;
 }

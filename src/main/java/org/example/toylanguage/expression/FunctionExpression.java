@@ -6,10 +6,8 @@ import org.example.toylanguage.context.ClassInstanceContext;
 import org.example.toylanguage.context.MemoryContext;
 import org.example.toylanguage.context.MemoryScope;
 import org.example.toylanguage.context.ReturnContext;
-import org.example.toylanguage.context.definition.ClassDefinition;
-import org.example.toylanguage.context.definition.DefinitionContext;
-import org.example.toylanguage.context.definition.DefinitionScope;
-import org.example.toylanguage.context.definition.FunctionDefinition;
+import org.example.toylanguage.context.definition.*;
+import org.example.toylanguage.exception.ExecutionException;
 import org.example.toylanguage.expression.value.ClassValue;
 import org.example.toylanguage.expression.value.NullValue;
 import org.example.toylanguage.expression.value.Value;
@@ -41,15 +39,19 @@ public class FunctionExpression implements Expression {
         //initialize function arguments
         List<Value<?>> values = argumentExpressions.stream().map(Expression::evaluate).collect(Collectors.toList());
 
-        //get definition and memory scopes from class definition
-        ClassDefinition classDefinition = classValue.getValue();
+        // find a class containing the function
+        ClassDefinition classDefinition = findClassDefinitionContainingFunction(classValue.getValue(), name, values.size());
+        if (classDefinition == null) {
+            throw new ExecutionException(String.format("Function is not defined: %s", name));
+        }
         DefinitionScope classDefinitionScope = classDefinition.getDefinitionScope();
-        MemoryScope memoryScope = classValue.getMemoryScope();
+        ClassValue functionClassValue = classValue.getRelation(classDefinition.getClassDetails().getName());
+        MemoryScope memoryScope = functionClassValue.getMemoryScope();
 
         //set class's definition and memory scopes
         DefinitionContext.pushScope(classDefinitionScope);
         MemoryContext.pushScope(memoryScope);
-        ClassInstanceContext.pushValue(classValue);
+        ClassInstanceContext.pushValue(functionClassValue);
 
         try {
             //proceed function
@@ -63,7 +65,7 @@ public class FunctionExpression implements Expression {
 
     private Value<?> evaluate(List<Value<?>> values) {
         //get function's definition and statement
-        FunctionDefinition definition = DefinitionContext.getScope().getFunction(name);
+        FunctionDefinition definition = DefinitionContext.getScope().getFunction(name, values.size());
         FunctionStatement statement = definition.getStatement();
 
         //set new memory scope
@@ -84,6 +86,39 @@ public class FunctionExpression implements Expression {
             // release function memory and return context
             MemoryContext.endScope();
             ReturnContext.reset();
+        }
+    }
+
+    /**
+     * Find a Base class that contains the required function
+     *
+     * <pre>{@code
+     * class A
+     *      fun action
+     *      end
+     * end
+     *
+     * class B
+     * end
+     *
+     * b = new B
+     * # Function `action` is not available from the DefinitionScope of class B as it's declared in the class A
+     * b :: action []
+     *
+     * }</pre>
+     */
+    private ClassDefinition findClassDefinitionContainingFunction(ClassDefinition classDefinition, String functionName, int argumentsSize) {
+        DefinitionScope definitionScope = classDefinition.getDefinitionScope();
+        if (definitionScope.containsFunction(functionName, argumentsSize)) {
+            return classDefinition;
+        } else {
+            for (ClassDetails baseType : classDefinition.getBaseTypes()) {
+                ClassDefinition baseTypeDefinition = definitionScope.getClass(baseType.getName());
+                ClassDefinition functionClassDefinition = findClassDefinitionContainingFunction(baseTypeDefinition, functionName, argumentsSize);
+                if (functionClassDefinition != null)
+                    return functionClassDefinition;
+            }
+            return null;
         }
     }
 }

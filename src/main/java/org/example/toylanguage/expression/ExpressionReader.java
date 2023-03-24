@@ -145,16 +145,16 @@ public class ExpressionReader {
         }
     }
 
-    // read class instance: new Class[arguments]
-    private ClassExpression readClassInstance(Token token) {
-        List<Expression> arguments = new ArrayList<>();
+    // read class instance: new Class [ property1, property2, ... ]
+    private ClassExpression readClassInstance(Token token) { // token contains class name
+        List<Expression> properties = new ArrayList<>();
         if (tokens.peekSameLine(TokenType.GroupDivider, "[")) {
 
             tokens.next(TokenType.GroupDivider, "["); //skip open square bracket
 
             while (!tokens.peekSameLine(TokenType.GroupDivider, "]")) {
                 Expression value = ExpressionReader.readExpression(this);
-                arguments.add(value);
+                properties.add(value);
 
                 if (tokens.peekSameLine(TokenType.GroupDivider, ","))
                     tokens.next();
@@ -162,11 +162,11 @@ public class ExpressionReader {
 
             tokens.next(TokenType.GroupDivider, "]"); //skip close square bracket
         }
-        return new ClassExpression(token.getValue(), arguments);
+        return new ClassExpression(token.getValue(), properties);
     }
 
-    // read function invocation: function_call[arguments]
-    private FunctionExpression readFunctionInvocation(Token token) {
+    // read function invocation: function_name [ argument1, argument2 ]
+    private FunctionExpression readFunctionInvocation(Token token) { // token contains function name
         List<Expression> arguments = new ArrayList<>();
         if (tokens.peekSameLine(TokenType.GroupDivider, "[")) {
 

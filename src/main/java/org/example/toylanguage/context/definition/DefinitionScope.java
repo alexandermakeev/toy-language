@@ -21,7 +21,7 @@ public class DefinitionScope {
 
     public ClassDefinition getClass(String name) {
         Optional<ClassDefinition> classDefinition = classes.stream()
-                .filter(t -> t.getName().equals(name))
+                .filter(t -> t.getClassDetails().getName().equals(name))
                 .findAny();
         if (classDefinition.isPresent())
             return classDefinition.get();
@@ -35,19 +35,33 @@ public class DefinitionScope {
         classes.add(classDefinition);
     }
 
-    public FunctionDefinition getFunction(String name) {
-        Optional<FunctionDefinition> functionDefinition = functions.stream()
-                .filter(t -> t.getName().equals(name))
-                .findAny();
+    public FunctionDefinition getFunction(String name, int argumentsSize) {
+        Optional<FunctionDefinition> functionDefinition = getFunctionDefinitionOptional(name, argumentsSize);
         if (functionDefinition.isPresent())
             return functionDefinition.get();
         else if (parent != null)
-            return parent.getFunction(name);
+            return parent.getFunction(name, argumentsSize);
         else
             throw new ExecutionException(String.format("Function is not defined: %s", name));
     }
 
+    public boolean containsFunction(String name, int argumentsSize) {
+        Optional<FunctionDefinition> functionDefinition = getFunctionDefinitionOptional(name, argumentsSize);
+        if (functionDefinition.isPresent())
+            return true;
+        else if (parent != null)
+            return parent.containsFunction(name, argumentsSize);
+        else
+            return false;
+    }
+
     public void addFunction(FunctionDefinition functionDefinition) {
         functions.add(functionDefinition);
+    }
+
+    private Optional<FunctionDefinition> getFunctionDefinitionOptional(String name, int argumentsSize) {
+        return functions.stream()
+                .filter(t -> t.getName().equals(name) && t.getArguments().size() == argumentsSize)
+                .findAny();
     }
 }

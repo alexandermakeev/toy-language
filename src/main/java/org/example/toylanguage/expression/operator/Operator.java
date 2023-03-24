@@ -12,7 +12,10 @@ public enum Operator {
     ClassInstance("new", ClassInstanceOperator.class, 7),
     NestedClassInstance(":{2}\\s+new", NestedClassInstanceOperator.class, 7),
     ClassProperty(":{2}", ClassPropertyOperator.class, 7),
+    ClassCast("as", ClassCastOperator.class, 7),
+    ClassInstanceOf("is", ClassInstanceOfOperator.class, 7),
 
+    ExponentiationOperator("\\*{2}", ExponentiationOperator.class, 6),
     Multiplication("\\*", MultiplicationOperator.class, 6),
     Division("/", DivisionOperator.class, 6),
     FloorDivision("//", FloorDivisionOperator.class, 6),

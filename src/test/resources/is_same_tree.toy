@@ -40,9 +40,9 @@ tree2 = new TreeNode [ 3, new TreeNode [ 4, new TreeNode [ 6 ], new TreeNode [ 7
 tree3 = new TreeNode [ 3, new TreeNode [ 4, new TreeNode [ 6 ], new TreeNode [ 7 ] ], new TreeNode [ 5, new TreeNode [ 9 ], new TreeNode [ 8 ] ] ]
 tree4 = new TreeNode [ 3, new TreeNode [ 4, new TreeNode [ 6 ], new TreeNode [ 7 ] ], new TreeNode [ 5, null, new TreeNode [ 9 ] ] ]
 
-print is_same_tree [ tree1, tree2 ] # should return true
-print is_same_tree [ tree1, tree3 ] # should return false
-print is_same_tree [ tree2, tree3 ] # should return false
-print is_same_tree [ tree1, tree4 ] # should return false
-print is_same_tree [ tree2, tree4 ] # should return false
-print is_same_tree [ tree3, tree4 ] # should return false
+assert is_same_tree [ tree1, tree2 ]
+assert !is_same_tree [ tree1, tree3 ]
+assert !is_same_tree [ tree2, tree3 ]
+assert !is_same_tree [ tree1, tree4 ]
+assert !is_same_tree [ tree2, tree4 ]
+assert !is_same_tree [ tree3, tree4 ]

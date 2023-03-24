@@ -2,10 +2,7 @@ package org.example.toylanguage;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.example.toylanguage.context.definition.ClassDefinition;
-import org.example.toylanguage.context.definition.DefinitionContext;
-import org.example.toylanguage.context.definition.DefinitionScope;
-import org.example.toylanguage.context.definition.FunctionDefinition;
+import org.example.toylanguage.context.definition.*;
 import org.example.toylanguage.exception.SyntaxException;
 import org.example.toylanguage.expression.Expression;
 import org.example.toylanguage.expression.ExpressionReader;
@@ -18,9 +15,7 @@ import org.example.toylanguage.token.Token;
 import org.example.toylanguage.token.TokenType;
 import org.example.toylanguage.token.TokensStack;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Getter
@@ -111,6 +106,9 @@ public class StatementParser {
             case "next":
                 parseNextStatement();
                 break;
+            case "assert":
+                parseAssertStatement(token);
+                break;
             default:
                 throw new SyntaxException(String.format("Failed to parse a keyword: %s", token.getValue()));
         }
@@ -156,17 +154,39 @@ public class StatementParser {
     }
 
     private void parseClassDefinition() {
-        Token type = tokens.next(TokenType.Variable);
+        // read class details
+        ClassDetails classDetails = readClassDetails();
 
-        List<String> arguments = new ArrayList<>();
+        // read base types
+        Set<ClassDetails> baseTypes = new LinkedHashSet<>();
+        if (tokens.peek(TokenType.GroupDivider, ":")) {
+            while (tokens.peek(TokenType.GroupDivider, ":", ",")) {
+                tokens.next();
+                ClassDetails baseClassDetails = readClassDetails();
+                baseTypes.add(baseClassDetails);
+            }
+        }
 
+        // add class definition
+        ClassStatement classStatement = new ClassStatement();
+        DefinitionScope classScope = DefinitionContext.newScope();
+        ClassDefinition classDefinition = new ClassDefinition(classDetails, baseTypes, classStatement, classScope);
+        DefinitionContext.getScope().addClass(classDefinition);
+
+        //parse class's statements
+        StatementParser.parse(this, classStatement, classScope);
+        tokens.next(TokenType.Keyword, "end");
+    }
+
+    private ClassDetails readClassDetails() {
+        Token className = tokens.next(TokenType.Variable);
+        List<String> classArguments = new ArrayList<>();
         if (tokens.peek(TokenType.GroupDivider, "[")) {
-
-            tokens.next(TokenType.GroupDivider, "["); //skip open square bracket
+            tokens.next(); //skip open square bracket
 
             while (!tokens.peek(TokenType.GroupDivider, "]")) {
                 Token argumentToken = tokens.next(TokenType.Variable);
-                arguments.add(argumentToken.getValue());
+                classArguments.add(argumentToken.getValue());
 
                 if (tokens.peek(TokenType.GroupDivider, ","))
                     tokens.next();
@@ -174,16 +194,7 @@ public class StatementParser {
 
             tokens.next(TokenType.GroupDivider, "]"); //skip close square bracket
         }
-
-        // add class definition
-        ClassStatement classStatement = new ClassStatement();
-        DefinitionScope classScope = DefinitionContext.newScope();
-        ClassDefinition classDefinition = new ClassDefinition(type.getValue(), arguments, classStatement, classScope);
-        DefinitionContext.getScope().addClass(classDefinition);
-
-        //parse class statements
-        StatementParser.parse(this, classStatement, classScope);
-        tokens.next(TokenType.Keyword, "end");
+        return new ClassDetails(className.getValue(), classArguments);
     }
 
     private void parseFunctionDefinition() {
@@ -276,6 +287,12 @@ public class StatementParser {
 
     private void parseNextStatement() {
         NextStatement statement = new NextStatement();
+        compositeStatement.addStatement(statement);
+    }
+
+    private void parseAssertStatement(Token rowToken) {
+        Expression expression = ExpressionReader.readExpression(tokens);
+        AssertStatement statement = new AssertStatement(expression, rowToken);
         compositeStatement.addStatement(statement);
     }
 }
