@@ -2,10 +2,7 @@ package org.example.toylanguage.expression;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.example.toylanguage.context.ClassInstanceContext;
-import org.example.toylanguage.context.MemoryContext;
-import org.example.toylanguage.context.MemoryScope;
-import org.example.toylanguage.context.ValueReference;
+import org.example.toylanguage.context.*;
 import org.example.toylanguage.context.definition.ClassDefinition;
 import org.example.toylanguage.context.definition.DefinitionContext;
 import org.example.toylanguage.expression.value.ClassValue;
@@ -108,6 +105,8 @@ public class ClassExpression implements Expression {
             } finally {
                 DefinitionContext.endScope();
             }
+
+            if (ExceptionContext.isRaised()) return null;
 
             return classValue;
         } finally {

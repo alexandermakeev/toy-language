@@ -1,6 +1,7 @@
 package org.example.toylanguage;
 
 import lombok.SneakyThrows;
+import org.example.toylanguage.context.ExceptionContext;
 import org.example.toylanguage.context.MemoryContext;
 import org.example.toylanguage.context.definition.DefinitionContext;
 import org.example.toylanguage.statement.CompositeStatement;
@@ -21,12 +22,16 @@ public class ToyLanguage {
         DefinitionContext.pushScope(DefinitionContext.newScope());
         MemoryContext.pushScope(MemoryContext.newScope());
         try {
-            CompositeStatement statement = new CompositeStatement();
+            CompositeStatement statement = new CompositeStatement(null, path.getFileName().toString());
             StatementParser.parse(tokens, statement);
             statement.execute();
         } finally {
             DefinitionContext.endScope();
             MemoryContext.endScope();
+
+            if (ExceptionContext.isRaised()) {
+                ExceptionContext.printStackTrace();
+            }
         }
     }
 

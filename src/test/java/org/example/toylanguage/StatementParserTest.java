@@ -31,7 +31,7 @@ class StatementParserTest {
         );
         DefinitionContext.pushScope(DefinitionContext.newScope());
         MemoryContext.pushScope(MemoryContext.newScope());
-        CompositeStatement statement = new CompositeStatement();
+        CompositeStatement statement = new CompositeStatement(null, "printTest");
         StatementParser.parse(tokens, statement);
 
         List<Statement> statements = statement.getStatements2Execute();
@@ -57,7 +57,7 @@ class StatementParserTest {
         );
         DefinitionContext.pushScope(DefinitionContext.newScope());
         MemoryContext.pushScope(MemoryContext.newScope());
-        CompositeStatement statement = new CompositeStatement();
+        CompositeStatement statement = new CompositeStatement(null, "testInput");
         StatementParser.parse(tokens, statement);
 
         List<Statement> statements = statement.getStatements2Execute();
@@ -83,7 +83,7 @@ class StatementParserTest {
         );
         DefinitionContext.pushScope(DefinitionContext.newScope());
         MemoryContext.pushScope(MemoryContext.newScope());
-        CompositeStatement statement = new CompositeStatement();
+        CompositeStatement statement = new CompositeStatement(null, "testAssignment");
         StatementParser.parse(tokens, statement);
 
         List<Statement> statements = statement.getStatements2Execute();
@@ -136,7 +136,7 @@ class StatementParserTest {
         );
         DefinitionContext.pushScope(DefinitionContext.newScope());
         MemoryContext.pushScope(MemoryContext.newScope());
-        CompositeStatement statement = new CompositeStatement();
+        CompositeStatement statement = new CompositeStatement(null, "testCondition");
         StatementParser.parse(tokens, statement);
 
         List<Statement> statements = statement.getStatements2Execute();
@@ -250,7 +250,7 @@ class StatementParserTest {
         );
         DefinitionContext.pushScope(DefinitionContext.newScope());
         MemoryContext.pushScope(MemoryContext.newScope());
-        CompositeStatement statement = new CompositeStatement();
+        CompositeStatement statement = new CompositeStatement(null, "testClass");
         StatementParser.parse(tokens, statement);
 
         List<Statement> statements = statement.getStatements2Execute();
@@ -297,7 +297,7 @@ class StatementParserTest {
         );
         DefinitionContext.pushScope(DefinitionContext.newScope());
         MemoryContext.pushScope(MemoryContext.newScope());
-        CompositeStatement statement = new CompositeStatement();
+        CompositeStatement statement = new CompositeStatement(null, "testComment");
         StatementParser.parse(tokens, statement);
 
         List<Statement> statements = statement.getStatements2Execute();

@@ -11,10 +11,11 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Getter
-public class ConditionStatement implements Statement {
+public class ConditionStatement extends Statement {
     private final Map<Expression, CompositeStatement> cases;
 
-    public ConditionStatement() {
+    public ConditionStatement(Integer rowNumber, String blockName) {
+        super(rowNumber, blockName);
         //keep the cases order
         this.cases = new LinkedHashMap<>();
     }

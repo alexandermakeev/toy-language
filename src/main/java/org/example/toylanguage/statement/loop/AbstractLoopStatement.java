@@ -1,13 +1,14 @@
 package org.example.toylanguage.statement.loop;
 
-import org.example.toylanguage.context.BreakContext;
-import org.example.toylanguage.context.MemoryContext;
-import org.example.toylanguage.context.NextContext;
-import org.example.toylanguage.context.ReturnContext;
+import org.example.toylanguage.context.*;
 import org.example.toylanguage.statement.CompositeStatement;
 import org.example.toylanguage.statement.Statement;
 
 public abstract class AbstractLoopStatement extends CompositeStatement {
+    public AbstractLoopStatement(Integer rowNumber, String blockName) {
+        super(rowNumber, blockName);
+    }
+
     protected abstract void init();
 
     protected abstract boolean hasNext();
@@ -36,6 +37,10 @@ public abstract class AbstractLoopStatement extends CompositeStatement {
                     // execute inner statements
                     for (Statement statement : getStatements2Execute()) {
                         statement.execute();
+
+                        // stop the execution in case Exception occurred
+                        if (ExceptionContext.isRaised())
+                            return;
 
                         // stop the execution in case ReturnStatement has been invoked
                         if (ReturnContext.getScope().isInvoked())
