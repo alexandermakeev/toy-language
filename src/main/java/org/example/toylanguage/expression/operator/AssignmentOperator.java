@@ -1,6 +1,6 @@
 package org.example.toylanguage.expression.operator;
 
-import org.example.toylanguage.exception.ExecutionException;
+import org.example.toylanguage.context.ExceptionContext;
 import org.example.toylanguage.expression.AssignExpression;
 import org.example.toylanguage.expression.Expression;
 import org.example.toylanguage.expression.value.Value;
@@ -20,7 +20,7 @@ public class AssignmentOperator extends BinaryOperatorExpression {
         if (getLeft() instanceof AssignExpression) {
             return ((AssignExpression) getLeft()).assign(right);
         } else {
-            throw new ExecutionException(String.format("Unable to make an assignment for `%s``", getLeft()));
+            return ExceptionContext.raiseException(String.format("Unable to make an assignment for `%s``", getLeft()));
         }
     }
 }

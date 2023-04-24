@@ -4,7 +4,6 @@ import lombok.Getter;
 import org.example.toylanguage.context.ExceptionContext;
 import org.example.toylanguage.expression.Expression;
 import org.example.toylanguage.expression.value.LogicalValue;
-import org.example.toylanguage.expression.value.TextValue;
 import org.example.toylanguage.expression.value.Value;
 
 @Getter
@@ -20,7 +19,7 @@ public class AssertStatement extends Statement {
     public void execute() {
         Value<?> value = expression.evaluate();
         if (value instanceof LogicalValue && !((LogicalValue) value).getValue()) {
-            ExceptionContext.raiseException(new TextValue("Assertion error"));
+            ExceptionContext.raiseException("Assertion error");
             ExceptionContext.addTracedStatement(this);
         }
     }

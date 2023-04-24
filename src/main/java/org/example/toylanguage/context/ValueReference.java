@@ -2,6 +2,7 @@ package org.example.toylanguage.context;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.example.toylanguage.expression.Expression;
 import org.example.toylanguage.expression.value.Value;
 
@@ -29,6 +30,7 @@ import org.example.toylanguage.expression.value.Value;
  */
 @Getter
 @Setter
+@ToString
 public class ValueReference implements Expression {
     private Value<?> value;
 

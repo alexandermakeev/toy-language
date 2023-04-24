@@ -2,7 +2,6 @@ package org.example.toylanguage.statement;
 
 import lombok.Getter;
 import org.example.toylanguage.context.MemoryContext;
-import org.example.toylanguage.exception.ExecutionException;
 import org.example.toylanguage.expression.Expression;
 import org.example.toylanguage.expression.value.LogicalValue;
 import org.example.toylanguage.expression.value.Value;
@@ -30,10 +29,7 @@ public class ConditionStatement extends Statement {
 
             Expression condition = entry.getKey();
             Value<?> value = condition.evaluate();
-            if (!(value instanceof LogicalValue)) {
-                throw new ExecutionException(String.format("Cannot compare non logical value `%s`", value));
-            }
-            if (((LogicalValue) value).getValue()) {
+            if (value instanceof LogicalValue && ((LogicalValue) value).getValue()) {
                 MemoryContext.pushScope(MemoryContext.newScope());
                 try {
                     CompositeStatement statement = entry.getValue();

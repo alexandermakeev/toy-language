@@ -1,6 +1,6 @@
 package org.example.toylanguage;
 
-import org.example.toylanguage.exception.TokenException;
+import org.example.toylanguage.exception.SyntaxException;
 import org.example.toylanguage.token.Token;
 import org.example.toylanguage.token.TokenType;
 
@@ -55,7 +55,7 @@ public class LexicalParser {
             }
         }
 
-        throw new TokenException(String.format("invalid expression at line %d", row));
+        throw new SyntaxException(String.format("Invalid expression at line %d", row));
     }
 
 }

@@ -2,6 +2,7 @@ package org.example.toylanguage.context;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.example.toylanguage.expression.value.TextValue;
 import org.example.toylanguage.expression.value.Value;
 import org.example.toylanguage.statement.Statement;
 
@@ -18,6 +19,10 @@ public class ExceptionContext {
         exception = new Exception(value, new Stack<>());
         state = State.RAISED;
         return null;
+    }
+
+    public static Value<?> raiseException(String textValue) {
+        return raiseException(new TextValue(textValue));
     }
 
     public static void rescueException() {

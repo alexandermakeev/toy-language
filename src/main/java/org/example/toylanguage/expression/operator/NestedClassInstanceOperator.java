@@ -1,6 +1,6 @@
 package org.example.toylanguage.expression.operator;
 
-import org.example.toylanguage.exception.ExecutionException;
+import org.example.toylanguage.context.ExceptionContext;
 import org.example.toylanguage.expression.ClassExpression;
 import org.example.toylanguage.expression.Expression;
 import org.example.toylanguage.expression.value.ClassValue;
@@ -28,7 +28,7 @@ public class NestedClassInstanceOperator extends BinaryOperatorExpression {
             // new Class [] :: new NestedClass []
             return ((ClassExpression) getRight()).evaluate((ClassValue) left);
         } else {
-            throw new ExecutionException(String.format("Unable to access class's nested class `%s``", getRight()));
+            return ExceptionContext.raiseException(String.format("Unable to access class's nested class `%s``", getRight()));
         }
     }
 }

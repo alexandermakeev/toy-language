@@ -2,12 +2,9 @@ package org.example.toylanguage.expression;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.example.toylanguage.context.ClassInstanceContext;
-import org.example.toylanguage.context.MemoryContext;
-import org.example.toylanguage.context.MemoryScope;
-import org.example.toylanguage.context.ReturnContext;
+import lombok.ToString;
+import org.example.toylanguage.context.*;
 import org.example.toylanguage.context.definition.*;
-import org.example.toylanguage.exception.ExecutionException;
 import org.example.toylanguage.expression.value.ClassValue;
 import org.example.toylanguage.expression.value.NullValue;
 import org.example.toylanguage.expression.value.Value;
@@ -15,11 +12,14 @@ import org.example.toylanguage.statement.FunctionStatement;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @RequiredArgsConstructor
 @Getter
+@ToString(onlyExplicitlyIncluded = true)
 public class FunctionExpression implements Expression {
+    @ToString.Include
     private final String name;
     private final List<Expression> argumentExpressions;
 
@@ -52,7 +52,9 @@ public class FunctionExpression implements Expression {
         // find a class containing the function
         ClassDefinition classDefinition = findClassDefinitionContainingFunction(classValue.getValue(), name, values.size());
         if (classDefinition == null) {
-            throw new ExecutionException(String.format("Function is not defined: %s", name));
+            String args = IntStream.range(0, values.size()).mapToObj(t -> "arg" + (t + 1)).collect(Collectors.joining(", "));
+            return ExceptionContext.raiseException(String.format("Function `%s#%s [%s]` is not defined",
+                    classValue.getValue().getClassDetails().getName(), name, args));
         }
         DefinitionScope classDefinitionScope = classDefinition.getDefinitionScope();
         ClassValue functionClassValue = classValue.getRelation(classDefinition.getClassDetails().getName());
@@ -76,6 +78,10 @@ public class FunctionExpression implements Expression {
     private Value<?> evaluate(List<Value<?>> values) {
         //get function's definition and statement
         FunctionDefinition definition = DefinitionContext.getScope().getFunction(name, values.size());
+        if (definition == null) {
+            String args = IntStream.range(0, values.size()).mapToObj(t -> "arg" + (t + 1)).collect(Collectors.joining(", "));
+            return ExceptionContext.raiseException(String.format("Function `%s [%s]` is not defined", name, args));
+        }
         FunctionStatement statement = definition.getStatement();
 
         //set new memory scope

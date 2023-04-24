@@ -2,6 +2,7 @@ package org.example.toylanguage.expression;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 import org.example.toylanguage.context.*;
 import org.example.toylanguage.context.definition.ClassDefinition;
 import org.example.toylanguage.context.definition.DefinitionContext;
@@ -19,7 +20,9 @@ import java.util.stream.IntStream;
 
 @RequiredArgsConstructor
 @Getter
+@ToString(onlyExplicitlyIncluded = true)
 public class ClassExpression implements Expression {
+    @ToString.Include
     private final String name;
     private final List<? extends Expression> propertiesExpressions;
     // contains Derived class and all the Base classes chain that Derived class inherits
@@ -69,6 +72,9 @@ public class ClassExpression implements Expression {
     private Value<?> evaluate(List<ValueReference> values) {
         //get class's definition and statement
         ClassDefinition definition = DefinitionContext.getScope().getClass(name);
+        if (definition == null) {
+            return ExceptionContext.raiseException(String.format("Class `%s` is not defined", name));
+        }
         ClassStatement classStatement = definition.getStatement();
 
         //set separate scope

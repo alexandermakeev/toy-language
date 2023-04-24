@@ -1,6 +1,6 @@
 package org.example.toylanguage.expression.operator;
 
-import org.example.toylanguage.exception.ExecutionException;
+import org.example.toylanguage.context.ExceptionContext;
 import org.example.toylanguage.expression.Expression;
 import org.example.toylanguage.expression.VariableExpression;
 import org.example.toylanguage.expression.value.ClassValue;
@@ -20,7 +20,7 @@ public class ClassInstanceOfOperator extends BinaryOperatorExpression {
             String classType = ((VariableExpression) getRight()).getName();
             return new LogicalValue(((ClassValue) left).containsRelation(classType));
         } else {
-            throw new ExecutionException(String.format("Unable to perform `is` operator for the following operands `%s` and `%s`", left, getRight()));
+            return ExceptionContext.raiseException(String.format("Unable to perform `is` operator for the following operands `%s` and `%s`", left, getRight()));
         }
     }
 }
