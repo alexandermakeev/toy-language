@@ -123,7 +123,9 @@ public class ClassExpression implements Expression {
                 DefinitionContext.endScope();
             }
 
-            if (ExceptionContext.isRaised()) return null;
+            // if exception have been thrown in the constructor
+            if (ExceptionContext.isRaised())
+                return null;
 
             return classValue;
         } finally {

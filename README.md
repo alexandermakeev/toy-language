@@ -122,20 +122,20 @@ end
 7. Exceptions
 ```
 # raise (throw) an exception
-raise "error"
+raise "Error"
 
 # raise a class instance
 class MyException [message]
 end
 
-raise new MyException ["error message"]
+raise new MyException ["Error message"]
 
 # rescue (catch) exception
 begin
-    raise new MyException ["error message"]
+    raise new MyException ["Error message"]
 rescue err
     print "Rescue block"
-    # access property of raised (throwed) object
+    # access property of raised (thrown) object
     print err :: message
 end
 

@@ -8,10 +8,10 @@ end
 
 fun do_something
     print "Do something useful ..."
-    raise new MyBusinessException ["A message that describes the error."]
 end
 
 fun do_something_else
+    raise new MyBusinessException ["A message that describes the error."]
     print "Do something else ..."
 end
 

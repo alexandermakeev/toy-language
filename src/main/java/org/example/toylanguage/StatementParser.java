@@ -73,7 +73,7 @@ public class StatementParser {
     private void parseExpressionStatement(Token rowToken) {
         tokens.back(); // go back to read an expression from the beginning
         Expression value = ExpressionReader.readExpression(tokens);
-        ExpressionStatement statement = new ExpressionStatement(rowToken.getRow(), compositeStatement.getBlockName(), value);
+        ExpressionStatement statement = new ExpressionStatement(rowToken.getRowNumber(), compositeStatement.getBlockName(), value);
         compositeStatement.addStatement(statement);
     }
 
@@ -110,7 +110,7 @@ public class StatementParser {
                 parseAssertStatement(token);
                 break;
             case "raise":
-                parseRaiseStatement(token);
+                parseRaiseExceptionStatement(token);
                 break;
             case "begin":
                 parseHandleExceptionStatement(token);
@@ -122,19 +122,19 @@ public class StatementParser {
 
     private void parsePrintStatement(Token rowToken) {
         Expression expression = ExpressionReader.readExpression(tokens);
-        PrintStatement statement = new PrintStatement(rowToken.getRow(), compositeStatement.getBlockName(), expression);
+        PrintStatement statement = new PrintStatement(rowToken.getRowNumber(), compositeStatement.getBlockName(), expression);
         compositeStatement.addStatement(statement);
     }
 
     private void parseInputStatement(Token rowToken) {
         Token variable = tokens.next(TokenType.Variable);
-        InputStatement statement = new InputStatement(rowToken.getRow(), compositeStatement.getBlockName(), variable.getValue(), scanner::nextLine);
+        InputStatement statement = new InputStatement(rowToken.getRowNumber(), compositeStatement.getBlockName(), variable.getValue(), scanner::nextLine);
         compositeStatement.addStatement(statement);
     }
 
     private void parseConditionStatement(Token rowToken) {
         tokens.back();
-        ConditionStatement conditionStatement = new ConditionStatement(rowToken.getRow(), compositeStatement.getBlockName());
+        ConditionStatement conditionStatement = new ConditionStatement(rowToken.getRowNumber(), compositeStatement.getBlockName());
 
         while (!tokens.peek(TokenType.Keyword, "end")) {
             //read condition case
@@ -147,7 +147,7 @@ public class StatementParser {
             }
 
             //read case statements
-            CompositeStatement caseStatement = new CompositeStatement(rowToken.getRow(), compositeStatement.getBlockName());
+            CompositeStatement caseStatement = new CompositeStatement(rowToken.getRowNumber(), compositeStatement.getBlockName());
             DefinitionScope caseScope = DefinitionContext.newScope();
             StatementParser.parse(this, caseStatement, caseScope);
 
@@ -175,7 +175,7 @@ public class StatementParser {
 
         // add class definition
         DefinitionScope classScope = DefinitionContext.newScope();
-        ClassStatement classStatement = new ClassStatement(rowToken.getRow(), classDetails.getName());
+        ClassStatement classStatement = new ClassStatement(rowToken.getRowNumber(), classDetails.getName());
         ClassDefinition classDefinition = new ClassDefinition(classDetails, baseTypes, classStatement, classScope);
         DefinitionContext.getScope().addClass(classDefinition);
 
@@ -228,9 +228,10 @@ public class StatementParser {
         if (compositeStatement instanceof ClassStatement) {
             blockName = compositeStatement.getBlockName() + "#" + blockName;
         }
-        FunctionStatement functionStatement = new FunctionStatement(rowToken.getRow(), blockName);
+        FunctionStatement functionStatement = new FunctionStatement(rowToken.getRowNumber(), blockName);
         DefinitionScope functionScope = DefinitionContext.newScope();
-        FunctionDefinition functionDefinition = new FunctionDefinition(name.getValue(), arguments, functionStatement, functionScope);
+        FunctionDetails functionDetails = new FunctionDetails(name.getValue(), arguments);
+        FunctionDefinition functionDefinition = new FunctionDefinition(functionDetails, functionStatement, functionScope);
         DefinitionContext.getScope().addFunction(functionDefinition);
 
         //parse function statements
@@ -240,7 +241,7 @@ public class StatementParser {
 
     private void parseReturnStatement(Token rowToken) {
         Expression expression = ExpressionReader.readExpression(tokens);
-        ReturnStatement statement = new ReturnStatement(rowToken.getRow(), compositeStatement.getBlockName(), expression);
+        ReturnStatement statement = new ReturnStatement(rowToken.getRowNumber(), compositeStatement.getBlockName(), expression);
         compositeStatement.addStatement(statement);
     }
 
@@ -264,21 +265,21 @@ public class StatementParser {
                         // loop <variable> in <lower_bound>..<upper_bound> by <step>
                         tokens.next(TokenType.Keyword, "by");
                         Expression step = ExpressionReader.readExpression(tokens);
-                        loopStatement = new ForLoopStatement(rowToken.getRow(), compositeStatement.getBlockName(), variable, bounds, upperBound, step);
+                        loopStatement = new ForLoopStatement(rowToken.getRowNumber(), compositeStatement.getBlockName(), variable, bounds, upperBound, step);
                     } else {
                         // use default step
                         // loop <variable> in <lower_bound>..<upper_bound>
-                        loopStatement = new ForLoopStatement(rowToken.getRow(), compositeStatement.getBlockName(), variable, bounds, upperBound);
+                        loopStatement = new ForLoopStatement(rowToken.getRowNumber(), compositeStatement.getBlockName(), variable, bounds, upperBound);
                     }
 
                 } else {
                     // loop <variable> in <iterable>
-                    loopStatement = new IterableLoopStatement(rowToken.getRow(), compositeStatement.getBlockName(), variable, bounds);
+                    loopStatement = new IterableLoopStatement(rowToken.getRowNumber(), compositeStatement.getBlockName(), variable, bounds);
                 }
 
             } else {
                 // loop <condition>
-                loopStatement = new WhileLoopStatement(rowToken.getRow(), compositeStatement.getBlockName(), loopExpression);
+                loopStatement = new WhileLoopStatement(rowToken.getRowNumber(), compositeStatement.getBlockName(), loopExpression);
             }
 
             DefinitionScope loopScope = DefinitionContext.newScope();
@@ -291,30 +292,30 @@ public class StatementParser {
     }
 
     private void parseBreakStatement(Token rowToken) {
-        BreakStatement statement = new BreakStatement(rowToken.getRow(), compositeStatement.getBlockName());
+        BreakStatement statement = new BreakStatement(rowToken.getRowNumber(), compositeStatement.getBlockName());
         compositeStatement.addStatement(statement);
     }
 
     private void parseNextStatement(Token rowToken) {
-        NextStatement statement = new NextStatement(rowToken.getRow(), compositeStatement.getBlockName());
+        NextStatement statement = new NextStatement(rowToken.getRowNumber(), compositeStatement.getBlockName());
         compositeStatement.addStatement(statement);
     }
 
     private void parseAssertStatement(Token rowToken) {
         Expression expression = ExpressionReader.readExpression(tokens);
-        AssertStatement statement = new AssertStatement(rowToken.getRow(), compositeStatement.getBlockName(), expression);
+        AssertStatement statement = new AssertStatement(rowToken.getRowNumber(), compositeStatement.getBlockName(), expression);
         compositeStatement.addStatement(statement);
     }
 
-    private void parseRaiseStatement(Token rowToken) {
+    private void parseRaiseExceptionStatement(Token rowToken) {
         Expression expression = ExpressionReader.readExpression(tokens);
-        RaiseStatement statement = new RaiseStatement(rowToken.getRow(), compositeStatement.getBlockName(), expression);
+        RaiseExceptionStatement statement = new RaiseExceptionStatement(rowToken.getRowNumber(), compositeStatement.getBlockName(), expression);
         compositeStatement.addStatement(statement);
     }
 
     private void parseHandleExceptionStatement(Token rowToken) {
         // read begin block
-        CompositeStatement beginStatement = new CompositeStatement(rowToken.getRow(), compositeStatement.getBlockName());
+        CompositeStatement beginStatement = new CompositeStatement(rowToken.getRowNumber(), compositeStatement.getBlockName());
         DefinitionScope beginScope = DefinitionContext.newScope();
         StatementParser.parse(this, beginStatement, beginScope);
 
@@ -328,7 +329,7 @@ public class StatementParser {
                 errorVariable = tokens.next().getValue();
             }
 
-            rescueStatement = new CompositeStatement(rowToken.getRow(), compositeStatement.getBlockName());
+            rescueStatement = new CompositeStatement(rowToken.getRowNumber(), compositeStatement.getBlockName());
             DefinitionScope rescueScope = DefinitionContext.newScope();
             StatementParser.parse(this, rescueStatement, rescueScope);
         }
@@ -338,7 +339,7 @@ public class StatementParser {
         if (tokens.peek(TokenType.Keyword, "ensure")) {
             tokens.next();
 
-            ensureStatement = new CompositeStatement(rowToken.getRow(), compositeStatement.getBlockName());
+            ensureStatement = new CompositeStatement(rowToken.getRowNumber(), compositeStatement.getBlockName());
             DefinitionScope ensureScope = DefinitionContext.newScope();
             StatementParser.parse(this, ensureStatement, ensureScope);
         }
@@ -347,7 +348,7 @@ public class StatementParser {
         tokens.next(TokenType.Keyword, "end");
 
         // construct a statement
-        HandleExceptionStatement statement = new HandleExceptionStatement(rowToken.getRow(), compositeStatement.getBlockName(),
+        HandleExceptionStatement statement = new HandleExceptionStatement(rowToken.getRowNumber(), compositeStatement.getBlockName(),
                 beginStatement, rescueStatement, ensureStatement, errorVariable);
         compositeStatement.addStatement(statement);
     }

@@ -42,15 +42,15 @@ public abstract class AbstractLoopStatement extends CompositeStatement {
                         if (ExceptionContext.isRaised())
                             return;
 
-                        // stop the execution in case ReturnStatement has been invoked
+                        // stop the execution in case ReturnStatement is invoked
                         if (ReturnContext.getScope().isInvoked())
                             return;
 
-                        // stop the execution in case BreakStatement has been invoked
+                        // stop the execution in case BreakStatement is invoked
                         if (BreakContext.getScope().isInvoked())
                             return;
 
-                        // jump to the next iteration in case NextStatement has been invoked
+                        // jump to the next iteration in case NextStatement is invoked
                         if (NextContext.getScope().isInvoked())
                             break;
                     }
@@ -58,7 +58,7 @@ public abstract class AbstractLoopStatement extends CompositeStatement {
                     NextContext.reset();
                     MemoryContext.endScope(); // release each iteration memory
 
-                    // increment the counter even if the NextStatement has been called
+                    // increment the counter even if the NextStatement is called
                     postIncrement();
                 }
 

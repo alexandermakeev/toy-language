@@ -15,9 +15,8 @@ public class ToyLanguage {
 
     @SneakyThrows
     public void execute(Path path) {
-        String source = Files.readString(path);
-        LexicalParser lexicalParser = new LexicalParser(source);
-        List<Token> tokens = lexicalParser.parse();
+        String sourceCode = Files.readString(path);
+        List<Token> tokens = LexicalParser.parse(sourceCode);
 
         DefinitionContext.pushScope(DefinitionContext.newScope());
         MemoryContext.pushScope(MemoryContext.newScope());

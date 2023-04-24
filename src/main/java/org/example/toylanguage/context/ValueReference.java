@@ -7,8 +7,8 @@ import org.example.toylanguage.expression.Expression;
 import org.example.toylanguage.expression.value.Value;
 
 /**
- * Wrapper for the Value to keep the properties relation between a Base class and a Derived class
- *
+ * Wrapper for the Value to keep the properties' relations between Base and Derived classes
+ * <p>
  * <pre>{@code
  * # Declare the Base class A
  * class A [a_value]
@@ -38,6 +38,9 @@ public class ValueReference implements Expression {
         this.value = value;
     }
 
+    /**
+     * Evaluates Expression and creates ValueReference for it
+     */
     public static ValueReference instanceOf(Expression expression) {
         if (expression instanceof ValueReference) {
             // reuse variable

@@ -83,15 +83,16 @@ public class FunctionExpression implements Expression {
             return ExceptionContext.raiseException(String.format("Function `%s [%s]` is not defined", name, args));
         }
         FunctionStatement statement = definition.getStatement();
+        FunctionDetails details = definition.getDetails();
 
         //set new memory scope
         MemoryContext.pushScope(MemoryContext.newScope());
 
         try {
             //initialize function arguments
-            IntStream.range(0, definition.getArguments().size()).boxed()
+            IntStream.range(0, details.getArguments().size()).boxed()
                     .forEach(i -> MemoryContext.getScope()
-                            .setLocal(definition.getArguments().get(i), values.size() > i ? values.get(i) : NullValue.NULL_INSTANCE));
+                            .setLocal(details.getArguments().get(i), values.size() > i ? values.get(i) : NullValue.NULL_INSTANCE));
 
             //execute function body
             statement.execute();

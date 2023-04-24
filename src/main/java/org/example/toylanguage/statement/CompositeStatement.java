@@ -29,7 +29,7 @@ public class CompositeStatement extends Statement {
             if (ExceptionContext.isRaised())
                 return;
 
-            //stop the execution in case ReturnStatement has been invoked
+            //stop the execution in case ReturnStatement is invoked
             if (ReturnContext.getScope().isInvoked())
                 return;
         }

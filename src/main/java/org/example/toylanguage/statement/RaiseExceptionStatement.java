@@ -8,10 +8,10 @@ import org.example.toylanguage.expression.value.TextValue;
 import org.example.toylanguage.expression.value.Value;
 
 @Getter
-public class RaiseStatement extends Statement {
+public class RaiseExceptionStatement extends Statement {
     private final Expression expression;
 
-    public RaiseStatement(Integer rowNumber, String blockName, Expression expression) {
+    public RaiseExceptionStatement(Integer rowNumber, String blockName, Expression expression) {
         super(rowNumber, blockName);
         this.expression = expression;
     }

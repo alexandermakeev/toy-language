@@ -1,31 +1,33 @@
 package org.example.toylanguage.context.definition;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.example.toylanguage.StatementParser;
 import org.example.toylanguage.statement.FunctionStatement;
+import org.example.toylanguage.token.Token;
 
-import java.util.List;
-import java.util.Objects;
-
+/**
+ * Definition for a function
+ * <p>
+ *
+ * @see StatementParser#parseFunctionDefinition(Token)
+ */
 @RequiredArgsConstructor
 @Getter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class FunctionDefinition implements Definition {
-    private final String name;
-    private final List<String> arguments;
+    /**
+     * Details for a function
+     */
+    @EqualsAndHashCode.Include
+    private final FunctionDetails details;
+    /**
+     * Statement(s) defined in the function body
+     */
     private final FunctionStatement statement;
+    /**
+     * Contains nested classes and functions defined in this function
+     */
     private final DefinitionScope definitionScope;
-
-    // function is compared by its name and number of arguments
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        FunctionDefinition that = (FunctionDefinition) o;
-        return Objects.equals(name, that.name) && arguments.size() == that.arguments.size();
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, arguments.size());
-    }
 }
