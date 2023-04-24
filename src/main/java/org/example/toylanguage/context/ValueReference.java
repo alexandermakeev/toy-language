@@ -41,7 +41,9 @@ public class ValueReference implements Expression {
             // reuse variable
             return (ValueReference) expression;
         } else {
-            return new ValueReference(expression.evaluate());
+            Value<?> value = expression.evaluate();
+            if (value == null) return null;
+            return new ValueReference(value);
         }
     }
 

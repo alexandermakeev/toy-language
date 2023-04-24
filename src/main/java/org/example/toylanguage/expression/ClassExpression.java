@@ -10,6 +10,7 @@ import org.example.toylanguage.expression.value.NullValue;
 import org.example.toylanguage.expression.value.Value;
 import org.example.toylanguage.statement.ClassStatement;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +32,12 @@ public class ClassExpression implements Expression {
     @Override
     public Value<?> evaluate() {
         //initialize class's properties
-        List<ValueReference> values = propertiesExpressions.stream().map(ValueReference::instanceOf).collect(Collectors.toList());
+        List<ValueReference> values = new ArrayList<>(propertiesExpressions.size());
+        for (Expression expression : propertiesExpressions) {
+            ValueReference value = ValueReference.instanceOf(expression);
+            if (value == null) return null;
+            values.add(value);
+        }
         return evaluate(values);
     }
 
@@ -42,7 +48,12 @@ public class ClassExpression implements Expression {
      */
     public Value<?> evaluate(ClassValue classValue) {
         //initialize class's properties
-        List<ValueReference> values = propertiesExpressions.stream().map(ValueReference::instanceOf).collect(Collectors.toList());
+        List<ValueReference> values = new ArrayList<>(propertiesExpressions.size());
+        for (Expression expression : propertiesExpressions) {
+            ValueReference value = ValueReference.instanceOf(expression);
+            if (value == null) return null;
+            values.add(value);
+        }
 
         //set parent class's definition
         ClassDefinition classDefinition = classValue.getValue();

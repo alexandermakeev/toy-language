@@ -15,6 +15,7 @@ public class ClassInstanceOfOperator extends BinaryOperatorExpression {
     @Override
     public Value<?> evaluate() {
         Value<?> left = getLeft().evaluate();
+        if (left == null) return null;
         if (left instanceof ClassValue && getRight() instanceof VariableExpression) {
             String classType = ((VariableExpression) getRight()).getName();
             return new LogicalValue(((ClassValue) left).containsRelation(classType));

@@ -21,6 +21,7 @@ public class AssertStatement extends Statement {
         Value<?> value = expression.evaluate();
         if (value instanceof LogicalValue && !((LogicalValue) value).getValue()) {
             ExceptionContext.raiseException(new TextValue("Assertion error"));
+            ExceptionContext.addTracedStatement(this);
         }
     }
 }

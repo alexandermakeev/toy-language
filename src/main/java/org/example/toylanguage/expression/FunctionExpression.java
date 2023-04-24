@@ -13,8 +13,8 @@ import org.example.toylanguage.expression.value.NullValue;
 import org.example.toylanguage.expression.value.Value;
 import org.example.toylanguage.statement.FunctionStatement;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @RequiredArgsConstructor
@@ -26,7 +26,12 @@ public class FunctionExpression implements Expression {
     @Override
     public Value<?> evaluate() {
         //initialize function arguments
-        List<Value<?>> values = argumentExpressions.stream().map(Expression::evaluate).collect(Collectors.toList());
+        List<Value<?>> values = new ArrayList<>(argumentExpressions.size());
+        for (Expression expression : argumentExpressions) {
+            Value<?> value = expression.evaluate();
+            if (value == null) return null;
+            values.add(value);
+        }
         return evaluate(values);
     }
 
@@ -37,7 +42,12 @@ public class FunctionExpression implements Expression {
      */
     public Value<?> evaluate(ClassValue classValue) {
         //initialize function arguments
-        List<Value<?>> values = argumentExpressions.stream().map(Expression::evaluate).collect(Collectors.toList());
+        List<Value<?>> values = new ArrayList<>(argumentExpressions.size());
+        for (Expression expression : argumentExpressions) {
+            Value<?> value = expression.evaluate();
+            if (value == null) return null;
+            values.add(value);
+        }
 
         // find a class containing the function
         ClassDefinition classDefinition = findClassDefinitionContainingFunction(classValue.getValue(), name, values.size());

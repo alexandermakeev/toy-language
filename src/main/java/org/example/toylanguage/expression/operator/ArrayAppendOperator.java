@@ -12,10 +12,13 @@ public class ArrayAppendOperator extends BinaryOperatorExpression {
     @Override
     public Value<?> evaluate() {
         Value<?> left = getLeft().evaluate();
+        if (left == null) return null;
+        Value<?> right = getRight().evaluate();
+        if (right == null) return null;
+
         if (left instanceof ArrayValue) {
-            Value<?> right = getRight().evaluate();
             ((ArrayValue) left).appendValue(right);
         }
-        return getLeft().evaluate();
+        return left;
     }
 }

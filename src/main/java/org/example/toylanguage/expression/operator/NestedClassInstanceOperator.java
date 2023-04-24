@@ -15,6 +15,7 @@ public class NestedClassInstanceOperator extends BinaryOperatorExpression {
     @Override
     public Value<?> evaluate() {
         Value<?> left = getLeft().evaluate();
+        if (left == null) return null;
 
         // access class's property via this instance
         // this :: new NestedClass []

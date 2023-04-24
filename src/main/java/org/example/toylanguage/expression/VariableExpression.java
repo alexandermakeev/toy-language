@@ -16,7 +16,9 @@ public class VariableExpression implements Expression, AssignExpression {
     }
 
     @Override
-    public void assign(Value<?> value) {
+    public Value<?> assign(Value<?> value) {
+        if (value == null) return null;
         MemoryContext.getScope().set(name, value);
+        return value;
     }
 }

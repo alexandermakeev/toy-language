@@ -16,8 +16,11 @@ public class ClassCastOperator extends BinaryOperatorExpression {
 
     @Override
     public Value<?> evaluate() {
+        Value<?> left = getLeft().evaluate();
+        if (left == null) return null;
+
         // evaluate expressions
-        ClassValue classInstance = (ClassValue) getLeft().evaluate();
+        ClassValue classInstance = (ClassValue) left;
         String typeToCastName = ((VariableExpression) getRight()).getName();
 
         // retrieve class details

@@ -16,7 +16,9 @@ public class NotEqualsOperator extends BinaryOperatorExpression {
     @Override
     public Value<?> evaluate() {
         Value<?> left = getLeft().evaluate();
+        if (left == null) return null;
         Value<?> right = getRight().evaluate();
+        if (right == null) return null;
         boolean result;
         if (left == NULL_INSTANCE || right == NULL_INSTANCE) {
             result = left != right;

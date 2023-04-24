@@ -119,6 +119,37 @@ loop <variable> in <lower_bound>..<upper_bound> by <step>
 end
 ```
 
+7. Exceptions
+```
+# raise (throw) an exception
+raise "error"
+
+# raise a class instance
+class MyException [message]
+end
+
+raise new MyException ["error message"]
+
+# rescue (catch) exception
+begin
+    raise new MyException ["error message"]
+rescue err
+    print "Rescue block"
+    # access property of raised (throwed) object
+    print err :: message
+end
+
+# ensure (finally)
+begin
+    raise new MyException ["error message"]
+rescue error
+    print "Rescue block"
+    print error :: message
+ensure
+    print "Ensure block"
+end
+```
+
 ### Data types
 There are the following data types currently supported:
 1. Numeric
@@ -252,4 +283,3 @@ To calculate a complex expression in the proper order, each of the supported ope
 Firstly, compile and package the program into a uber jar, go to the ./target folder and then run the following command
 
 java -cp toy-language.jar org.example.toylanguage.RunToyLanguage ../src/test/resources/stack.toy
-

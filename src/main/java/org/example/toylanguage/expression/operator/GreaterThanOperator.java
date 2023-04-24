@@ -18,7 +18,9 @@ public class GreaterThanOperator extends BinaryOperatorExpression {
     @Override
     public Value<?> evaluate() {
         Value<?> left = getLeft().evaluate();
+        if (left == null) return null;
         Value<?> right = getRight().evaluate();
+        if (right == null) return null;
         boolean result;
         if (left == NULL_INSTANCE || right == NULL_INSTANCE) {
             throw new ExecutionException(String.format("Unable to perform greater than for NULL values `%s`, '%s'", left, right));

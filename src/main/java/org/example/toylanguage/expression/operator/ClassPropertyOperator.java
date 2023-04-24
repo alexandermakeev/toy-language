@@ -17,6 +17,7 @@ public class ClassPropertyOperator extends BinaryOperatorExpression implements A
     @Override
     public Value<?> evaluate() {
         Value<?> left = getLeft().evaluate();
+        if (left == null) return null;
 
         // access class's property via this instance
         // this :: class_argument
@@ -40,8 +41,9 @@ public class ClassPropertyOperator extends BinaryOperatorExpression implements A
     }
 
     @Override
-    public void assign(Value<?> value) {
+    public Value<?> assign(Value<?> value) {
         Value<?> left = getLeft().evaluate();
+        if (left == null) return null;
 
         // access class's property via this instance
         // this :: class_argument
@@ -53,5 +55,6 @@ public class ClassPropertyOperator extends BinaryOperatorExpression implements A
             String propertyName = ((VariableExpression) getRight()).getName();
             ((ClassValue) left).setValue(propertyName, value);
         }
+        return left;
     }
 }

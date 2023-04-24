@@ -19,11 +19,12 @@ public class RaiseStatement extends Statement {
     @Override
     public void execute() {
         Value<?> value = expression.evaluate();
-        if (value == null) return;
-        if (value == NullValue.NULL_INSTANCE) {
-            value = new TextValue("Empty exception");
+        if (value != null) {
+            if (value == NullValue.NULL_INSTANCE) {
+                value = new TextValue("Empty exception");
+            }
+            ExceptionContext.raiseException(value);
         }
-        ExceptionContext.raiseException(value);
         ExceptionContext.addTracedStatement(this);
     }
 }
