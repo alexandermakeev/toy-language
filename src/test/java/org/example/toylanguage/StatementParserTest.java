@@ -31,7 +31,7 @@ class StatementParserTest {
         );
         DefinitionContext.pushScope(DefinitionContext.newScope());
         MemoryContext.pushScope(MemoryContext.newScope());
-        CompositeStatement statement = new CompositeStatement();
+        CompositeStatement statement = new CompositeStatement(null, "printTest");
         StatementParser.parse(tokens, statement);
 
         List<Statement> statements = statement.getStatements2Execute();
@@ -57,7 +57,7 @@ class StatementParserTest {
         );
         DefinitionContext.pushScope(DefinitionContext.newScope());
         MemoryContext.pushScope(MemoryContext.newScope());
-        CompositeStatement statement = new CompositeStatement();
+        CompositeStatement statement = new CompositeStatement(null, "testInput");
         StatementParser.parse(tokens, statement);
 
         List<Statement> statements = statement.getStatements2Execute();
@@ -83,7 +83,7 @@ class StatementParserTest {
         );
         DefinitionContext.pushScope(DefinitionContext.newScope());
         MemoryContext.pushScope(MemoryContext.newScope());
-        CompositeStatement statement = new CompositeStatement();
+        CompositeStatement statement = new CompositeStatement(null, "testAssignment");
         StatementParser.parse(tokens, statement);
 
         List<Statement> statements = statement.getStatements2Execute();
@@ -136,7 +136,7 @@ class StatementParserTest {
         );
         DefinitionContext.pushScope(DefinitionContext.newScope());
         MemoryContext.pushScope(MemoryContext.newScope());
-        CompositeStatement statement = new CompositeStatement();
+        CompositeStatement statement = new CompositeStatement(null, "testCondition");
         StatementParser.parse(tokens, statement);
 
         List<Statement> statements = statement.getStatements2Execute();
@@ -215,42 +215,42 @@ class StatementParserTest {
     @Test
     public void testClass() {
         List<Token> tokens = List.of(
-                Token.builder().type(TokenType.Keyword).value("class").row(1).build(),
-                Token.builder().type(TokenType.Variable).value("Person").row(1).build(),
-                Token.builder().type(TokenType.GroupDivider).value("[").row(1).build(),
-                Token.builder().type(TokenType.Variable).value("name").row(1).build(),
-                Token.builder().type(TokenType.GroupDivider).value(",").row(1).build(),
-                Token.builder().type(TokenType.Variable).value("age").row(1).build(),
-                Token.builder().type(TokenType.GroupDivider).value("]").row(1).build(),
-                Token.builder().type(TokenType.LineBreak).value("\n").row(1).build(),
-                Token.builder().type(TokenType.Keyword).value("end").row(2).build(),
-                Token.builder().type(TokenType.LineBreak).value("\n").row(2).build(),
-                Token.builder().type(TokenType.Variable).value("person").row(3).build(),
-                Token.builder().type(TokenType.Operator).value("=").row(3).build(),
-                Token.builder().type(TokenType.Operator).value("new").row(3).build(),
-                Token.builder().type(TokenType.Variable).value("Person").row(3).build(),
-                Token.builder().type(TokenType.GroupDivider).value("[").row(3).build(),
-                Token.builder().type(TokenType.Text).value("Randy Marsh").row(3).build(),
-                Token.builder().type(TokenType.GroupDivider).value(",").row(3).build(),
-                Token.builder().type(TokenType.Numeric).value("45").row(3).build(),
-                Token.builder().type(TokenType.GroupDivider).value("]").row(3).build(),
-                Token.builder().type(TokenType.LineBreak).value("\n").row(3).build(),
-                Token.builder().type(TokenType.Keyword).value("print").row(4).build(),
-                Token.builder().type(TokenType.Variable).value("person").row(4).build(),
-                Token.builder().type(TokenType.Operator).value("::").row(4).build(),
-                Token.builder().type(TokenType.Variable).value("name").row(4).build(),
-                Token.builder().type(TokenType.Operator).value("+").row(4).build(),
-                Token.builder().type(TokenType.Text).value(" is ").row(4).build(),
-                Token.builder().type(TokenType.Operator).value("+").row(4).build(),
-                Token.builder().type(TokenType.Variable).value("person").row(4).build(),
-                Token.builder().type(TokenType.Operator).value("::").row(4).build(),
-                Token.builder().type(TokenType.Variable).value("age").row(4).build(),
-                Token.builder().type(TokenType.Operator).value("+").row(4).build(),
-                Token.builder().type(TokenType.Text).value(" years old").row(4).build()
+                Token.builder().type(TokenType.Keyword).value("class").rowNumber(1).build(),
+                Token.builder().type(TokenType.Variable).value("Person").rowNumber(1).build(),
+                Token.builder().type(TokenType.GroupDivider).value("[").rowNumber(1).build(),
+                Token.builder().type(TokenType.Variable).value("name").rowNumber(1).build(),
+                Token.builder().type(TokenType.GroupDivider).value(",").rowNumber(1).build(),
+                Token.builder().type(TokenType.Variable).value("age").rowNumber(1).build(),
+                Token.builder().type(TokenType.GroupDivider).value("]").rowNumber(1).build(),
+                Token.builder().type(TokenType.LineBreak).value("\n").rowNumber(1).build(),
+                Token.builder().type(TokenType.Keyword).value("end").rowNumber(2).build(),
+                Token.builder().type(TokenType.LineBreak).value("\n").rowNumber(2).build(),
+                Token.builder().type(TokenType.Variable).value("person").rowNumber(3).build(),
+                Token.builder().type(TokenType.Operator).value("=").rowNumber(3).build(),
+                Token.builder().type(TokenType.Operator).value("new").rowNumber(3).build(),
+                Token.builder().type(TokenType.Variable).value("Person").rowNumber(3).build(),
+                Token.builder().type(TokenType.GroupDivider).value("[").rowNumber(3).build(),
+                Token.builder().type(TokenType.Text).value("Randy Marsh").rowNumber(3).build(),
+                Token.builder().type(TokenType.GroupDivider).value(",").rowNumber(3).build(),
+                Token.builder().type(TokenType.Numeric).value("45").rowNumber(3).build(),
+                Token.builder().type(TokenType.GroupDivider).value("]").rowNumber(3).build(),
+                Token.builder().type(TokenType.LineBreak).value("\n").rowNumber(3).build(),
+                Token.builder().type(TokenType.Keyword).value("print").rowNumber(4).build(),
+                Token.builder().type(TokenType.Variable).value("person").rowNumber(4).build(),
+                Token.builder().type(TokenType.Operator).value("::").rowNumber(4).build(),
+                Token.builder().type(TokenType.Variable).value("name").rowNumber(4).build(),
+                Token.builder().type(TokenType.Operator).value("+").rowNumber(4).build(),
+                Token.builder().type(TokenType.Text).value(" is ").rowNumber(4).build(),
+                Token.builder().type(TokenType.Operator).value("+").rowNumber(4).build(),
+                Token.builder().type(TokenType.Variable).value("person").rowNumber(4).build(),
+                Token.builder().type(TokenType.Operator).value("::").rowNumber(4).build(),
+                Token.builder().type(TokenType.Variable).value("age").rowNumber(4).build(),
+                Token.builder().type(TokenType.Operator).value("+").rowNumber(4).build(),
+                Token.builder().type(TokenType.Text).value(" years old").rowNumber(4).build()
         );
         DefinitionContext.pushScope(DefinitionContext.newScope());
         MemoryContext.pushScope(MemoryContext.newScope());
-        CompositeStatement statement = new CompositeStatement();
+        CompositeStatement statement = new CompositeStatement(null, "testClass");
         StatementParser.parse(tokens, statement);
 
         List<Statement> statements = statement.getStatements2Execute();
@@ -297,7 +297,7 @@ class StatementParserTest {
         );
         DefinitionContext.pushScope(DefinitionContext.newScope());
         MemoryContext.pushScope(MemoryContext.newScope());
-        CompositeStatement statement = new CompositeStatement();
+        CompositeStatement statement = new CompositeStatement(null, "testComment");
         StatementParser.parse(tokens, statement);
 
         List<Statement> statements = statement.getStatements2Execute();

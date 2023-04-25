@@ -1,7 +1,6 @@
 package org.example.toylanguage.statement;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.example.toylanguage.context.MemoryContext;
 import org.example.toylanguage.expression.value.LogicalValue;
 import org.example.toylanguage.expression.value.NumericValue;
@@ -11,11 +10,16 @@ import org.example.toylanguage.token.TokenType;
 
 import java.util.function.Supplier;
 
-@RequiredArgsConstructor
 @Getter
-public class InputStatement implements Statement {
+public class InputStatement extends Statement {
     private final String name;
     private final Supplier<String> consoleSupplier;
+
+    public InputStatement(Integer rowNumber, String blockName, String name, Supplier<String> consoleSupplier) {
+        super(rowNumber, blockName);
+        this.name = name;
+        this.consoleSupplier = consoleSupplier;
+    }
 
     @Override
     public void execute() {

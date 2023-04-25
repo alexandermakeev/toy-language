@@ -1,6 +1,6 @@
 package org.example.toylanguage.expression.operator;
 
-import org.example.toylanguage.exception.ExecutionException;
+import org.example.toylanguage.context.ExceptionContext;
 import org.example.toylanguage.expression.AssignExpression;
 import org.example.toylanguage.expression.Expression;
 import org.example.toylanguage.expression.FunctionExpression;
@@ -17,6 +17,7 @@ public class ClassPropertyOperator extends BinaryOperatorExpression implements A
     @Override
     public Value<?> evaluate() {
         Value<?> left = getLeft().evaluate();
+        if (left == null) return null;
 
         // access class's property via this instance
         // this :: class_argument
@@ -36,12 +37,13 @@ public class ClassPropertyOperator extends BinaryOperatorExpression implements A
             }
         }
 
-        throw new ExecutionException(String.format("Unable to access class's property `%s``", getRight()));
+        return ExceptionContext.raiseException(String.format("Unable to access class's property `%s``", getRight()));
     }
 
     @Override
-    public void assign(Value<?> value) {
+    public Value<?> assign(Value<?> value) {
         Value<?> left = getLeft().evaluate();
+        if (left == null) return null;
 
         // access class's property via this instance
         // this :: class_argument
@@ -53,5 +55,6 @@ public class ClassPropertyOperator extends BinaryOperatorExpression implements A
             String propertyName = ((VariableExpression) getRight()).getName();
             ((ClassValue) left).setValue(propertyName, value);
         }
+        return left;
     }
 }

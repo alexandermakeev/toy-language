@@ -1,6 +1,6 @@
 package org.example.toylanguage;
 
-import org.example.toylanguage.exception.TokenException;
+import org.example.toylanguage.exception.SyntaxException;
 import org.example.toylanguage.token.Token;
 import org.example.toylanguage.token.TokenType;
 
@@ -8,38 +8,55 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
+/**
+ * Transforming the source code into tokens
+ * <p>
+ *
+ * @see Token
+ * @see TokenType
+ */
 public class LexicalParser {
+    /**
+     * Accumulated tokens
+     */
     private final List<Token> tokens;
+    /**
+     * Source code
+     */
     private final String source;
-    private final List<Integer> linesIndices;
+    /**
+     * Current row number
+     */
+    private int rowNumber;
 
-    public LexicalParser(String source) {
+    /**
+     * Parse incoming sourceCode into List of lexemes following the TokenType
+     */
+    public static List<Token> parse(String sourceCode) {
+        LexicalParser parser = new LexicalParser(sourceCode);
+        parser.parse();
+        return parser.tokens;
+    }
+
+    private LexicalParser(String source) {
         this.source = source;
         this.tokens = new ArrayList<>();
-        this.linesIndices = IntStream
-                .iterate(source.indexOf("\n"), index -> index >= 0, index -> source.indexOf("\n", index + 1))
-                .boxed()
-                .collect(Collectors.toList());
+        this.rowNumber = 1;
     }
 
-    public List<Token> parse() {
-        int position = 0;
+    private void parse() {
+        int position = 0; // position in the source code
         while (position < source.length()) {
+            // read a lexeme and skip its length
             position += nextToken(position);
         }
-        return tokens;
     }
 
+    // find the next token
+    // returns number of chars that have been parsed to find a lexeme including length of the found lexeme
     private int nextToken(int position) {
         String nextToken = source.substring(position);
-
-        int row = IntStream.range(0, linesIndices.size())
-                .filter(i -> position <= linesIndices.get(i))
-                .findFirst()
-                .orElse(linesIndices.size()) + 1;
 
         for (TokenType tokenType : TokenType.values()) {
             Pattern pattern = Pattern.compile("^" + tokenType.getRegex());
@@ -48,14 +65,19 @@ public class LexicalParser {
                 if (tokenType != TokenType.Whitespace) {
                     // group(1) is used to get text literal without double quotes
                     String value = matcher.groupCount() > 0 ? matcher.group(1) : matcher.group();
-                    Token token = Token.builder().type(tokenType).value(value).row(row).build();
+                    Token token = Token.builder().type(tokenType).value(value).rowNumber(rowNumber).build();
                     tokens.add(token);
+
+                    if (tokenType == TokenType.LineBreak) {
+                        rowNumber++;
+                    }
                 }
+
                 return matcher.group().length();
             }
         }
 
-        throw new TokenException(String.format("invalid expression at line %d", row));
+        throw new SyntaxException(String.format("Invalid expression at line %d", rowNumber));
     }
 
 }

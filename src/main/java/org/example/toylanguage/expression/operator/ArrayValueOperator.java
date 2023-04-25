@@ -14,28 +14,32 @@ public class ArrayValueOperator extends BinaryOperatorExpression implements Assi
     @Override
     public Value<?> evaluate() {
         Value<?> left = getLeft().evaluate();
+        if (left == null) return null;
+        Value<?> right = getRight().evaluate();
+        if (right == null) return null;
+
         if (left instanceof ArrayValue) {
-            Value<?> right = getRight().evaluate();
             return ((ArrayValue) left).getValue(((Double) right.getValue()).intValue());
         }
         if (left instanceof TextValue) {
-            Value<?> right = getRight().evaluate();
             return ((TextValue) left).getValue(((Double) right.getValue()).intValue());
         }
-
         return left;
     }
 
     @Override
-    public void assign(Value<?> value) {
+    public Value<?> assign(Value<?> value) {
         Value<?> left = getLeft().evaluate();
+        if (left == null) return null;
+        Value<?> right = getRight().evaluate();
+        if (right == null) return null;
+
         if (left instanceof ArrayValue) {
-            Value<?> right = getRight().evaluate();
             ((ArrayValue) left).setValue(((Double) right.getValue()).intValue(), value);
         }
         if (left instanceof TextValue) {
-            Value<?> right = getRight().evaluate();
             ((TextValue) left).setValue(((Double) right.getValue()).intValue(), value);
         }
+        return left;
     }
 }

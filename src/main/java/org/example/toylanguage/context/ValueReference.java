@@ -2,12 +2,13 @@ package org.example.toylanguage.context;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.example.toylanguage.expression.Expression;
 import org.example.toylanguage.expression.value.Value;
 
 /**
- * Wrapper for the Value to keep the properties relation between a Base class and a Derived class
- *
+ * Wrapper for the Value to keep the properties' relations between Base and Derived classes
+ * <p>
  * <pre>{@code
  * # Declare the Base class A
  * class A [a_value]
@@ -29,6 +30,7 @@ import org.example.toylanguage.expression.value.Value;
  */
 @Getter
 @Setter
+@ToString
 public class ValueReference implements Expression {
     private Value<?> value;
 
@@ -36,12 +38,17 @@ public class ValueReference implements Expression {
         this.value = value;
     }
 
+    /**
+     * Evaluates Expression and creates ValueReference for it
+     */
     public static ValueReference instanceOf(Expression expression) {
         if (expression instanceof ValueReference) {
             // reuse variable
             return (ValueReference) expression;
         } else {
-            return new ValueReference(expression.evaluate());
+            Value<?> value = expression.evaluate();
+            if (value == null) return null;
+            return new ValueReference(value);
         }
     }
 

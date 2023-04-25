@@ -1,6 +1,5 @@
 package org.example.toylanguage.statement.loop;
 
-import lombok.RequiredArgsConstructor;
 import org.example.toylanguage.context.MemoryContext;
 import org.example.toylanguage.expression.Expression;
 import org.example.toylanguage.expression.VariableExpression;
@@ -10,7 +9,6 @@ import org.example.toylanguage.expression.value.LogicalValue;
 import org.example.toylanguage.expression.value.NumericValue;
 import org.example.toylanguage.expression.value.Value;
 
-@RequiredArgsConstructor
 public class ForLoopStatement extends AbstractLoopStatement {
     private final VariableExpression variable;
     private final Expression lowerBound;
@@ -18,8 +16,16 @@ public class ForLoopStatement extends AbstractLoopStatement {
     private final Expression step;
     private static final Expression DEFAULT_STEP = new NumericValue(1.0);
 
-    public ForLoopStatement(VariableExpression variable, Expression lowerBound, Expression uppedBound) {
-        this(variable, lowerBound, uppedBound, DEFAULT_STEP);
+    public ForLoopStatement(Integer rowNumber, String blockName, VariableExpression variable, Expression lowerBound, Expression uppedBound) {
+        this(rowNumber, blockName, variable, lowerBound, uppedBound, DEFAULT_STEP);
+    }
+
+    public ForLoopStatement(Integer rowNumber, String blockName, VariableExpression variable, Expression lowerBound, Expression uppedBound, Expression step) {
+        super(rowNumber, blockName);
+        this.variable = variable;
+        this.lowerBound = lowerBound;
+        this.uppedBound = uppedBound;
+        this.step = step;
     }
 
     @Override

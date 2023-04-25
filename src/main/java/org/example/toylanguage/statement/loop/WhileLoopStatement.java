@@ -1,13 +1,16 @@
 package org.example.toylanguage.statement.loop;
 
-import lombok.RequiredArgsConstructor;
 import org.example.toylanguage.expression.Expression;
 import org.example.toylanguage.expression.value.LogicalValue;
 import org.example.toylanguage.expression.value.Value;
 
-@RequiredArgsConstructor
 public class WhileLoopStatement extends AbstractLoopStatement {
     private final Expression hasNext;
+
+    public WhileLoopStatement(Integer rowNumber, String blockName, Expression hasNext) {
+        super(rowNumber, blockName);
+        this.hasNext = hasNext;
+    }
 
     @Override
     protected void init() {

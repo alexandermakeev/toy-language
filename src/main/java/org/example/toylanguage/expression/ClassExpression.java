@@ -2,10 +2,8 @@ package org.example.toylanguage.expression;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.example.toylanguage.context.ClassInstanceContext;
-import org.example.toylanguage.context.MemoryContext;
-import org.example.toylanguage.context.MemoryScope;
-import org.example.toylanguage.context.ValueReference;
+import lombok.ToString;
+import org.example.toylanguage.context.*;
 import org.example.toylanguage.context.definition.ClassDefinition;
 import org.example.toylanguage.context.definition.DefinitionContext;
 import org.example.toylanguage.expression.value.ClassValue;
@@ -13,6 +11,7 @@ import org.example.toylanguage.expression.value.NullValue;
 import org.example.toylanguage.expression.value.Value;
 import org.example.toylanguage.statement.ClassStatement;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +20,9 @@ import java.util.stream.IntStream;
 
 @RequiredArgsConstructor
 @Getter
+@ToString(onlyExplicitlyIncluded = true)
 public class ClassExpression implements Expression {
+    @ToString.Include
     private final String name;
     private final List<? extends Expression> propertiesExpressions;
     // contains Derived class and all the Base classes chain that Derived class inherits
@@ -34,7 +35,12 @@ public class ClassExpression implements Expression {
     @Override
     public Value<?> evaluate() {
         //initialize class's properties
-        List<ValueReference> values = propertiesExpressions.stream().map(ValueReference::instanceOf).collect(Collectors.toList());
+        List<ValueReference> values = new ArrayList<>(propertiesExpressions.size());
+        for (Expression expression : propertiesExpressions) {
+            ValueReference value = ValueReference.instanceOf(expression);
+            if (value == null) return null;
+            values.add(value);
+        }
         return evaluate(values);
     }
 
@@ -45,7 +51,12 @@ public class ClassExpression implements Expression {
      */
     public Value<?> evaluate(ClassValue classValue) {
         //initialize class's properties
-        List<ValueReference> values = propertiesExpressions.stream().map(ValueReference::instanceOf).collect(Collectors.toList());
+        List<ValueReference> values = new ArrayList<>(propertiesExpressions.size());
+        for (Expression expression : propertiesExpressions) {
+            ValueReference value = ValueReference.instanceOf(expression);
+            if (value == null) return null;
+            values.add(value);
+        }
 
         //set parent class's definition
         ClassDefinition classDefinition = classValue.getValue();
@@ -61,6 +72,9 @@ public class ClassExpression implements Expression {
     private Value<?> evaluate(List<ValueReference> values) {
         //get class's definition and statement
         ClassDefinition definition = DefinitionContext.getScope().getClass(name);
+        if (definition == null) {
+            return ExceptionContext.raiseException(String.format("Class `%s` is not defined", name));
+        }
         ClassStatement classStatement = definition.getStatement();
 
         //set separate scope
@@ -108,6 +122,10 @@ public class ClassExpression implements Expression {
             } finally {
                 DefinitionContext.endScope();
             }
+
+            // if exception have been thrown in the constructor
+            if (ExceptionContext.isRaised())
+                return null;
 
             return classValue;
         } finally {

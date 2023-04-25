@@ -23,6 +23,7 @@ class ToyLanguageTest {
 
             System.setIn(in);
             System.setOut(out);
+            System.setErr(out);
 
             ToyLanguage lang = new ToyLanguage();
             lang.execute(path);
@@ -36,58 +37,170 @@ class ToyLanguageTest {
     }
 
     @Test
-    void isSameTree() throws URISyntaxException {
+    void isSameTree() throws URISyntaxException, IOException {
         URL resource = getClass().getClassLoader().getResource("is_same_tree.toy");
         Path path = Paths.get(resource.toURI());
-        ToyLanguage lang = new ToyLanguage();
-        lang.execute(path);
+
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+             PrintStream out = new PrintStream(baos)) {
+
+            System.setOut(out);
+            System.setErr(out);
+
+            ToyLanguage lang = new ToyLanguage();
+            lang.execute(path);
+
+            assertEquals("", baos.toString());
+        }
     }
 
     @Test
-    void binarySearch() throws URISyntaxException {
+    void binarySearch() throws URISyntaxException, IOException {
         URL resource = getClass().getClassLoader().getResource("binary_search.toy");
         Path path = Paths.get(resource.toURI());
-        ToyLanguage lang = new ToyLanguage();
-        lang.execute(path);
+
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+             PrintStream out = new PrintStream(baos)) {
+
+            System.setOut(out);
+            System.setErr(out);
+
+            ToyLanguage lang = new ToyLanguage();
+            lang.execute(path);
+
+            assertEquals("", baos.toString());
+        }
     }
 
     @Test
-    void bubbleSort() throws URISyntaxException {
+    void bubbleSort() throws URISyntaxException, IOException {
         URL resource = getClass().getClassLoader().getResource("bubble_sort.toy");
         Path path = Paths.get(resource.toURI());
-        ToyLanguage lang = new ToyLanguage();
-        lang.execute(path);
+
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+             PrintStream out = new PrintStream(baos)) {
+
+            System.setOut(out);
+            System.setErr(out);
+
+            ToyLanguage lang = new ToyLanguage();
+            lang.execute(path);
+
+            assertEquals("", baos.toString());
+        }
     }
 
     @Test
-    void stack() throws URISyntaxException {
+    void stack() throws URISyntaxException, IOException {
         URL resource = getClass().getClassLoader().getResource("stack.toy");
         Path path = Paths.get(resource.toURI());
-        ToyLanguage lang = new ToyLanguage();
-        lang.execute(path);
+
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+             PrintStream out = new PrintStream(baos)) {
+
+            System.setOut(out);
+            System.setErr(out);
+
+            ToyLanguage lang = new ToyLanguage();
+            lang.execute(path);
+
+            assertEquals("", baos.toString());
+        }
     }
 
     @Test
-    void instanceOf() throws URISyntaxException {
+    void instanceOf() throws URISyntaxException, IOException {
         URL resource = getClass().getClassLoader().getResource("instance_of.toy");
         Path path = Paths.get(resource.toURI());
-        ToyLanguage lang = new ToyLanguage();
-        lang.execute(path);
+
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+             PrintStream out = new PrintStream(baos)) {
+
+            System.setOut(out);
+            System.setErr(out);
+
+            ToyLanguage lang = new ToyLanguage();
+            lang.execute(path);
+
+            assertEquals("", baos.toString());
+        }
     }
 
     @Test
-    void castType() throws URISyntaxException {
+    void castType() throws URISyntaxException, IOException {
         URL resource = getClass().getClassLoader().getResource("cast_type.toy");
         Path path = Paths.get(resource.toURI());
-        ToyLanguage lang = new ToyLanguage();
-        lang.execute(path);
+
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+             PrintStream out = new PrintStream(baos)) {
+
+            System.setOut(out);
+            System.setErr(out);
+
+            ToyLanguage lang = new ToyLanguage();
+            lang.execute(path);
+
+            assertEquals("", baos.toString());
+        }
     }
 
     @Test
-    void calculator() throws URISyntaxException {
+    void calculator() throws URISyntaxException, IOException {
         URL resource = getClass().getClassLoader().getResource("calculator.toy");
         Path path = Paths.get(resource.toURI());
-        ToyLanguage lang = new ToyLanguage();
-        lang.execute(path);
+
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+             PrintStream out = new PrintStream(baos)) {
+
+            System.setOut(out);
+            System.setErr(out);
+
+            ToyLanguage lang = new ToyLanguage();
+            lang.execute(path);
+
+            assertEquals("", baos.toString());
+        }
+    }
+
+    @Test
+    void raiseException() throws URISyntaxException, IOException {
+        URL resource = getClass().getClassLoader().getResource("raise_exception.toy");
+        Path path = Paths.get(resource.toURI());
+
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+             PrintStream out = new PrintStream(baos)) {
+
+            System.setOut(out);
+            System.setErr(out);
+
+            ToyLanguage lang = new ToyLanguage();
+            lang.execute(path);
+
+            assertEquals("Do something useful ...\n" +
+                    "MyBusinessException [ message = A message that describes the error. ]\n" +
+                    "    at do_something_else:14\n" +
+                    "    at perform_business_operation:5\n" +
+                    "    at raise_exception.toy:1\n", baos.toString());
+        }
+    }
+
+    @Test
+    void handleException() throws URISyntaxException, IOException {
+        URL resource = getClass().getClassLoader().getResource("handle_exception.toy");
+        Path path = Paths.get(resource.toURI());
+
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+             PrintStream out = new PrintStream(baos)) {
+
+            System.setOut(out);
+            System.setErr(out);
+
+            ToyLanguage lang = new ToyLanguage();
+            lang.execute(path);
+
+            assertEquals("Do something useful ...\n" +
+                    "Rescuing 'A message that describes the error.'\n" +
+                    "Ensure block\n", baos.toString());
+        }
     }
 }

@@ -1,19 +1,26 @@
 package org.example.toylanguage.statement;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import org.example.toylanguage.context.ExceptionContext;
 import org.example.toylanguage.context.ReturnContext;
 import org.example.toylanguage.expression.Expression;
 import org.example.toylanguage.expression.value.Value;
 
-@RequiredArgsConstructor
 @Getter
-public class ReturnStatement implements Statement {
+public class ReturnStatement extends Statement {
     private final Expression expression;
+
+    public ReturnStatement(Integer rowNumber, String blockName, Expression expression) {
+        super(rowNumber, blockName);
+        this.expression = expression;
+    }
 
     @Override
     public void execute() {
         Value<?> result = expression.evaluate();
-        ReturnContext.getScope().invoke(result);
+        if (result != null) {
+            ReturnContext.getScope().invoke(result);
+        }
+        ExceptionContext.addTracedStatement(this);
     }
 }

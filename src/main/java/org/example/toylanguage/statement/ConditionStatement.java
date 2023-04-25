@@ -2,7 +2,6 @@ package org.example.toylanguage.statement;
 
 import lombok.Getter;
 import org.example.toylanguage.context.MemoryContext;
-import org.example.toylanguage.exception.ExecutionException;
 import org.example.toylanguage.expression.Expression;
 import org.example.toylanguage.expression.value.LogicalValue;
 import org.example.toylanguage.expression.value.Value;
@@ -11,10 +10,11 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Getter
-public class ConditionStatement implements Statement {
+public class ConditionStatement extends Statement {
     private final Map<Expression, CompositeStatement> cases;
 
-    public ConditionStatement() {
+    public ConditionStatement(Integer rowNumber, String blockName) {
+        super(rowNumber, blockName);
         //keep the cases order
         this.cases = new LinkedHashMap<>();
     }
@@ -29,10 +29,7 @@ public class ConditionStatement implements Statement {
 
             Expression condition = entry.getKey();
             Value<?> value = condition.evaluate();
-            if (!(value instanceof LogicalValue)) {
-                throw new ExecutionException(String.format("Cannot compare non logical value `%s`", value));
-            }
-            if (((LogicalValue) value).getValue()) {
+            if (value instanceof LogicalValue && ((LogicalValue) value).getValue()) {
                 MemoryContext.pushScope(MemoryContext.newScope());
                 try {
                     CompositeStatement statement = entry.getValue();
